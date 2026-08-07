@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AdScope — 멀티채널 광고 분석 대시보드</title>
+<style>
+:root{--bg:#f4f6f8;--panel:#fff;--text:#172033;--muted:#687386;--line:#dfe4ea;--accent:#5b67f1;--accent2:#18a77b;--warn:#c27a18;--danger:#c74848;--shadow:0 10px 30px rgba(31,45,61,.08)}
+*{box-sizing:border-box} body{margin:0;font-family:Inter,"Pretendard","Noto Sans KR",system-ui,sans-serif;background:var(--bg);color:var(--text)}
+button,input,select,textarea{font:inherit}.app{min-width:1024px;min-height:100vh}.topbar{position:sticky;top:0;z-index:30;background:rgba(255,255,255,.96);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.brand-row{height:64px;display:flex;align-items:center;gap:16px;padding:0 24px}.logo{display:flex;align-items:center;gap:10px;font-weight:800}.logo-mark{width:34px;height:34px;border-radius:11px;background:linear-gradient(145deg,#5b67f1,#8b5cf6);display:grid;place-items:center;color:#fff}.logo-sub{font-size:12px;color:var(--muted);font-weight:600}.actions{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}.btn{border:1px solid var(--line);background:#fff;border-radius:10px;padding:9px 12px;cursor:pointer;color:var(--text);font-weight:700;font-size:13px}.btn:hover{border-color:#bfc7d1;background:#fafbfc}.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}.btn.danger{color:var(--danger)}
+.filters{display:grid;grid-template-columns:1.05fr .9fr .9fr 1fr 1.25fr 1.05fr;gap:10px;padding:12px 24px;border-top:1px solid #eef1f4;background:#fff}.filter label{display:block;font-size:11px;color:var(--muted);font-weight:700;margin-bottom:5px}.filter select,.filter input{width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:9px;background:#fff;color:var(--text)}
+.workspace{display:grid;grid-template-columns:250px minmax(520px,1fr) 310px;gap:14px;padding:14px}.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow)}.panel-head{padding:16px 16px 10px;border-bottom:1px solid #eef1f4}.panel-head h2{margin:0;font-size:15px}.panel-head p{margin:5px 0 0;color:var(--muted);font-size:12px}.fields{height:calc(100vh - 190px);overflow:auto;padding:12px}.field-group{margin-bottom:18px}.field-group h3{font-size:12px;margin:0 0 8px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}.field{display:flex;align-items:center;gap:9px;padding:9px 10px;margin:6px 0;border:1px solid var(--line);border-radius:9px;background:#fff;cursor:grab;user-select:none}.field:hover{border-color:#aeb7c4;transform:translateY(-1px)}.field:active{cursor:grabbing}.dot{width:9px;height:9px;border-radius:3px}.dim .dot{background:#5b67f1}.metric .dot{background:#18a77b}.field small{margin-left:auto;color:var(--muted)}
+.center{display:flex;flex-direction:column;gap:14px;min-width:0}.builder{padding:14px}.builder-top{display:flex;align-items:center;gap:10px;margin-bottom:12px}.builder-title{font-weight:800}.recommend{margin-left:auto;background:#eef0ff;color:#4650c9;padding:6px 9px;border-radius:999px;font-size:12px;font-weight:800}.chart-type{padding:8px 10px;border:1px solid var(--line);border-radius:9px;background:#fff}.drop-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:12px}.dropzone{min-height:76px;border:1px dashed #b8c1cc;border-radius:10px;padding:9px;background:#fafbfc}.dropzone.dragover{border-color:var(--accent);background:#f1f2ff}.dropzone-title{font-size:11px;font-weight:800;color:var(--muted);margin-bottom:7px}.chips{display:flex;gap:6px;flex-wrap:wrap}.chip{display:inline-flex;align-items:center;gap:5px;background:#fff;border:1px solid var(--line);border-radius:999px;padding:6px 8px;font-size:12px;cursor:grab}.chip button{border:0;background:none;color:#8b94a3;cursor:pointer;padding:0}.preview{min-height:340px;border:1px solid var(--line);border-radius:12px;padding:12px;background:#fff}.preview-head{display:flex;align-items:flex-start;gap:10px;margin-bottom:8px}.preview-title{font-weight:800}.preview-desc{font-size:12px;color:var(--muted);margin-top:3px}.preview-actions{margin-left:auto;display:flex;gap:6px}.notice{padding:14px;border:1px solid #ead5b6;background:#fff8ec;color:#7a531e;border-radius:10px;font-size:13px}.chart-area{height:280px;position:relative}.legend{display:flex;gap:12px;flex-wrap:wrap;margin:7px 0 4px;font-size:12px}.legend-item{cursor:pointer;display:flex;align-items:center;gap:6px}.legend-swatch{width:10px;height:10px;border-radius:3px}.legend-item.off{opacity:.35;text-decoration:line-through}
+.dashboard{padding:14px}.dashboard-head{display:flex;align-items:center;margin-bottom:12px}.dashboard-head h2{margin:0;font-size:16px}.dashboard-grid{position:relative;min-height:520px;border:1px dashed #c8d0da;border-radius:12px;background:linear-gradient(90deg,#f4f6f8 1px,transparent 1px),linear-gradient(#f4f6f8 1px,transparent 1px);background-size:24px 24px;overflow:auto}.dash-card{position:absolute;width:460px;height:310px;min-width:280px;min-height:220px;background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);resize:both;overflow:hidden}.dash-card-head{height:42px;display:flex;align-items:center;padding:0 10px;border-bottom:1px solid #eef1f4;cursor:move}.dash-card-title{font-size:13px;font-weight:800}.dash-card-tools{margin-left:auto;display:flex;gap:4px}.icon-btn{border:0;background:#f3f5f7;border-radius:8px;width:28px;height:28px;cursor:pointer}.dash-card-body{height:calc(100% - 42px);padding:9px}.dash-card-body .chart-area{height:100%}
+.settings{height:calc(100vh - 190px);overflow:auto}.settings-body{padding:14px}.setting{margin-bottom:13px}.setting label{display:block;font-size:12px;color:var(--muted);font-weight:700;margin-bottom:6px}.setting input,.setting select,.setting textarea{width:100%;border:1px solid var(--line);border-radius:9px;padding:9px;background:#fff}.setting textarea{min-height:70px;resize:vertical}.inline{display:flex;gap:8px}.inline>*{flex:1}.toggle{display:flex;align-items:center;gap:8px;font-size:13px}.status{font-size:12px;color:var(--muted);margin-top:10px}.empty{display:grid;place-items:center;height:100%;color:var(--muted);font-size:13px;text-align:center;padding:20px}.table-wrap{overflow:auto;height:100%}table{border-collapse:collapse;width:100%;font-size:12px}th,td{padding:8px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}th:first-child,td:first-child{text-align:left}th{position:sticky;top:0;background:#fff;z-index:2}.kpi{display:grid;place-items:center;height:100%;text-align:center}.kpi strong{font-size:34px}.kpi span{color:var(--muted);font-size:13px}.tooltip{position:fixed;z-index:100;background:#182033;color:#fff;padding:8px 10px;border-radius:8px;font-size:12px;pointer-events:none;display:none;max-width:240px}.toast{position:fixed;right:20px;bottom:20px;background:#172033;color:#fff;padding:11px 14px;border-radius:10px;box-shadow:var(--shadow);opacity:0;transform:translateY(10px);transition:.2s;z-index:200}.toast.show{opacity:1;transform:none}.modal-backdrop{position:fixed;inset:0;background:rgba(18,24,38,.46);display:none;align-items:center;justify-content:center;z-index:300;padding:24px}.modal-backdrop.show{display:flex}.modal{width:min(920px,96vw);max-height:90vh;overflow:auto;background:#fff;border-radius:16px;box-shadow:0 24px 80px rgba(15,23,42,.25);border:1px solid var(--line)}.modal-head{display:flex;align-items:center;padding:18px 20px;border-bottom:1px solid var(--line)}.modal-head h2{margin:0;font-size:18px}.modal-body{padding:18px 20px}.source-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}.source-card{border:1px solid var(--line);border-radius:12px;padding:14px;cursor:pointer;background:#fff}.source-card.active{border-color:var(--accent);box-shadow:0 0 0 3px #eef0ff}.source-card strong{display:block;margin-bottom:5px}.source-card span{font-size:12px;color:var(--muted)}.import-tabs{display:flex;gap:8px;margin:10px 0}.import-tab.active{background:#eef0ff;border-color:#cdd2ff;color:#4650c9}.import-pane{display:none}.import-pane.active{display:block}.drop-file{border:1px dashed #aeb8c6;border-radius:12px;padding:28px;text-align:center;background:#fafbfc}.mapping{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}.mapping .setting{margin:0}.import-summary{margin-top:14px;padding:12px;border-radius:10px;background:#f4f7fb;font-size:13px;color:var(--muted)}.modal-foot{display:flex;justify-content:flex-end;gap:8px;padding:14px 20px;border-top:1px solid var(--line)}
+
+.optim-layout{display:grid;grid-template-columns:320px 1fr;gap:16px}.optim-controls{border-right:1px solid var(--line);padding-right:16px}.optim-results{min-width:0}.objective-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.objective-card{border:1px solid var(--line);border-radius:10px;padding:10px;cursor:pointer;background:#fff}.objective-card.active{border-color:var(--accent);background:#f3f4ff;box-shadow:0 0 0 2px #e8eaff}.objective-card strong{display:block;font-size:13px}.objective-card span{font-size:11px;color:var(--muted)}.optim-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}.optim-kpi{border:1px solid var(--line);border-radius:12px;padding:12px;background:#fafbfc}.optim-kpi span{display:block;font-size:11px;color:var(--muted);margin-bottom:5px}.optim-kpi strong{font-size:18px}.delta.good{color:var(--accent2)}.delta.bad{color:var(--danger)}.allocation-table{max-height:330px;overflow:auto;border:1px solid var(--line);border-radius:10px}.allocation-table input{width:88px;padding:6px;border:1px solid var(--line);border-radius:7px}.advice-list{display:grid;gap:9px;margin-top:12px}.advice{border-left:4px solid var(--accent);background:#f7f8ff;border-radius:8px;padding:10px 12px;font-size:13px}.advice.warn{border-color:var(--warn);background:#fff9ef}.advice.good{border-color:var(--accent2);background:#f0fbf7}.scenario-bar{height:10px;background:#edf0f4;border-radius:999px;overflow:hidden}.scenario-fill{height:100%;background:linear-gradient(90deg,var(--accent),#8b5cf6)}.assumption{font-size:11px;color:var(--muted);line-height:1.5;margin-top:10px}.optim-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}@media(max-width:1100px){.optim-layout{grid-template-columns:1fr}.optim-controls{border-right:0;border-bottom:1px solid var(--line);padding:0 0 14px}.optim-kpis{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:1250px){.workspace{grid-template-columns:220px minmax(500px,1fr) 280px}.filters{grid-template-columns:repeat(5,1fr)}}
+
+.scenario-manager{display:grid;grid-template-columns:280px 1fr;min-height:560px}.scenario-sidebar{border-right:1px solid var(--line);padding:16px;background:#fafbfc}.scenario-list{display:grid;gap:8px;margin-top:12px;max-height:480px;overflow:auto}.scenario-item{border:1px solid var(--line);border-radius:11px;padding:11px;background:#fff;cursor:pointer}.scenario-item.active{border-color:var(--accent);box-shadow:0 0 0 3px #eef0ff}.scenario-item strong{display:block;font-size:13px}.scenario-item span{font-size:11px;color:var(--muted)}.scenario-main{padding:18px;min-width:0}.scenario-toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}.scenario-meta{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}.scenario-meta-card{border:1px solid var(--line);border-radius:11px;padding:11px;background:#fafbfc}.scenario-meta-card span{display:block;font-size:11px;color:var(--muted);margin-bottom:4px}.scenario-meta-card strong{font-size:15px}.scenario-compare{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}.scenario-compare-card{border:1px solid var(--line);border-radius:12px;padding:14px}.scenario-compare-card h3{font-size:14px;margin:0 0 10px}.scenario-empty{height:430px;display:grid;place-items:center;text-align:center;color:var(--muted)}.scenario-checkbox{float:right}.scenario-note{width:100%;min-height:70px;border:1px solid var(--line);border-radius:9px;padding:9px;resize:vertical}@media(max-width:1000px){.scenario-manager{grid-template-columns:1fr}.scenario-sidebar{border-right:0;border-bottom:1px solid var(--line)}.scenario-meta{grid-template-columns:repeat(2,1fr)}}
+
+/* Advertiser collaboration hub */
+.collab-layout{display:grid;grid-template-columns:250px minmax(420px,1fr) 310px;min-height:650px}.collab-rooms{border-right:1px solid var(--line);padding:14px;background:#fafbfc}.collab-room-list{display:grid;gap:8px;margin-top:12px;max-height:510px;overflow:auto}.collab-room{border:1px solid var(--line);border-radius:11px;padding:11px;background:#fff;cursor:pointer}.collab-room.active{border-color:var(--accent);box-shadow:0 0 0 3px #eef0ff}.collab-room strong{display:block;font-size:13px}.collab-room span{font-size:11px;color:var(--muted)}.collab-unread{float:right;background:var(--accent);color:#fff;border-radius:999px;min-width:19px;height:19px;display:grid;place-items:center;font-size:10px}.collab-feed{display:flex;flex-direction:column;min-width:0}.collab-feed-head{padding:14px 16px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px}.collab-feed-body{padding:16px;overflow:auto;height:460px;background:#f7f8fa}.message{display:flex;gap:9px;margin-bottom:14px}.message.mine{flex-direction:row-reverse}.avatar{width:32px;height:32px;border-radius:10px;background:#e8eaff;color:#4650c9;display:grid;place-items:center;font-weight:800;font-size:12px;flex:0 0 auto}.message.mine .avatar{background:#def6ed;color:#087a59}.bubble{max-width:82%;background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 12px;box-shadow:0 3px 12px rgba(31,45,61,.04)}.message.mine .bubble{background:#f0fbf7;border-color:#ccebdd}.message-meta{font-size:10px;color:var(--muted);margin-bottom:5px}.message-text{font-size:13px;line-height:1.55;white-space:pre-wrap}.internal-badge{display:inline-block;background:#fff2d9;color:#8a5b00;border-radius:999px;padding:2px 6px;font-size:10px;font-weight:800;margin-left:5px}.attachment-card{margin-top:8px;border:1px solid var(--line);border-radius:10px;padding:9px;background:#fafbfc;font-size:12px}.report-card{margin-top:8px;border:1px solid #cfd5ff;border-radius:12px;padding:12px;background:#f7f8ff}.report-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:9px}.report-kpi{background:#fff;border:1px solid #e0e4ff;border-radius:9px;padding:8px}.report-kpi span{display:block;font-size:10px;color:var(--muted)}.report-kpi strong{font-size:13px}.action-card{margin-top:8px;border:1px solid #ead5b6;border-radius:12px;padding:12px;background:#fffaf1}.action-top{display:flex;align-items:center;gap:8px}.action-status{margin-left:auto;border-radius:999px;padding:4px 8px;font-size:10px;font-weight:800}.status-proposed{background:#fff0cf;color:#825500}.status-approved{background:#dff7ee;color:#087a59}.status-rejected{background:#fde8e8;color:#a92f2f}.status-progress{background:#e8eaff;color:#4650c9}.status-complete{background:#e7f2ff;color:#1763a6}.action-buttons{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px}.action-buttons button{padding:6px 8px;font-size:11px}.composer{border-top:1px solid var(--line);padding:12px;background:#fff}.composer-tools{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:8px}.composer textarea{width:100%;min-height:72px;border:1px solid var(--line);border-radius:10px;padding:10px;resize:vertical}.composer-foot{display:flex;align-items:center;gap:8px;margin-top:8px}.collab-side{border-left:1px solid var(--line);padding:14px;background:#fff;overflow:auto}.collab-side h3{font-size:13px;margin:4px 0 10px}.pending-action{border:1px solid var(--line);border-radius:10px;padding:10px;margin-bottom:8px}.pending-action strong{display:block;font-size:12px}.pending-action span{font-size:11px;color:var(--muted)}.presence{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted)}.presence-dot{width:8px;height:8px;border-radius:50%;background:#18a77b}.collab-filter{display:flex;gap:6px;margin-bottom:10px}.collab-filter .btn.active{background:#eef0ff;border-color:#cdd2ff;color:#4650c9}.snapshot{height:90px;margin-top:8px;border-radius:9px;background:linear-gradient(180deg,#fff,#f3f4ff);border:1px solid #dfe3ff;display:flex;align-items:flex-end;gap:5px;padding:10px}.snapshot i{display:block;flex:1;background:#7b85f5;border-radius:4px 4px 0 0;min-height:8px}@media(max-width:1100px){.collab-layout{grid-template-columns:220px 1fr}.collab-side{display:none}}
+
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div class="brand-row">
+      <div class="logo"><div class="logo-mark">A</div><div><div>AdScope</div><div class="logo-sub">멀티채널 광고 분석</div></div></div>
+      <div class="actions">
+        <button class="btn primary" id="newChartBtn">새 차트 만들기</button>
+        <button class="btn" id="dataImportBtn">매체 데이터 가져오기</button><button class="btn" id="optimizerBtn">예산 최적화</button><button class="btn" id="scenarioManagerBtn">시나리오 관리</button><button class="btn primary" id="collabBtn" type="button" aria-controls="collabModal" aria-haspopup="dialog" onclick="openCollabHub()">광고주 소통</button>
+        <button class="btn" id="saveBtn">대시보드 저장</button>
+        <button class="btn" id="saveAsBtn">다른 이름으로 저장</button>
+        <button class="btn" id="resetBtn">초기화</button>
+        <button class="btn" id="exportBtn">JSON 설정 내보내기</button>
+        <button class="btn" id="importBtn">JSON 설정 불러오기</button>
+        <input id="importFile" type="file" accept="application/json" hidden />
+      </div>
+    </div>
+    <div class="filters" id="globalFilters"></div>
+  </header>
+
+  <main class="workspace">
+    <aside class="panel">
+      <div class="panel-head"><h2>데이터 필드</h2><p>드래그하거나 클릭해 추가하세요.</p></div>
+      <div class="fields" id="fieldPanel"></div>
+    </aside>
+
+    <section class="center">
+      <div class="panel builder">
+        <div class="builder-top">
+          <div class="builder-title">셀프서비스 차트 빌더</div>
+          <select class="chart-type" id="chartType"></select>
+          <div class="recommend" id="recommendation">추천: KPI 카드</div><button class="btn" id="resetBuilderBtn" type="button">빌더 초기화</button>
+        </div>
+        <div class="drop-grid" id="dropGrid"></div>
+        <div class="preview">
+          <div class="preview-head">
+            <div><div class="preview-title" id="previewTitle"></div><div class="preview-desc" id="previewDesc"></div></div>
+            <div class="preview-actions"><button class="btn primary" id="addDashboardBtn">대시보드에 추가</button></div>
+          </div>
+          <div id="previewContent"></div>
+        </div>
+      </div>
+
+      <div class="panel dashboard">
+        <div class="dashboard-head"><h2>대시보드 캔버스</h2><div class="status" id="dashboardName" style="margin-left:10px">기본 대시보드</div></div>
+        <div class="dashboard-grid" id="dashboardGrid"></div>
+      </div>
+    </section>
+
+    <aside class="panel settings">
+      <div class="panel-head"><h2>차트 설정</h2><p>선택한 차트의 표현 방식을 조정합니다.</p></div>
+      <div class="settings-body">
+        <div class="setting"><label>차트 제목</label><input id="titleInput" /></div>
+        <div class="setting"><label>설명</label><textarea id="descInput"></textarea></div>
+        <div class="setting"><label>정렬 방식</label><select id="sortSelect"><option value="none">기본</option><option value="asc">오름차순</option><option value="desc">내림차순</option></select></div>
+        <div class="setting"><label>집계 방식</label><select id="aggSelect"><option value="sum">합계</option><option value="avg">평균</option><option value="min">최솟값</option><option value="max">최댓값</option></select></div>
+        <div class="setting"><label class="toggle"><input id="secondaryAxis" type="checkbox" /> 보조축 사용</label></div>
+        <div class="setting"><label>필드 빠른 추가</label><select id="quickField"></select></div>
+        <div class="setting"><button class="btn" id="quickAddBtn" style="width:100%">선택 필드 추가</button></div>
+        <div class="status">그래프 항목 클릭 시 해당 값으로 교차 필터링됩니다. 범례 클릭 시 계열을 숨기거나 다시 표시할 수 있습니다.</div>
+      </div>
+    </aside>
+  </main>
+</div>
+<div class="modal-backdrop" id="importModal">
+  <div class="modal">
+    <div class="modal-head"><h2>매체 데이터 가져오기</h2><button class="icon-btn" id="closeImportModal" style="margin-left:auto">×</button></div>
+    <div class="modal-body">
+      <div class="source-grid" id="sourceGrid"></div>
+      <div class="import-tabs"><button class="btn import-tab active" data-pane="filePane">CSV / JSON 파일</button><button class="btn import-tab" data-pane="pastePane">데이터 붙여넣기</button></div>
+      <div class="import-pane active" id="filePane"><div class="drop-file" id="dataDropFile"><strong>파일을 끌어놓거나 클릭해 선택</strong><div class="status">CSV 또는 JSON · 여러 파일을 한 번에 불러올 수 있습니다.</div><input id="mediaDataFiles" type="file" accept=".csv,.json,text/csv,application/json" multiple hidden></div></div>
+      <div class="import-pane" id="pastePane"><textarea id="pastedData" style="width:100%;min-height:150px;border:1px solid var(--line);border-radius:10px;padding:12px" placeholder="CSV 헤더와 데이터를 붙여넣으세요."></textarea></div>
+      <div class="mapping" id="mappingGrid"></div>
+      <div class="import-summary" id="importSummary">매체를 선택하고 데이터를 추가하세요. 원본 컬럼은 표준 광고 스키마로 자동 변환됩니다.</div>
+    </div>
+    <div class="modal-foot"><button class="btn" id="downloadTemplateBtn">표준 CSV 템플릿</button><button class="btn" id="clearImportedBtn">가져온 데이터 삭제</button><button class="btn primary" id="applyImportBtn">데이터 적용</button></div>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="optimizerModal">
+  <div class="modal" style="width:min(1180px,97vw)">
+    <div class="modal-head"><h2>광고 예산 최적화 & 다음 액션</h2><button class="icon-btn" id="closeOptimizerModal" style="margin-left:auto">×</button></div>
+    <div class="modal-body optim-layout">
+      <section class="optim-controls">
+        <div class="setting"><label>최적화 단위</label><select id="optimLevel"><option value="channel">광고 매체</option><option value="campaign">캠페인</option><option value="product">제품</option></select></div>
+        <div class="setting"><label>광고주의 목표</label><div class="objective-grid" id="objectiveGrid"></div></div>
+        <div class="setting"><label>계획 총예산 (원)</label><input id="optimBudget" type="number" min="0" step="100000" /></div>
+        <div class="inline"><div class="setting"><label>항목별 최소 배정률</label><input id="optimMinPct" type="number" min="0" max="100" value="5" /></div><div class="setting"><label>항목별 최대 배정률</label><input id="optimMaxPct" type="number" min="0" max="100" value="60" /></div></div>
+        <div class="setting" id="targetWrap"><label id="targetLabel">목표 매출 (원)</label><input id="optimTarget" type="number" min="0" step="100000" /></div>
+        <div class="setting"><label>위험 성향</label><select id="riskLevel"><option value="conservative">보수적 — 현재 배분에서 크게 벗어나지 않음</option><option value="balanced" selected>균형 — 효율과 안정성 절충</option><option value="aggressive">공격적 — 고성과 항목에 집중</option></select></div>
+        <button class="btn primary" id="runOptimizerBtn" style="width:100%">최적 배분 계산</button>
+        <div class="assumption">최근 선택 기간의 실적을 기준으로 항목별 포화도를 추정합니다. 결과는 인과적 보장이 아닌 의사결정 시뮬레이션이며, 실제 집행 전 소규모 증분 테스트를 권장합니다.</div>
+      </section>
+      <section class="optim-results">
+        <div id="optimEmpty" class="empty" style="height:420px">목표와 예산을 설정한 뒤 최적 배분을 계산하세요.</div>
+        <div id="optimOutput" style="display:none">
+          <div class="optim-kpis" id="optimKpis"></div>
+          <div class="allocation-table"><table><thead><tr><th>배분 항목</th><th>현재 광고비</th><th>권장 광고비</th><th>변화</th><th>예상 매출</th><th>예상 전환</th><th>한계 ROAS</th></tr></thead><tbody id="allocationBody"></tbody></table></div>
+          <h3 style="font-size:14px;margin:16px 0 8px">다음 액션 조언</h3><div class="advice-list" id="adviceList"></div>
+          <div class="optim-actions"><button class="btn" id="applyAllocationBtn">시나리오 저장</button><button class="btn" id="exportOptimBtn">최적화 결과 JSON</button><button class="btn" id="addOptimChartBtn">배분 비교 차트 추가</button></div>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="scenarioModal">
+  <div class="modal" style="width:min(1180px,97vw)">
+    <div class="modal-head"><h2>최적화 시나리오 관리</h2><button class="icon-btn" id="closeScenarioModal" style="margin-left:auto">×</button></div>
+    <div class="scenario-manager">
+      <aside class="scenario-sidebar">
+        <button class="btn primary" id="newScenarioFromCurrentBtn" style="width:100%">현재 결과 저장</button>
+        <div class="status">시나리오는 이 브라우저의 localStorage에 저장됩니다.</div>
+        <div class="scenario-list" id="scenarioList"></div>
+      </aside>
+      <section class="scenario-main">
+        <div id="scenarioDetail" class="scenario-empty">저장된 시나리오를 선택하거나 최적화 결과를 저장하세요.</div>
+      </section>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="collabModal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="collabModalTitle">
+  <div class="modal" style="width:min(1280px,98vw);max-height:94vh">
+    <div class="modal-head"><h2 id="collabModalTitle">광고주 커뮤니케이션 허브</h2><div class="presence" style="margin-left:12px"><span class="presence-dot"></span>협업 프로토타입 · 브라우저 저장</div><label class="status" style="margin-left:auto">샘플 계정 <select id="collabAccount" class="btn" style="margin-left:6px"><option value="agency">대행사 운영 담당자</option><option value="client">브랜드 A 광고주</option><option value="client2">브랜드 B 광고주</option></select></label><button class="icon-btn" id="closeCollabModal">×</button></div>
+    <div class="collab-layout">
+      <aside class="collab-rooms">
+        <button class="btn primary" id="newRoomBtn" style="width:100%">+ 광고주 대화방</button>
+        <div class="status">광고주·캠페인별 성과 보고와 승인 이력을 관리합니다.</div>
+        <div class="collab-room-list" id="collabRoomList"></div>
+      </aside>
+      <section class="collab-feed">
+        <div class="collab-feed-head"><div><strong id="collabRoomTitle">대화방</strong><div class="status" id="collabRoomMeta"></div></div><button class="btn" id="generateReportBtn" style="margin-left:auto">성과 보고 생성</button><button class="btn" id="suggestActionBtn">다음 액션 제안</button></div>
+        <div class="collab-feed-body" id="collabFeed"></div>
+        <div class="composer">
+          <div class="composer-tools"><select id="messageVisibility" class="btn"><option value="public">광고주 공개</option><option value="internal">내부 메모</option></select><select id="attachmentType" class="btn"><option value="">첨부 없음</option><option value="chart">현재 차트 첨부</option><option value="dashboard">대시보드 스냅샷</option><option value="scenario">최적화 시나리오</option></select></div>
+          <textarea id="messageInput" placeholder="광고주에게 전달할 성과 설명, 확인 요청, 운영 코멘트를 입력하세요."></textarea>
+          <div class="composer-foot"><span class="status">Enter 줄바꿈 · Ctrl/⌘+Enter 전송</span><button class="btn primary" id="sendMessageBtn" style="margin-left:auto">메시지 보내기</button></div>
+        </div>
+      </section>
+      <aside class="collab-side">
+        <h3>승인 대기 액션</h3><div id="pendingActions"></div>
+        <h3 style="margin-top:18px">공유 도구</h3>
+        <button class="btn" id="exportConversationBtn" style="width:100%;margin-bottom:7px">대화 JSON 내보내기</button>
+        <button class="btn" id="markAllReadBtn" style="width:100%;margin-bottom:7px">모두 읽음 처리</button><button class="btn" id="simulateReplyBtn" style="width:100%">샘플 광고주 답변 받기</button>
+        <div class="status" style="margin-top:12px">현재 버전은 동일 브라우저의 localStorage에서만 작동합니다. 실제 다중 사용자 채팅에는 로그인, 서버 DB, 실시간 메시징이 필요합니다.</div>
+      </aside>
+    </div>
+  </div>
+</div>
+
+<div class="tooltip" id="tooltip"></div><div class="toast" id="toast"></div>
+<script>
+const __memoryStorage={};
+function storageGet(key){try{return window.storageGet(key)}catch(e){return Object.prototype.hasOwnProperty.call(__memoryStorage,key)?__memoryStorage[key]:null}}
+function storageSet(key,value){try{window.storageSet(key,value)}catch(e){__memoryStorage[key]=String(value)}}
+function storageRemove(key){try{window.storageRemove(key)}catch(e){delete __memoryStorage[key]}}
+const DIMENSIONS=[
+ {id:'date',label:'날짜',type:'date'},{id:'week',label:'주',type:'date'},{id:'month',label:'월',type:'date'},{id:'brand',label:'브랜드',type:'category'},{id:'channel',label:'광고 매체',type:'category'},{id:'campaign',label:'캠페인',type:'category'},{id:'adSet',label:'광고 세트',type:'category'},{id:'content',label:'콘텐츠명',type:'category'},{id:'product',label:'제품',type:'category'},{id:'contentFormat',label:'콘텐츠 형식',type:'category'},{id:'hookType',label:'후킹 유형',type:'category'},{id:'videoLength',label:'영상 길이',type:'category'}
+];
+const METRICS=[
+ {id:'spend',label:'광고비',unit:'currency',raw:true},{id:'impressions',label:'노출 수',unit:'count',raw:true},{id:'reach',label:'도달 수',unit:'count',raw:true},{id:'clicks',label:'클릭 수',unit:'count',raw:true},{id:'conversions',label:'전환 수',unit:'count',raw:true},{id:'revenue',label:'매출',unit:'currency',raw:true},{id:'ctr',label:'CTR',unit:'percent'},{id:'cpc',label:'CPC',unit:'currency'},{id:'cpm',label:'CPM',unit:'currency'},{id:'cpa',label:'CPA',unit:'currency'},{id:'cvr',label:'CVR',unit:'percent'},{id:'roas',label:'ROAS',unit:'ratio'}
+];
+const ALL=[...DIMENSIONS,...METRICS];
+const CHARTS=[['kpi','KPI 카드'],['bar','막대그래프'],['stacked','누적 막대그래프'],['line','선 그래프'],['area','영역 그래프'],['donut','도넛그래프'],['scatter','산점도'],['table','테이블'],['heatmap','히트맵']];
+const ZONES=[['x','X축'],['y','Y축'],['group','그룹/색상'],['filter','필터'],['tooltip','툴팁'],['size','크기']];
+const palette=['#5b67f1','#18a77b','#f59e0b','#ec4899','#0ea5e9','#8b5cf6','#ef4444','#64748b'];
+let hiddenSeries=new Set(),crossFilter=null,editingCardId=null,pendingImportRows=[],selectedSource='Meta';
+let state={name:'기본 대시보드',filters:{brand:'전체',startDate:'',endDate:'',channel:'전체',campaign:'전체',product:'전체'},builder:{chartType:'line',zones:{x:['date'],y:['spend','revenue'],group:[],filter:[],tooltip:['clicks','conversions'],size:[]},title:'날짜별 광고비와 매출 추이',description:'최근 30일 멀티채널 광고 성과',sort:'none',agg:'sum',secondaryAxis:true},dashboard:[]};
+const DEFAULT_ZONES=()=>({x:[],y:[],group:[],filter:[],tooltip:[],size:[]});
+function normalizeBuilder(builder){const fallback={chartType:'line',zones:{x:['date'],y:['spend','revenue'],group:[],filter:[],tooltip:['clicks','conversions'],size:[]},title:'날짜별 광고비와 매출 추이',description:'최근 30일 멀티채널 광고 성과',sort:'none',agg:'sum',secondaryAxis:true};const b=builder&&typeof builder==='object'?builder:{};const zones=DEFAULT_ZONES();const source=b.zones&&typeof b.zones==='object'?b.zones:{};Object.keys(zones).forEach(k=>{zones[k]=Array.isArray(source[k])?source[k].filter(id=>ALL.some(f=>f.id===id)):[]});return {...fallback,...b,zones,title:typeof b.title==='string'?b.title:fallback.title,description:typeof b.description==='string'?b.description:fallback.description,secondaryAxis:Boolean(b.secondaryAxis)}}
+function normalizeState(){if(!state||typeof state!=='object')state={};state.name=typeof state.name==='string'?state.name:'기본 대시보드';state.filters={brand:'전체',startDate:'',endDate:'',channel:'전체',campaign:'전체',product:'전체',...(state.filters||{})};delete state.filters.dateRange;state.builder=normalizeBuilder(state.builder);state.dashboard=Array.isArray(state.dashboard)?state.dashboard.filter(Boolean).map(card=>({...card,id:card.id||uid(),config:normalizeBuilder(card.config)})):[];}
+
+function rng(seed){let t=seed;return()=>{t=(t*1664525+1013904223)%4294967296;return t/4294967296}}
+function generateData(){const r=rng(42), channels=['Meta','Google','TikTok'], products=['시그니처 세럼','에어핏 쿠션','딥클린 워시'], formats=['UGC','숏폼','이미지','캐러셀'], hooks=['문제 제기','전후 비교','혜택 강조','사용 후기'], lengths=['6초','15초','30초']; const rows=[]; const start=new Date(); start.setHours(0,0,0,0); start.setDate(start.getDate()-29);
+ for(let d=0;d<30;d++){const dt=new Date(start);dt.setDate(start.getDate()+d);for(let c=0;c<12;c++){const channel=channels[c%3],campaign=`${channel} 캠페인 ${String(c+1).padStart(2,'0')}`;for(let k=0;k<3;k++){const spend=Math.round((90000+r()*650000)*(channel==='TikTok'?0.8:1));const impressions=Math.round(spend/(4.5+r()*8)*1000);const clicks=Math.round(impressions*(0.006+r()*0.025));const conversions=Math.round(clicks*(0.015+r()*0.085));const revenue=Math.round(conversions*(28000+r()*82000));rows.push({date:dt.toISOString().slice(0,10),brand:'LUMENA',channel,campaign,adSet:`세트 ${k+1}`,content:`콘텐츠 ${String((c*3+k)%30+1).padStart(2,'0')}`,product:products[c%3],contentFormat:formats[(c+k)%formats.length],hookType:hooks[(c+2*k)%hooks.length],videoLength:lengths[(c+k)%3],spend,impressions,reach:Math.round(impressions*(.63+r()*.22)),clicks,conversions,revenue});}}} return rows;}
+let RAW=generateData();
+
+const SOURCE_PRESETS={
+ Meta:{label:'Meta',description:'Ads Manager 내보내기',aliases:{date:['date','day','reporting starts','날짜'],campaign:['campaign','campaign name','캠페인 이름'],adSet:['ad set','ad set name','광고 세트 이름'],content:['ad name','광고 이름','content'],spend:['amount spent','spend','지출 금액'],impressions:['impressions','노출'],reach:['reach','도달'],clicks:['link clicks','clicks','클릭'],conversions:['purchases','conversions','구매'],revenue:['purchase conversion value','revenue','구매 전환값'],product:['product','제품']}},
+ Naver:{label:'네이버',description:'검색광고·GFA 리포트',aliases:{date:['date','day','일자','날짜'],campaign:['campaign','campaign name','캠페인명'],adSet:['adgroup','ad group','광고그룹명'],content:['creative','ad','소재명','키워드'],spend:['cost','spend','총비용','광고비'],impressions:['impression','impressions','노출수'],reach:['reach','도달수'],clicks:['click','clicks','클릭수'],conversions:['conversion','conversions','전환수'],revenue:['revenue','conversion value','전환매출액'],product:['product','제품']}},
+ Kakao:{label:'카카오',description:'카카오모먼트 리포트',aliases:{date:['date','day','일자'],campaign:['campaign','campaign name','캠페인명'],adSet:['ad group','adgroup','광고그룹명'],content:['creative','소재명','광고명'],spend:['cost','spend','광고비'],impressions:['impressions','노출수'],reach:['reach','도달수'],clicks:['clicks','클릭수'],conversions:['conversions','전환수'],revenue:['revenue','전환매출'],product:['product','제품']}},
+ TikTok:{label:'틱톡',description:'TikTok Ads 리포트',aliases:{date:['date','day','stat time day'],campaign:['campaign name','campaign'],adSet:['ad group name','adgroup'],content:['ad name','creative name','content'],spend:['cost','spend'],impressions:['impressions'],reach:['reach'],clicks:['clicks','destination clicks'],conversions:['conversions','complete payment'],revenue:['total purchase value','revenue'],product:['product']}}
+};
+const STANDARD_FIELDS=['date','brand','campaign','adSet','content','product','spend','impressions','reach','clicks','conversions','revenue'];
+function cleanKey(v){return String(v??'').trim().toLowerCase().replace(/[\s_\-()]/g,'')}
+function parseCSV(text){const rows=[];let row=[],cell='',q=false;for(let i=0;i<text.length;i++){const ch=text[i],n=text[i+1];if(ch==='"'&&q&&n==='"'){cell+='"';i++;continue}if(ch==='"'){q=!q;continue}if(ch===','&&!q){row.push(cell);cell='';continue}if((ch==='\n'||ch==='\r')&&!q){if(ch==='\r'&&n==='\n')i++;row.push(cell);cell='';if(row.some(x=>String(x).trim()!==''))rows.push(row);row=[];continue}cell+=ch}row.push(cell);if(row.some(x=>String(x).trim()!==''))rows.push(row);if(rows.length<2)return[];const headers=rows.shift().map(h=>h.trim());return rows.map(r=>Object.fromEntries(headers.map((h,i)=>[h,r[i]??''])))}
+function parseNumber(v){if(typeof v==='number')return v;const n=Number(String(v??'').replace(/[₩,$,%\s]/g,'').replace(/,/g,''));return Number.isFinite(n)?n:0}
+function normalizeDate(v){const s=String(v??'').trim();if(!s)return new Date().toISOString().slice(0,10);const d=new Date(s.replace(/\./g,'-').replace(/\//g,'-'));return Number.isNaN(d.getTime())?s.slice(0,10):d.toISOString().slice(0,10)}
+function findValue(row,field,source){const aliases=[field,...(SOURCE_PRESETS[source]?.aliases[field]||[])].map(cleanKey);const key=Object.keys(row).find(k=>aliases.includes(cleanKey(k)));return key?row[key]:''}
+function standardizeRows(rows,source){return rows.map((r,i)=>({date:normalizeDate(findValue(r,'date',source)),brand:String(findValue(r,'brand',source)||'LUMENA'),channel:SOURCE_PRESETS[source].label,campaign:String(findValue(r,'campaign',source)||`${SOURCE_PRESETS[source].label} 가져오기 캠페인`),adSet:String(findValue(r,'adSet',source)||'기본 광고 세트'),content:String(findValue(r,'content',source)||`가져온 콘텐츠 ${i+1}`),product:String(findValue(r,'product',source)||'미지정 제품'),contentFormat:String(r.contentFormat||r['콘텐츠 형식']||'미지정'),hookType:String(r.hookType||r['후킹 유형']||'미지정'),videoLength:String(r.videoLength||r['영상 길이']||'미지정'),spend:parseNumber(findValue(r,'spend',source)),impressions:parseNumber(findValue(r,'impressions',source)),reach:parseNumber(findValue(r,'reach',source)),clicks:parseNumber(findValue(r,'clicks',source)),conversions:parseNumber(findValue(r,'conversions',source)),revenue:parseNumber(findValue(r,'revenue',source))})).filter(r=>r.date&&r.campaign)}
+function renderImportModal(){const grid=document.getElementById('sourceGrid');grid.innerHTML=Object.entries(SOURCE_PRESETS).map(([id,s])=>`<div class="source-card ${id===selectedSource?'active':''}" data-source="${id}"><strong>${s.label}</strong><span>${s.description}</span></div>`).join('');grid.querySelectorAll('.source-card').forEach(c=>c.onclick=()=>{selectedSource=c.dataset.source;renderImportModal()});document.getElementById('mappingGrid').innerHTML=STANDARD_FIELDS.map(f=>`<div class="setting"><label>${byId(f)?.label||({date:'날짜',brand:'브랜드'}[f]||f)}</label><input value="자동 매핑" disabled></div>`).join('');document.getElementById('importSummary').textContent=pendingImportRows.length?`${SOURCE_PRESETS[selectedSource].label} 데이터 ${pendingImportRows.length.toLocaleString('ko-KR')}행을 확인했습니다. 적용하면 기존 데이터에 추가됩니다.`:'매체를 선택하고 데이터를 추가하세요. 원본 컬럼은 표준 광고 스키마로 자동 변환됩니다.'}
+async function readImportFiles(files){let parsed=[];for(const file of files){const text=await file.text();let rows=[];if(file.name.toLowerCase().endsWith('.json')){const j=JSON.parse(text);rows=Array.isArray(j)?j:(j.data||j.rows||[])}else rows=parseCSV(text);parsed.push(...standardizeRows(rows,selectedSource))}pendingImportRows=parsed;renderImportModal()}
+function persistRaw(){storageSet('adscope-imported-data',JSON.stringify(RAW.filter(r=>r.__imported)))}
+function setupImport(){dataImportBtn.onclick=()=>{pendingImportRows=[];renderImportModal();importModal.classList.add('show')};closeImportModal.onclick=()=>importModal.classList.remove('show');importModal.onclick=e=>{if(e.target===importModal)importModal.classList.remove('show')};document.querySelectorAll('.import-tab').forEach(b=>b.onclick=()=>{document.querySelectorAll('.import-tab').forEach(x=>x.classList.toggle('active',x===b));document.querySelectorAll('.import-pane').forEach(x=>x.classList.toggle('active',x.id===b.dataset.pane))});dataDropFile.onclick=()=>mediaDataFiles.click();dataDropFile.ondragover=e=>{e.preventDefault();dataDropFile.style.borderColor='var(--accent)'};dataDropFile.ondragleave=()=>dataDropFile.style.borderColor='';dataDropFile.ondrop=e=>{e.preventDefault();dataDropFile.style.borderColor='';readImportFiles(e.dataTransfer.files).catch(()=>alert('파일을 읽는 중 오류가 발생했습니다.'))};mediaDataFiles.onchange=()=>readImportFiles(mediaDataFiles.files).catch(()=>alert('파일 형식을 확인해 주세요.'));pastedData.oninput=()=>{try{pendingImportRows=standardizeRows(parseCSV(pastedData.value),selectedSource);renderImportModal()}catch(e){pendingImportRows=[]}};applyImportBtn.onclick=()=>{if(!pendingImportRows.length){toast('적용할 데이터가 없습니다.');return}RAW.push(...pendingImportRows.map(r=>({...r,__imported:true})));persistRaw();pendingImportRows=[];state.filters={brand:'전체',startDate:'',endDate:'',channel:'전체',campaign:'전체',product:'전체'};importModal.classList.remove('show');renderAll();toast('매체 데이터를 통합했습니다.')};clearImportedBtn.onclick=()=>{RAW=RAW.filter(r=>!r.__imported);storageRemove('adscope-imported-data');renderAll();toast('가져온 데이터를 삭제했습니다.')};downloadTemplateBtn.onclick=()=>{const sample='date,brand,campaign,adSet,content,product,spend,impressions,reach,clicks,conversions,revenue\n2026-08-01,LUMENA,여름 캠페인,리타게팅,영상 A,시그니처 세럼,250000,52000,41000,870,42,3150000';const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([sample],{type:'text/csv;charset=utf-8'}));a.download='adscope-standard-template.csv';a.click();URL.revokeObjectURL(a.href)};try{const saved=JSON.parse(storageGet('adscope-imported-data')||'[]');if(Array.isArray(saved))RAW.push(...saved)}catch(e){}}
+
+function byId(id){return ALL.find(x=>x.id===id)}
+function fmt(v,unit){if(v==null||Number.isNaN(v))return '-'; if(unit==='currency')return '₩'+Math.round(v).toLocaleString('ko-KR'); if(unit==='percent')return v.toFixed(2)+'%'; if(unit==='ratio')return v.toFixed(2)+'x'; return Math.round(v).toLocaleString('ko-KR')}
+function derived(sum,id){const safe=(a,b,m=1)=>b? a/b*m:0;return {ctr:safe(sum.clicks,sum.impressions,100),cpc:safe(sum.spend,sum.clicks),cpm:safe(sum.spend,sum.impressions,1000),cpa:safe(sum.spend,sum.conversions),cvr:safe(sum.conversions,sum.clicks,100),roas:safe(sum.revenue,sum.spend)}[id]}
+function normalizeDim(row,id){if(id==='week'){const d=new Date(row.date);const first=new Date(d.getFullYear(),0,1);return `${d.getFullYear()}-${String(Math.ceil((((d-first)/86400000)+first.getDay()+1)/7)).padStart(2,'0')}주`}; if(id==='month')return row.date.slice(0,7); return row[id]}
+function filteredData(){const start=state.filters.startDate||'',end=state.filters.endDate||'';return RAW.filter(r=>(!start||r.date>=start)&&(!end||r.date<=end)&&(state.filters.brand==='전체'||r.brand===state.filters.brand)&&(state.filters.channel==='전체'||r.channel===state.filters.channel)&&(state.filters.campaign==='전체'||r.campaign===state.filters.campaign)&&(state.filters.product==='전체'||r.product===state.filters.product)&&(!crossFilter||normalizeDim(r,crossFilter.field)===crossFilter.value));}
+function sumRows(rows){return rows.reduce((a,r)=>{for(const m of METRICS.filter(x=>x.raw))a[m.id]+=r[m.id]||0;return a},{spend:0,impressions:0,reach:0,clicks:0,conversions:0,revenue:0})}
+function metricValue(rows,id,agg='sum'){if(!rows.length)return 0;const m=byId(id); if(!m)return 0; if(!m.raw)return derived(sumRows(rows),id); const vals=rows.map(r=>r[id]||0); if(agg==='avg')return vals.reduce((a,b)=>a+b,0)/vals.length;if(agg==='min')return Math.min(...vals);if(agg==='max')return Math.max(...vals);return vals.reduce((a,b)=>a+b,0)}
+function aggregate(config){const rows=filteredData(),x=config.zones.x[0],g=config.zones.group[0],ys=config.zones.y; if(!x){return [{key:'전체',series:'전체',rows,values:Object.fromEntries(ys.map(y=>[y,metricValue(rows,y,config.agg)]))}]}
+ const map=new Map();for(const r of rows){const xv=normalizeDim(r,x),gv=g?normalizeDim(r,g):'전체',key=xv+'||'+gv;if(!map.has(key))map.set(key,{key:xv,series:gv,rows:[]});map.get(key).rows.push(r)} let out=[...map.values()].map(o=>({...o,values:Object.fromEntries(ys.map(y=>[y,metricValue(o.rows,y,config.agg)]))}));
+ if(config.sort!=='none'&&ys[0])out.sort((a,b)=>(a.values[ys[0]]-b.values[ys[0]])*(config.sort==='asc'?1:-1));return out;}
+function recommend(z){const dims=[...z.x,...z.group].map(byId).filter(Boolean),nums=z.y.map(byId).filter(Boolean);if(!dims.length&&nums.length===1)return'kpi';if(nums.length>=2&&!dims.length)return'scatter';if(dims.some(d=>d.type==='date')&&nums.length)return'line';if(dims.length===1&&nums.length===1&&nums[0].unit==='percent')return'donut';if(dims.length&&nums.length)return'bar';return'kpi'}
+function validate(config){const z=config.zones,ys=z.y;if(!ys.length)return'Y축에 숫자 지표를 추가해 주세요.';if(config.chartType==='donut'&&(!(z.x.length===1&&ys.length===1)))return'원형 차트는 하나의 범주와 하나의 지표만 사용할 수 있습니다.';if(['line','area'].includes(config.chartType)&&(!z.x.length||byId(z.x[0])?.type!=='date'))return'날짜 추이를 보려면 X축에 날짜 필드를 추가해 주세요.';if(!filteredData().length)return'선택한 필터에 해당하는 데이터가 없습니다.';if(ys.length>1&&!config.secondaryAxis){const units=[...new Set(ys.map(y=>byId(y).unit))];if(units.length>1)return'단위가 다른 지표입니다. 보조축 사용을 권장합니다.'}return''}
+function svgEl(tag,attrs={}){const e=document.createElementNS('http://www.w3.org/2000/svg',tag);Object.entries(attrs).forEach(([k,v])=>e.setAttribute(k,v));return e}
+function renderChart(container,config,compact=false){container.innerHTML='';const error=validate(config);if(error){container.innerHTML=`<div class="notice">${error}</div>`;return}const data=aggregate(config),type=config.chartType,ys=config.zones.y,x=config.zones.x[0];
+ if(type==='table'){const wrap=document.createElement('div');wrap.className='table-wrap';const t=document.createElement('table');t.innerHTML=`<thead><tr><th>${x?byId(x).label:'구분'}</th>${ys.map(y=>`<th>${byId(y).label}</th>`).join('')}</tr></thead><tbody>${data.map(d=>`<tr><td>${d.key}</td>${ys.map(y=>`<td>${fmt(d.values[y],byId(y).unit)}</td>`).join('')}</tr>`).join('')}</tbody>`;wrap.appendChild(t);container.appendChild(wrap);return}
+ if(type==='kpi'){const y=ys[0],val=metricValue(filteredData(),y,config.agg);container.innerHTML=`<div class="kpi"><div><strong>${fmt(val,byId(y).unit)}</strong><br><span>${byId(y).label}</span></div></div>`;return}
+ const legend=document.createElement('div');legend.className='legend';const series=[...new Set(data.map(d=>d.series))];const legendKeys=series.length>1?series:ys;legendKeys.forEach((s,i)=>{const item=document.createElement('div');item.className='legend-item'+(hiddenSeries.has(s)?' off':'');item.innerHTML=`<span class="legend-swatch" style="background:${palette[i%palette.length]}"></span>${byId(s)?.label||s}`;item.onclick=()=>{hiddenSeries.has(s)?hiddenSeries.delete(s):hiddenSeries.add(s);renderAll()};legend.appendChild(item)});container.appendChild(legend);
+ const area=document.createElement('div');area.className='chart-area';container.appendChild(area);if(type==='donut'){renderDonut(area,data,config);return}if(type==='scatter'){renderScatter(area,data,config);return}if(type==='heatmap'){renderHeatmap(area,data,config);return}renderCartesian(area,data,config);
+}
+function renderCartesian(area,data,c){const w=Math.max(360,area.clientWidth||600),h=Math.max(220,area.clientHeight||280),m={l:58,r:20,t:12,b:48};const svg=svgEl('svg',{width:'100%',height:'100%',viewBox:`0 0 ${w} ${h}`});area.appendChild(svg);const ys=c.zones.y,groups=[...new Set(data.map(d=>d.series))],cats=[...new Set(data.map(d=>d.key))];let max=1;data.forEach(d=>ys.forEach(y=>max=Math.max(max,d.values[y])));for(let i=0;i<5;i++){const y=m.t+(h-m.t-m.b)*i/4;svg.appendChild(svgEl('line',{x1:m.l,y1:y,x2:w-m.r,y2:y,stroke:'#e5e9ef'}));const tx=svgEl('text',{x:m.l-8,y:y+4,'text-anchor':'end','font-size':10,fill:'#7a8494'});tx.textContent=fmt(max*(1-i/4),byId(ys[0]).unit).replace('₩','');svg.appendChild(tx)}
+ const plotW=w-m.l-m.r,plotH=h-m.t-m.b,band=plotW/Math.max(cats.length,1);cats.forEach((cat,i)=>{const tx=svgEl('text',{x:m.l+band*(i+.5),y:h-18,'text-anchor':'middle','font-size':10,fill:'#687386'});tx.textContent=String(cat).slice(0,12);svg.appendChild(tx)});
+ const effective=data.filter(d=>!hiddenSeries.has(d.series));if(['line','area'].includes(c.chartType)){ys.forEach((metric,mi)=>{const points=cats.map((cat,i)=>{const row=effective.find(d=>d.key===cat);const v=row?row.values[metric]:0;return [m.l+band*(i+.5),m.t+plotH*(1-v/max),row]});if(c.chartType==='area'){const p=[[points[0]?.[0]||m.l,h-m.b],...points,[points.at(-1)?.[0]||w-m.r,h-m.b]];svg.appendChild(svgEl('polygon',{points:p.map(v=>v.slice(0,2).join(',')).join(' '),fill:palette[mi]+'22'}))}const path=svgEl('polyline',{points:points.map(v=>v.slice(0,2).join(',')).join(' '),fill:'none',stroke:palette[mi], 'stroke-width':2.5});svg.appendChild(path);points.forEach(([x,y,row])=>{const cc=svgEl('circle',{cx:x,cy:y,r:4,fill:palette[mi],style:'cursor:pointer'});bindPoint(cc,row,metric,c);svg.appendChild(cc)})})}else{const stacked=c.chartType==='stacked';cats.forEach((cat,i)=>{let offset=0;ys.forEach((metric,mi)=>{const row=effective.find(d=>d.key===cat);if(!row)return;const v=row.values[metric],bw=band*(stacked?.62:.62/ys.length),x=m.l+band*i+band*.19+(stacked?0:mi*bw),bh=plotH*v/max,y=m.t+plotH-bh-offset;const rect=svgEl('rect',{x,y,width:bw-2,height:bh,rx:3,fill:palette[mi],style:'cursor:pointer'});bindPoint(rect,row,metric,c);svg.appendChild(rect);if(stacked)offset+=bh})})}}
+function bindPoint(el,row,metric,c){el.addEventListener('mousemove',e=>showTip(e,`${row.key}<br>${byId(metric).label}: ${fmt(row.values[metric],byId(metric).unit)}`));el.addEventListener('mouseleave',hideTip);el.addEventListener('click',()=>{const f=c.zones.x[0];if(f){crossFilter={field:f,value:row.key};toast(`교차 필터 적용: ${byId(f).label} = ${row.key}`);renderAll()}})}
+function renderDonut(area,data,c){const y=c.zones.y[0],total=data.reduce((a,d)=>a+d.values[y],0)||1,w=area.clientWidth||500,h=area.clientHeight||280,cx=w/2,cy=h/2,r=Math.min(w,h)*.32;const svg=svgEl('svg',{width:'100%',height:'100%',viewBox:`0 0 ${w} ${h}`});area.appendChild(svg);let start=-Math.PI/2;data.forEach((d,i)=>{if(hiddenSeries.has(d.key))return;const a=d.values[y]/total*Math.PI*2,end=start+a,x1=cx+r*Math.cos(start),y1=cy+r*Math.sin(start),x2=cx+r*Math.cos(end),y2=cy+r*Math.sin(end),large=a>Math.PI?1:0;const path=svgEl('path',{d:`M ${cx} ${cy} L ${x1} ${y1} A ${r} ${r} 0 ${large} 1 ${x2} ${y2} Z`,fill:palette[i%palette.length],style:'cursor:pointer'});bindPoint(path,d,y,c);svg.appendChild(path);start=end});svg.appendChild(svgEl('circle',{cx,cy,r:r*.55,fill:'#fff'}));const tx=svgEl('text',{x:cx,y:cy-2,'text-anchor':'middle','font-size':13,fill:'#687386'});tx.textContent=byId(y).label;svg.appendChild(tx);const tv=svgEl('text',{x:cx,y:cy+22,'text-anchor':'middle','font-size':20,'font-weight':800,fill:'#172033'});tv.textContent=fmt(total,byId(y).unit);svg.appendChild(tv)}
+function renderScatter(area,data,c){const ys=c.zones.y,xm=ys[0],ym=ys[1]||ys[0],rows=filteredData().slice(0,240),w=area.clientWidth||600,h=area.clientHeight||280,m={l:55,r:20,t:15,b:42};const vals=rows.map(r=>({x:metricValue([r],xm),y:metricValue([r],ym),r})),xmax=Math.max(...vals.map(v=>v.x),1),ymax=Math.max(...vals.map(v=>v.y),1);const svg=svgEl('svg',{width:'100%',height:'100%',viewBox:`0 0 ${w} ${h}`});area.appendChild(svg);svg.appendChild(svgEl('line',{x1:m.l,y1:h-m.b,x2:w-m.r,y2:h-m.b,stroke:'#b9c2ce'}));svg.appendChild(svgEl('line',{x1:m.l,y1:m.t,x2:m.l,y2:h-m.b,stroke:'#b9c2ce'}));vals.forEach((v,i)=>{const cx=m.l+(w-m.l-m.r)*v.x/xmax,cy=h-m.b-(h-m.t-m.b)*v.y/ymax;const cc=svgEl('circle',{cx,cy,r:4,fill:palette[i%3],opacity:.72});cc.addEventListener('mousemove',e=>showTip(e,`${v.r.channel} · ${v.r.content}<br>${byId(xm).label}: ${fmt(v.x,byId(xm).unit)}<br>${byId(ym).label}: ${fmt(v.y,byId(ym).unit)}`));cc.addEventListener('mouseleave',hideTip);svg.appendChild(cc)});}
+function renderHeatmap(area,data,c){const y=c.zones.y[0],cats=[...new Set(data.map(d=>d.key))].slice(0,18),w=area.clientWidth||600,h=area.clientHeight||280;const max=Math.max(...data.map(d=>d.values[y]),1),cols=Math.min(6,cats.length),cellW=w/cols,rows=Math.ceil(cats.length/cols),cellH=h/rows;const svg=svgEl('svg',{width:'100%',height:'100%',viewBox:`0 0 ${w} ${h}`});area.appendChild(svg);cats.forEach((cat,i)=>{const d=data.find(x=>x.key===cat),int=d.values[y]/max,x=i%cols*cellW,yy=Math.floor(i/cols)*cellH;const rect=svgEl('rect',{x:x+2,y:yy+2,width:cellW-4,height:cellH-4,rx:6,fill:`rgba(91,103,241,${.12+.78*int})`});bindPoint(rect,d,y,c);svg.appendChild(rect);const tx=svgEl('text',{x:x+cellW/2,y:yy+cellH/2-3,'text-anchor':'middle','font-size':11,fill:int>.55?'#fff':'#172033'});tx.textContent=String(cat).slice(0,10);svg.appendChild(tx);const tv=svgEl('text',{x:x+cellW/2,y:yy+cellH/2+14,'text-anchor':'middle','font-size':10,fill:int>.55?'#fff':'#687386'});tv.textContent=fmt(d.values[y],byId(y).unit);svg.appendChild(tv)})}
+function showTip(e,html){const t=document.getElementById('tooltip');t.innerHTML=html;t.style.display='block';t.style.left=e.clientX+12+'px';t.style.top=e.clientY+12+'px'}function hideTip(){document.getElementById('tooltip').style.display='none'}
+function renderFields(){const fp=document.getElementById('fieldPanel');fp.innerHTML='';[['차원',DIMENSIONS,'dim'],['지표',METRICS,'metric']].forEach(([title,list,cls])=>{const g=document.createElement('div');g.className='field-group';g.innerHTML=`<h3>${title}</h3>`;list.forEach(f=>{const el=document.createElement('div');el.className=`field ${cls}`;el.draggable=true;el.dataset.id=f.id;el.innerHTML=`<span class="dot"></span><span>${f.label}</span><small>${f.type==='date'?'날짜':f.unit==='percent'?'%':f.unit==='currency'?'₩':f.unit==='ratio'?'x':'#'}</small>`;el.ondragstart=e=>e.dataTransfer.setData('text/plain',f.id);el.onclick=()=>addField(f.id,DIMENSIONS.some(d=>d.id===f.id)?'x':'y');g.appendChild(el)});fp.appendChild(g)})}
+function renderZones(){const dg=document.getElementById('dropGrid');dg.innerHTML='';ZONES.forEach(([id,label])=>{const z=document.createElement('div');z.className='dropzone';z.dataset.zone=id;z.innerHTML=`<div class="dropzone-title">${label}</div><div class="chips"></div>`;z.ondragover=e=>{e.preventDefault();z.classList.add('dragover')};z.ondragleave=()=>z.classList.remove('dragover');z.ondrop=e=>{e.preventDefault();z.classList.remove('dragover');const field=e.dataTransfer.getData('text/plain');const from=e.dataTransfer.getData('from-zone');moveField(field,from,id)};const chips=z.querySelector('.chips');state.builder.zones[id].forEach((fid,idx)=>{const c=document.createElement('div');c.className='chip';c.draggable=true;c.innerHTML=`${byId(fid).label}<button>×</button>`;c.ondragstart=e=>{e.dataTransfer.setData('text/plain',fid);e.dataTransfer.setData('from-zone',id)};c.querySelector('button').onclick=e=>{e.stopPropagation();state.builder.zones[id].splice(idx,1);syncRecommendation();renderAll()};chips.appendChild(c)});dg.appendChild(z)})}
+function validZone(field,zone){const f=byId(field);if(zone==='y'||zone==='size')return METRICS.some(m=>m.id===field);if(zone==='x'||zone==='group'||zone==='filter')return DIMENSIONS.some(d=>d.id===field);return true}
+function moveField(field,from,to){if(!validZone(field,to)){toast('이 필드는 해당 영역에 추가할 수 없습니다.');return}if(from){const i=state.builder.zones[from].indexOf(field);if(i>=0)state.builder.zones[from].splice(i,1)}if(to!=='y'&&state.builder.zones[to].length)state.builder.zones[to]=[];if(!state.builder.zones[to].includes(field))state.builder.zones[to].push(field);syncRecommendation();renderAll()}
+function addField(field,preferred){let zone=preferred;if(METRICS.some(m=>m.id===field))zone='y';else if(state.builder.zones.x.length)zone='group';else zone='x';moveField(field,'',zone)}
+function syncRecommendation(){const r=recommend(state.builder.zones);document.getElementById('recommendation').textContent='추천: '+CHARTS.find(x=>x[0]===r)[1];if(!state.builder.userSelectedType)state.builder.chartType=r}
+function renderFilters(){const el=document.getElementById('globalFilters');const dates=RAW.map(r=>r.date).filter(Boolean).sort(),minDate=dates[0]||'',maxDate=dates[dates.length-1]||'';if(!state.filters.startDate)state.filters.startDate=minDate;if(!state.filters.endDate)state.filters.endDate=maxDate;const opts=(label,key,values)=>`<div class="filter"><label>${label}</label><select data-filter="${key}">${values.map(v=>`<option ${state.filters[key]===v?'selected':''}>${v}</option>`).join('')}</select></div>`;const dateInput=(label,key)=>`<div class="filter"><label>${label}</label><input type="date" data-filter="${key}" min="${minDate}" max="${maxDate}" value="${state.filters[key]||''}"></div>`;el.innerHTML=opts('브랜드','brand',['전체',...new Set(RAW.map(r=>r.brand))])+dateInput('시작일','startDate')+dateInput('종료일','endDate')+opts('광고 매체','channel',['전체',...new Set(RAW.map(r=>r.channel))])+opts('캠페인','campaign',['전체',...new Set(RAW.map(r=>r.campaign))])+opts('제품','product',['전체',...new Set(RAW.map(r=>r.product))]);el.querySelectorAll('select,input[type=date]').forEach(control=>control.onchange=()=>{state.filters[control.dataset.filter]=control.value;if(state.filters.startDate&&state.filters.endDate&&state.filters.startDate>state.filters.endDate){if(control.dataset.filter==='startDate')state.filters.endDate=state.filters.startDate;else state.filters.startDate=state.filters.endDate;toast('시작일과 종료일 순서를 자동으로 조정했습니다.')}crossFilter=null;renderAll()})}
+
+function renderSettings(){titleInput.value=state.builder.title;descInput.value=state.builder.description;sortSelect.value=state.builder.sort;aggSelect.value=state.builder.agg;secondaryAxis.checked=state.builder.secondaryAxis;const q=document.getElementById('quickField');q.innerHTML=ALL.map(f=>`<option value="${f.id}">${f.label}</option>`).join('')}
+function renderPreview(){previewTitle.textContent=state.builder.title||'제목 없는 차트';previewDesc.textContent=state.builder.description||'';chartType.value=state.builder.chartType;renderChart(document.getElementById('previewContent'),state.builder)}
+function renderDashboard(){dashboardName.textContent=state.name+(crossFilter?` · 교차 필터: ${byId(crossFilter.field).label}=${crossFilter.value}`:'');const grid=document.getElementById('dashboardGrid');grid.innerHTML='';state.dashboard.forEach((card,i)=>{const el=document.createElement('div');el.className='dash-card';el.style.left=(card.x||20+(i%2)*490)+'px';el.style.top=(card.y||20+Math.floor(i/2)*330)+'px';el.style.width=(card.w||460)+'px';el.style.height=(card.h||310)+'px';el.dataset.id=card.id;el.innerHTML=`<div class="dash-card-head"><div class="dash-card-title">${card.config.title}</div><div class="dash-card-tools"><button class="icon-btn edit">⚙</button><button class="icon-btn clone">⧉</button><button class="icon-btn del">×</button></div></div><div class="dash-card-body"></div>`;grid.appendChild(el);renderChart(el.querySelector('.dash-card-body'),card.config,true);makeDraggable(el,card);el.querySelector('.edit').onclick=()=>{state.builder=JSON.parse(JSON.stringify(card.config));editingCardId=card.id;state.builder.userSelectedType=true;renderAll();toast('설정을 다시 열었습니다.')};el.querySelector('.clone').onclick=()=>{const n=JSON.parse(JSON.stringify(card));n.id=uid();n.x=(card.x||0)+30;n.y=(card.y||0)+30;state.dashboard.push(n);renderDashboard()};el.querySelector('.del').onclick=()=>{state.dashboard=state.dashboard.filter(x=>x.id!==card.id);renderDashboard()};new ResizeObserver(()=>{card.w=el.offsetWidth;card.h=el.offsetHeight}).observe(el)});if(!state.dashboard.length)grid.innerHTML='<div class="empty">차트를 만든 뒤 “대시보드에 추가”를 눌러보세요.</div>'}
+function makeDraggable(el,card){let sx,sy,sl,st,drag=false;const head=el.querySelector('.dash-card-head');head.addEventListener('mousedown',e=>{if(e.target.closest('button'))return;drag=true;sx=e.clientX;sy=e.clientY;sl=el.offsetLeft;st=el.offsetTop;document.body.style.userSelect='none'});window.addEventListener('mousemove',e=>{if(!drag)return;el.style.left=Math.max(0,sl+e.clientX-sx)+'px';el.style.top=Math.max(0,st+e.clientY-sy)+'px'});window.addEventListener('mouseup',()=>{if(drag){card.x=el.offsetLeft;card.y=el.offsetTop}drag=false;document.body.style.userSelect=''})}
+function renderAll(){normalizeState();renderFilters();renderZones();renderSettings();renderPreview();renderDashboard()}
+function seedDashboard(){const examples=[
+ {chartType:'line',zones:{x:['date'],y:['spend','revenue'],group:[],filter:[],tooltip:['clicks'],size:[]},title:'날짜별 광고비와 매출 추이',description:'일별 투자와 매출 변화',sort:'none',agg:'sum',secondaryAxis:true},
+ {chartType:'bar',zones:{x:['channel'],y:['roas'],group:[],filter:[],tooltip:['spend','revenue'],size:[]},title:'매체별 ROAS',description:'채널별 광고 효율 비교',sort:'desc',agg:'sum',secondaryAxis:false},
+ {chartType:'bar',zones:{x:['content'],y:['spend','conversions'],group:[],filter:[],tooltip:['clicks'],size:[]},title:'콘텐츠별 광고비와 전환 수',description:'상위 콘텐츠 성과 비교',sort:'desc',agg:'sum',secondaryAxis:true},
+ {chartType:'scatter',zones:{x:[],y:['spend','revenue'],group:['channel'],filter:[],tooltip:['content'],size:['conversions']},title:'광고비와 매출의 산점도',description:'광고 단위별 투자 대비 매출 분포',sort:'none',agg:'sum',secondaryAxis:false}
+ ];state.dashboard=examples.map((c,i)=>({id:uid(),config:c,x:20+(i%2)*490,y:20+Math.floor(i/2)*330,w:460,h:310}))}
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1800)}
+
+const OPT_OBJECTIVES=[
+ {id:'maxRevenue',label:'매출 극대화',desc:'주어진 예산으로 예상 매출 최대화'},
+ {id:'maxConversions',label:'전환 극대화',desc:'주어진 예산으로 전환 수 최대화'},
+ {id:'maxROAS',label:'ROAS 극대화',desc:'수익 효율이 높은 배분 탐색'},
+ {id:'maxCVR',label:'전환율 극대화',desc:'전환 품질 중심으로 배분'},
+ {id:'minSpendRevenue',label:'광고비 최소화',desc:'목표 매출 달성에 필요한 최소 비용'},
+ {id:'minSpendConversions',label:'CPA 최소화',desc:'목표 전환 달성에 필요한 최소 비용'}
+];
+let optimState={objective:'maxRevenue',result:null};
+function safeDiv(a,b){return b? a/b:0}
+function filteredRaw(){return RAW.filter(r=>{const inDate=(!state.filters.startDate||r.date>=state.filters.startDate)&&(!state.filters.endDate||r.date<=state.filters.endDate);return inDate&&(state.filters.brand==='전체'||r.brand===state.filters.brand)&&(state.filters.channel==='전체'||r.channel===state.filters.channel)&&(state.filters.campaign==='전체'||r.campaign===state.filters.campaign)&&(state.filters.product==='전체'||r.product===state.filters.product)})}
+function buildResponseModels(level){const grouped={};filteredRaw().forEach(r=>{const k=r[level]||'미분류';if(!grouped[k])grouped[k]={name:k,spend:0,revenue:0,conversions:0,clicks:0,impressions:0,days:new Set()};const g=grouped[k];g.spend+=r.spend;g.revenue+=r.revenue;g.conversions+=r.conversions;g.clicks+=r.clicks;g.impressions+=r.impressions;g.days.add(r.date)});return Object.values(grouped).filter(g=>g.spend>0).map(g=>{const days=Math.max(1,g.days.size),base=g.spend/days,revPerSpend=safeDiv(g.revenue,g.spend),convPerSpend=safeDiv(g.conversions,g.spend),cvr=safeDiv(g.conversions,g.clicks);const saturation=Math.max(base*1.7,100000);return {...g,currentBudget:base,revRate:revPerSpend,convRate:convPerSpend,cvr,saturation,alpha:.72}})}
+function response(model,budget,kind){if(budget<=0)return 0;const scale=Math.max(model.saturation,1);const factor=Math.pow(1+budget/scale,model.alpha)-1;const baseFactor=Math.pow(1+model.currentBudget/scale,model.alpha)-1||1;const baseValue=kind==='revenue'?model.revRate*model.currentBudget:model.convRate*model.currentBudget;return baseValue*factor/baseFactor}
+function marginal(model,budget,kind){const h=Math.max(1000,budget*.005);return safeDiv(response(model,budget+h,kind)-response(model,Math.max(0,budget-h),kind),2*h)}
+function scoreAllocation(models,alloc,obj,target){let rev=0,conv=0,clicks=0,spend=0;models.forEach((m,i)=>{spend+=alloc[i];rev+=response(m,alloc[i],'revenue');conv+=response(m,alloc[i],'conversions');clicks+=m.clicks*Math.pow(Math.max(alloc[i],1)/Math.max(m.currentBudget,1),.82)});const roas=safeDiv(rev,spend),cvr=safeDiv(conv,clicks);if(obj==='maxRevenue')return rev;if(obj==='maxConversions')return conv;if(obj==='maxROAS')return roas*1e8+rev*.02;if(obj==='maxCVR')return cvr*1e9+conv*1000;if(obj==='minSpendRevenue')return rev>=target?1e15-spend:rev*1e4;if(obj==='minSpendConversions')return conv>=target?1e15-spend:conv*1e9;return rev}
+function optimizeAllocation(models,budget,obj,target,minPct,maxPct,risk){
+ const n=models.length;if(!n||!Number.isFinite(budget)||budget<=0)return null;
+ const globalMin=budget*minPct/100,globalMax=budget*maxPct/100;
+ if(globalMin*n>budget+1||globalMax*n<budget-1)return null;
+ const profile={
+   conservative:{stepDiv:220,down:.82,up:1.22,confidencePower:1.8,concentrationPower:.55,anchorPenalty:2.8},
+   balanced:{stepDiv:360,down:.58,up:1.75,confidencePower:.8,concentrationPower:.9,anchorPenalty:.75},
+   aggressive:{stepDiv:620,down:0,up:4,confidencePower:.2,concentrationPower:1.35,anchorPenalty:.05}
+ }[risk]||{stepDiv:360,down:.58,up:1.75,confidencePower:.8,concentrationPower:.9,anchorPenalty:.75};
+ const currentTotal=models.reduce((s,m)=>s+m.currentBudget,0)||1;
+ const anchor=models.map(m=>m.currentBudget/currentTotal*budget);
+ let lower=anchor.map(v=>Math.max(globalMin,v*profile.down));
+ let upper=anchor.map(v=>Math.min(globalMax,v*profile.up));
+ // 위험성향별 이동 한도가 총예산과 충돌하면 전역 제약 쪽으로 점진 완화한다.
+ const relaxBounds=()=>{
+   let guard=0;
+   while(lower.reduce((a,b)=>a+b,0)>budget+1&&guard++<100){
+     lower=lower.map(v=>Math.max(globalMin,v*.97));
+   }
+   guard=0;
+   while(upper.reduce((a,b)=>a+b,0)<budget-1&&guard++<100){
+     upper=upper.map(v=>Math.min(globalMax,v*1.03+1));
+   }
+ };
+ relaxBounds();
+ if(lower.reduce((a,b)=>a+b,0)>budget+1||upper.reduce((a,b)=>a+b,0)<budget-1)return null;
+ const unit=Math.max(10000,Math.round(budget/profile.stepDiv/1000)*1000);
+ let alloc=lower.slice();
+ const confidence=models.map(m=>{
+   const volume=Math.log1p(Math.max(m.conversions,0)+Math.max(m.clicks,0)/20);
+   const spendSupport=Math.log1p(Math.max(m.spend,0)/100000);
+   return Math.max(.18,Math.min(1,(volume+spendSupport)/8));
+ });
+ const baseEff=models.map(m=>obj==='maxConversions'||obj==='minSpendConversions'||obj==='maxCVR'?m.convRate:m.revRate);
+ const maxEff=Math.max(...baseEff,1e-9);
+ const totals=kind=>alloc.reduce((sum,v,i)=>sum+response(models[i],v,kind),0);
+ const marginalScore=(i)=>{
+   if(alloc[i]>=upper[i]-1)return -Infinity;
+   let raw;
+   if(obj==='maxRevenue'||obj==='maxROAS'||obj==='minSpendRevenue')raw=marginal(models[i],alloc[i],'revenue');
+   else if(obj==='maxConversions'||obj==='minSpendConversions')raw=marginal(models[i],alloc[i],'conversions');
+   else {
+     const convGain=marginal(models[i],alloc[i],'conversions');
+     const clickBase=Math.max(models[i].clicks,1),quality=Math.max(models[i].cvr,0.000001);
+     raw=convGain*quality*1e6/clickBase;
+   }
+   const conf=Math.pow(confidence[i],profile.confidencePower);
+   const efficiency=Math.pow(Math.max(baseEff[i]/maxEff,.0001),profile.concentrationPower);
+   const deviation=Math.abs(alloc[i]-anchor[i])/Math.max(anchor[i],budget/n,1);
+   const anchorFactor=1/(1+profile.anchorPenalty*deviation);
+   const underAnchorBonus=alloc[i]<anchor[i]?1+profile.anchorPenalty*.12:1;
+   return raw*conf*efficiency*anchorFactor*underAnchorBonus;
+ };
+ const addBest=(amount)=>{
+   let remaining=amount,guard=0;
+   while(remaining>1&&guard++<20000){
+     let best=-1,bestScore=-Infinity;
+     for(let i=0;i<n;i++){const sc=marginalScore(i);if(sc>bestScore){bestScore=sc;best=i}}
+     if(best<0||!Number.isFinite(bestScore))break;
+     const add=Math.min(unit,remaining,upper[best]-alloc[best]);
+     if(add<=0)break;alloc[best]+=add;remaining-=add;
+   }
+   return remaining;
+ };
+ if(obj==='minSpendRevenue'||obj==='minSpendConversions'){
+   const kind=obj==='minSpendRevenue'?'revenue':'conversions';
+   let guard=0;
+   while(totals(kind)<target&&guard++<20000){
+     const before=alloc.reduce((a,b)=>a+b,0);addBest(unit);
+     if(alloc.reduce((a,b)=>a+b,0)<=before+1)break;
+   }
+   return alloc;
+ }
+ addBest(budget-alloc.reduce((a,b)=>a+b,0));
+ let diff=budget-alloc.reduce((a,b)=>a+b,0),guard=0;
+ while(Math.abs(diff)>1&&guard++<2000){
+   const indexes=alloc.map((v,i)=>i).filter(i=>diff>0?alloc[i]<upper[i]-1:alloc[i]>lower[i]+1);
+   if(!indexes.length)break;
+   const i=diff>0?indexes.sort((a,b)=>marginalScore(b)-marginalScore(a))[0]:indexes.sort((a,b)=>marginalScore(a)-marginalScore(b))[0];
+   const move=Math.min(Math.abs(diff),diff>0?upper[i]-alloc[i]:alloc[i]-lower[i]);
+   alloc[i]+=Math.sign(diff)*move;diff-=Math.sign(diff)*move;
+ }
+ return alloc;
+}
+function summarizeOptim(models,alloc){let spend=0,revenue=0,conversions=0,clicks=0;models.forEach((m,i)=>{spend+=alloc[i];revenue+=response(m,alloc[i],'revenue');conversions+=response(m,alloc[i],'conversions');clicks+=m.clicks*Math.pow(Math.max(alloc[i],1)/Math.max(m.currentBudget,1),.82)});return{spend,revenue,conversions,roas:safeDiv(revenue,spend),cvr:safeDiv(conversions,clicks),cpa:safeDiv(spend,conversions)}}
+function krw(v){return Math.round(v).toLocaleString('ko-KR')+'원'}
+function pct(v){return (v*100).toFixed(1)+'%'}
+function renderObjectives(){objectiveGrid.innerHTML=OPT_OBJECTIVES.map(o=>`<div class="objective-card ${optimState.objective===o.id?'active':''}" data-id="${o.id}"><strong>${o.label}</strong><span>${o.desc}</span></div>`).join('');objectiveGrid.querySelectorAll('.objective-card').forEach(el=>el.onclick=()=>{optimState.objective=el.dataset.id;renderObjectives();updateTargetUI()})}
+function updateTargetUI(){const isRev=optimState.objective==='minSpendRevenue',isConv=optimState.objective==='minSpendConversions';targetWrap.style.display=(isRev||isConv)?'block':'none';targetLabel.textContent=isRev?'목표 매출 (원)':'목표 전환 수'}
+function setupOptimization(){
+ renderObjectives();updateTargetUI();
+ const btn=document.getElementById('optimizerBtn'),modal=document.getElementById('optimizerModal'),close=document.getElementById('closeOptimizerModal'),level=document.getElementById('optimLevel'),budget=document.getElementById('optimBudget');
+ btn.addEventListener('click',()=>{const models=buildResponseModels(level.value);budget.value=Math.round(models.reduce((s,m)=>s+m.currentBudget,0)/100000)*100000||10000000;modal.classList.add('show')});
+ close.addEventListener('click',()=>modal.classList.remove('show'));modal.addEventListener('click',e=>{if(e.target===modal)modal.classList.remove('show')});
+ document.getElementById('runOptimizerBtn').addEventListener('click',runOptimization);
+ level.addEventListener('change',()=>{const models=buildResponseModels(level.value);budget.value=Math.round(models.reduce((s,m)=>s+m.currentBudget,0)/100000)*100000||10000000});
+ document.getElementById('applyAllocationBtn').addEventListener('click',saveOptimScenario);document.getElementById('exportOptimBtn').addEventListener('click',exportOptimResult);document.getElementById('addOptimChartBtn').addEventListener('click',addOptimChart);
+}
+function runOptimization(){
+ const level=document.getElementById('optimLevel').value;
+ const models=buildResponseModels(level),budget=Number(document.getElementById('optimBudget').value),target=Number(document.getElementById('optimTarget').value||0),minPct=Number(document.getElementById('optimMinPct').value),maxPct=Number(document.getElementById('optimMaxPct').value),risk=document.getElementById('riskLevel').value;
+ if(!models.length)return toast('선택한 기간과 필터에 최적화할 데이터가 없습니다.');
+ if(!budget||budget<=0)return toast('계획 총예산을 입력해 주세요.');
+ if(minPct<0||maxPct<=0||minPct>maxPct)return toast('최소·최대 배정률을 확인해 주세요.');
+ if(minPct*models.length>100||maxPct*models.length<100)return toast('현재 항목 수에서는 배정률 제약으로 총예산을 나눌 수 없습니다.');
+ if(optimState.objective.startsWith('minSpend')&&!target)return toast('달성할 목표값을 입력해 주세요.');
+ const alloc=optimizeAllocation(models,budget,optimState.objective,target,minPct,maxPct,risk);
+ if(!alloc)return toast('최적 배분을 계산하지 못했습니다. 제약조건을 완화해 주세요.');
+ const currentTotal=models.reduce((s,m)=>s+m.currentBudget,0)||1,current=models.map(m=>m.currentBudget/currentTotal*budget),base=summarizeOptim(models,current),next=summarizeOptim(models,alloc);
+ optimState.result={models,alloc,current,base,next,objective:optimState.objective,target,level,risk,createdAt:new Date().toISOString()};
+ renderOptimResult();toast('최적 예산 분배를 계산했습니다.');
+}
+function deltaHtml(n,b,reverse=false){const d=safeDiv(n-b,Math.abs(b)||1),good=reverse?d<0:d>0;return `<span class="delta ${good?'good':'bad'}">${d>=0?'+':''}${(d*100).toFixed(1)}%</span>`}
+function renderOptimResult(){const r=optimState.result;if(!r)return;optimEmpty.style.display='none';optimOutput.style.display='block';optimKpis.innerHTML=`<div class="optim-kpi"><span>예상 광고비</span><strong>${krw(r.next.spend)}</strong>${deltaHtml(r.next.spend,r.base.spend,true)}</div><div class="optim-kpi"><span>예상 매출</span><strong>${krw(r.next.revenue)}</strong>${deltaHtml(r.next.revenue,r.base.revenue)}</div><div class="optim-kpi"><span>예상 전환</span><strong>${Math.round(r.next.conversions).toLocaleString()}</strong>${deltaHtml(r.next.conversions,r.base.conversions)}</div><div class="optim-kpi"><span>예상 ROAS</span><strong>${r.next.roas.toFixed(2)}x</strong>${deltaHtml(r.next.roas,r.base.roas)}</div>`;allocationBody.innerHTML=r.models.map((m,i)=>{const change=safeDiv(r.alloc[i]-r.current[i],r.current[i]||1),rev=response(m,r.alloc[i],'revenue'),conv=response(m,r.alloc[i],'conversions'),mroas=marginal(m,r.alloc[i],'revenue');return `<tr><td>${m.name}</td><td>${krw(r.current[i])}</td><td><strong>${krw(r.alloc[i])}</strong></td><td class="${change>=0?'delta good':'delta bad'}">${change>=0?'+':''}${(change*100).toFixed(1)}%</td><td>${krw(rev)}</td><td>${Math.round(conv).toLocaleString()}</td><td>${mroas.toFixed(2)}x</td></tr>`}).join('');adviceList.innerHTML=makeAdvice(r).map(a=>`<div class="advice ${a.type}">${a.text}</div>`).join('')}
+function makeAdvice(r){const arr=[],changes=r.models.map((m,i)=>({name:m.name,change:safeDiv(r.alloc[i]-r.current[i],r.current[i]||1),mroas:marginal(m,r.alloc[i],'revenue'),cvr:m.cvr,alloc:r.alloc[i]})).sort((a,b)=>b.change-a.change),up=changes.filter(x=>x.change>.1).slice(0,3),down=[...changes].sort((a,b)=>a.change-b.change).filter(x=>x.change<-.1).slice(0,3);if(up.length)arr.push({type:'good',text:`증액 우선: ${up.map(x=>`${x.name} (${x.change>0?'+':''}${(x.change*100).toFixed(0)}%)`).join(', ')}. 한 번에 전액 변경하지 말고 20~30%씩 단계적으로 증액하며 한계 ROAS를 확인하세요.`});if(down.length)arr.push({type:'warn',text:`감액 또는 재검토: ${down.map(x=>`${x.name} (${(x.change*100).toFixed(0)}%)`).join(', ')}. 소재 피로도, 타기팅 중복, 랜딩페이지 이탈을 먼저 점검하세요.`});const best=[...changes].sort((a,b)=>b.mroas-a.mroas)[0];if(best)arr.push({type:'good',text:`추가 예산 1원의 기대 매출이 가장 높은 항목은 ${best.name}이며 현재 추정 한계 ROAS는 ${best.mroas.toFixed(2)}x입니다.`});if(r.next.roas<1)arr.push({type:'warn',text:'예상 ROAS가 1.0x 미만입니다. 예산 확대보다 전환 추적, 상품 마진, 랜딩페이지와 소재 개선을 우선하는 편이 안전합니다.'});if(Math.abs(r.next.revenue-r.base.revenue)/Math.max(1,r.base.revenue)<.03)arr.push({type:'warn',text:'재배분에 따른 개선 폭이 작습니다. 매체 간 이동보다 신규 소재 테스트와 오디언스 확장이 더 큰 개선 여지를 만들 수 있습니다.'});arr.push({type:'',text:'실행 후 3~7일간 학습 기간을 확보하고, 계획 대비 실적 차이가 15% 이상이면 반응곡선을 다시 계산해 재최적화하세요.'});return arr}
+function getScenarios(){return Object.keys(localStorage).filter(k=>k.startsWith('adscope-optimization-')).map(k=>{try{const v=JSON.parse(storageGet(k));return {key:k,...v}}catch(e){return null}}).filter(Boolean).sort((a,b)=>new Date(b.createdAt||0)-new Date(a.createdAt||0))}
+function objectiveLabel(id){return (OPT_OBJECTIVES.find(o=>o.id===id)||{}).label||id}
+function saveOptimScenario(){if(!optimState.result)return toast('먼저 최적 배분을 계산해 주세요.');const name=prompt('시나리오 이름을 입력하세요.',`${new Date().toLocaleDateString('ko-KR')} ${objectiveLabel(optimState.result.objective)}`);if(!name)return;const payload={...optimState.result,name,note:'',updatedAt:new Date().toISOString()};storageSet('adscope-optimization-'+Date.now(),JSON.stringify(payload));toast('최적화 시나리오를 브라우저에 저장했습니다.');if(scenarioModal.classList.contains('show'))renderScenarioManager()}
+let selectedScenarioKey=null,compareScenarioKeys=new Set();
+function renderScenarioManager(){const items=getScenarios();scenarioList.innerHTML=items.length?items.map(s=>`<div class="scenario-item ${selectedScenarioKey===s.key?'active':''}" data-key="${s.key}"><input class="scenario-checkbox" type="checkbox" data-compare="${s.key}" ${compareScenarioKeys.has(s.key)?'checked':''}><strong>${s.name||'이름 없는 시나리오'}</strong><span>${objectiveLabel(s.objective)} · ${new Date(s.createdAt).toLocaleString('ko-KR')}</span></div>`).join(''):'<div class="status">저장된 시나리오가 없습니다.</div>';scenarioList.querySelectorAll('.scenario-item').forEach(el=>el.onclick=e=>{if(e.target.matches('[data-compare]')){e.stopPropagation();e.target.checked?compareScenarioKeys.add(e.target.dataset.compare):compareScenarioKeys.delete(e.target.dataset.compare);renderScenarioDetail();return}selectedScenarioKey=el.dataset.key;renderScenarioManager()});renderScenarioDetail()}
+function renderScenarioDetail(){const items=getScenarios(),sel=items.find(s=>s.key===selectedScenarioKey)||items[0];if(!selectedScenarioKey&&sel)selectedScenarioKey=sel.key;if(compareScenarioKeys.size>=2){const chosen=items.filter(s=>compareScenarioKeys.has(s.key));scenarioDetail.className='';scenarioDetail.innerHTML=`<div class="scenario-toolbar"><button class="btn" id="clearCompareBtn">비교 해제</button></div><div class="scenario-compare">${chosen.map(s=>`<div class="scenario-compare-card"><h3>${s.name}</h3><div class="status">${objectiveLabel(s.objective)}</div><p><strong>광고비</strong><br>${krw(s.next.spend)}</p><p><strong>예상 매출</strong><br>${krw(s.next.revenue)}</p><p><strong>예상 전환</strong><br>${Math.round(s.next.conversions).toLocaleString()}</p><p><strong>ROAS</strong><br>${s.next.roas.toFixed(2)}x</p></div>`).join('')}</div>`;clearCompareBtn.onclick=()=>{compareScenarioKeys.clear();renderScenarioManager()};return}if(!sel){scenarioDetail.className='scenario-empty';scenarioDetail.innerHTML='저장된 시나리오를 선택하거나 최적화 결과를 저장하세요.';return}scenarioDetail.className='';scenarioDetail.innerHTML=`<div class="scenario-toolbar"><button class="btn primary" id="loadScenarioBtn">불러오기</button><button class="btn" id="renameScenarioBtn">이름 변경</button><button class="btn" id="duplicateScenarioBtn">복제</button><button class="btn danger" id="deleteScenarioBtn">삭제</button><button class="btn" id="exportScenarioBtn">JSON 내보내기</button></div><h2 style="margin:0 0 12px">${sel.name||'이름 없는 시나리오'}</h2><div class="scenario-meta"><div class="scenario-meta-card"><span>목표</span><strong>${objectiveLabel(sel.objective)}</strong></div><div class="scenario-meta-card"><span>예상 광고비</span><strong>${krw(sel.next.spend)}</strong></div><div class="scenario-meta-card"><span>예상 매출</span><strong>${krw(sel.next.revenue)}</strong></div><div class="scenario-meta-card"><span>예상 ROAS</span><strong>${sel.next.roas.toFixed(2)}x</strong></div></div><div class="allocation-table"><table><thead><tr><th>항목</th><th>현재 광고비</th><th>권장 광고비</th><th>예상 매출</th><th>예상 전환</th></tr></thead><tbody>${sel.models.map((m,i)=>`<tr><td>${m.name}</td><td>${krw(sel.current[i])}</td><td><strong>${krw(sel.alloc[i])}</strong></td><td>${krw(response(m,sel.alloc[i],'revenue'))}</td><td>${Math.round(response(m,sel.alloc[i],'conversions')).toLocaleString()}</td></tr>`).join('')}</tbody></table></div><div class="setting" style="margin-top:14px"><label>메모</label><textarea class="scenario-note" id="scenarioNote">${sel.note||''}</textarea></div>`;loadScenarioBtn.onclick=()=>{optimState.result=sel;optimState.objective=sel.objective;optimLevel.value=sel.level||'channel';renderObjectives();updateTargetUI();renderOptimResult();scenarioModal.classList.remove('show');optimizerModal.classList.add('show');toast('시나리오를 최적화 화면에 불러왔습니다.')};renameScenarioBtn.onclick=()=>{const n=prompt('새 이름을 입력하세요.',sel.name||'');if(n){sel.name=n;sel.updatedAt=new Date().toISOString();storageSet(sel.key,JSON.stringify(Object.fromEntries(Object.entries(sel).filter(([k])=>k!=='key'))));renderScenarioManager()}};duplicateScenarioBtn.onclick=()=>{const copy={...sel,name:(sel.name||'시나리오')+' 복사본',createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()};delete copy.key;storageSet('adscope-optimization-'+Date.now(),JSON.stringify(copy));renderScenarioManager();toast('시나리오를 복제했습니다.')};deleteScenarioBtn.onclick=()=>{if(confirm('이 시나리오를 삭제할까요?')){storageRemove(sel.key);compareScenarioKeys.delete(sel.key);selectedScenarioKey=null;renderScenarioManager();toast('시나리오를 삭제했습니다.')}};exportScenarioBtn.onclick=()=>{const copy={...sel};delete copy.key;const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(copy,null,2)],{type:'application/json'}));a.download=(sel.name||'scenario')+'.json';a.click();URL.revokeObjectURL(a.href)};scenarioNote.onchange=()=>{sel.note=scenarioNote.value;sel.updatedAt=new Date().toISOString();const copy={...sel};delete copy.key;storageSet(sel.key,JSON.stringify(copy));toast('메모를 저장했습니다.')}}
+function setupScenarioManager(){scenarioManagerBtn.onclick=()=>{selectedScenarioKey=getScenarios()[0]?.key||null;compareScenarioKeys.clear();renderScenarioManager();scenarioModal.classList.add('show')};closeScenarioModal.onclick=()=>scenarioModal.classList.remove('show');scenarioModal.onclick=e=>{if(e.target===scenarioModal)scenarioModal.classList.remove('show')};newScenarioFromCurrentBtn.onclick=saveOptimScenario}
+function exportOptimResult(){if(!optimState.result)return;const b=new Blob([JSON.stringify(optimState.result,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='adscope-optimization.json';a.click();URL.revokeObjectURL(a.href)}
+function addOptimChart(){const r=optimState.result;if(!r)return;const rows=r.models.map((m,i)=>({date:new Date().toISOString().slice(0,10),brand:'최적화 시나리오',channel:m.name,campaign:m.name,adSet:'권장 배분',content:'권장 배분',product:'시나리오',contentFormat:'시뮬레이션',hookType:'-',videoLength:'-',spend:r.alloc[i],impressions:0,reach:0,clicks:0,conversions:response(m,r.alloc[i],'conversions'),revenue:response(m,r.alloc[i],'revenue'),_optimization:true}));RAW=RAW.concat(rows);state.dashboard.push({id:uid(),config:{chartType:'bar',zones:{x:['channel'],y:['spend','revenue'],group:[],filter:[],tooltip:['conversions','roas'],size:[]},title:'최적 예산 배분 시나리오',description:'권장 광고비와 예상 매출 비교',sort:'desc',agg:'sum',secondaryAxis:true},x:20+(state.dashboard.length%2)*490,y:20+Math.floor(state.dashboard.length/2)*330,w:460,h:310});optimizerModal.classList.remove('show');renderAll();toast('최적화 비교 차트를 대시보드에 추가했습니다.')}
+
+
+// Collaboration hub ---------------------------------------------------------
+const COLLAB_KEY='adscope-collaboration-v1';
+let collabState={rooms:[],activeRoomId:null};
+let collabAccount='agency';
+function uid(){return (typeof crypto!=='undefined'&&typeof crypto.randomUUID==='function')?crypto.randomUUID():'id-'+Date.now()+'-'+Math.random().toString(16).slice(2)}
+function escapeHtml(v){return String(v??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
+function defaultCollab(){const now=new Date().toISOString();return {activeRoomId:'room-demo',rooms:[{id:'room-demo',advertiser:'브랜드 A',campaign:'통합 퍼포먼스 운영',members:['운영 담당자','김민수 광고주'],unread:1,messages:[{id:uid(),type:'text',author:'김민수 광고주',side:'client',visibility:'public',createdAt:now,text:'이번 주 ROAS 개선 원인과 다음 주 예산 운영안을 함께 확인하고 싶습니다.'},{id:uid(),type:'report',author:'운영 담당자',side:'agency',visibility:'public',createdAt:now,text:'최근 성과를 기준으로 핵심 지표를 정리했습니다.',report:buildPerformanceReport()},{id:uid(),type:'action',author:'운영 담당자',side:'agency',visibility:'public',createdAt:now,text:'고효율 매체 예산을 단계적으로 증액하는 안을 제안합니다.',action:{title:'고효율 캠페인 예산 10% 증액',detail:'3일간 10% 증액 후 CPA와 한계 ROAS를 재검토합니다.',status:'proposed'}}]}]}}
+function loadCollab(){
+ try{const v=JSON.parse(storageGet(COLLAB_KEY));collabState=v&&Array.isArray(v.rooms)?v:defaultCollab()}catch(e){collabState=defaultCollab()}
+ if(!collabState||!Array.isArray(collabState.rooms)||!collabState.rooms.length)collabState=defaultCollab();
+ collabState.rooms=collabState.rooms.filter(Boolean).map((r,i)=>({id:r.id||uid(),advertiser:r.advertiser||`광고주 ${i+1}`,campaign:r.campaign||'통합 광고 운영',members:Array.isArray(r.members)&&r.members.length?r.members:['운영 담당자','광고주 담당자'],unread:Number(r.unread)||0,messages:Array.isArray(r.messages)?r.messages.filter(Boolean).map(m=>({id:m.id||uid(),type:m.type||'text',author:m.author||'운영 담당자',side:m.side||'agency',visibility:m.visibility||'public',createdAt:m.createdAt||new Date().toISOString(),text:m.text||'',report:m.report||null,attachment:m.attachment||null,action:m.action?{title:m.action.title||'다음 액션',detail:m.action.detail||'',status:m.action.status||'proposed',updatedAt:m.action.updatedAt||null}:null})):[]}));
+ if(!collabState.rooms.some(r=>r.id===collabState.activeRoomId))collabState.activeRoomId=collabState.rooms[0].id;saveCollab();
+}
+function saveCollab(){storageSet(COLLAB_KEY,JSON.stringify(collabState))}
+function activeRoom(){return collabState.rooms.find(r=>r.id===collabState.activeRoomId)||collabState.rooms[0]}
+function buildPerformanceReport(){const rows=filteredData().filter(r=>!r._optimization),sum=k=>rows.reduce((a,r)=>a+(+r[k]||0),0),spend=sum('spend'),revenue=sum('revenue'),conv=sum('conversions'),clicks=sum('clicks'),imp=sum('impressions');return {period:'선택 필터 기준',spend,revenue,conversions:conv,roas:safeDiv(revenue,spend),cpa:safeDiv(spend,conv),ctr:safeDiv(clicks,imp)*100,summary:revenue>=spend*4?'목표 초과 달성':'개선 기회 확인'}}
+function renderMiniSnapshot(){return `<div class="snapshot">${[38,62,48,79,55,88,72,96].map(h=>`<i style="height:${h}%"></i>`).join('')}</div>`}
+function reportHtml(r){return `<div class="report-card"><strong>주요 성과 보고 · ${escapeHtml(r.period)}</strong><div class="status">${escapeHtml(r.summary)}</div><div class="report-grid"><div class="report-kpi"><span>광고비</span><strong>${krw(r.spend)}</strong></div><div class="report-kpi"><span>매출</span><strong>${krw(r.revenue)}</strong></div><div class="report-kpi"><span>ROAS</span><strong>${r.roas.toFixed(2)}x</strong></div><div class="report-kpi"><span>전환</span><strong>${Math.round(r.conversions).toLocaleString()}</strong></div><div class="report-kpi"><span>CPA</span><strong>${krw(r.cpa)}</strong></div><div class="report-kpi"><span>CTR</span><strong>${r.ctr.toFixed(2)}%</strong></div></div>${renderMiniSnapshot()}</div>`}
+function actionHtml(m){const a=m.action,labels={proposed:'제안됨',approved:'승인',rejected:'반려',progress:'실행 중',complete:'완료'},isAgency=collabAccount==='agency';let buttons='';if(!isAgency&&a.status==='proposed')buttons='<button class="btn approve-action">승인</button><button class="btn reject-action">반려</button>';if(isAgency&&a.status==='approved')buttons='<button class="btn progress-action">실행 시작</button>';if(isAgency&&a.status==='progress')buttons='<button class="btn complete-action">완료 처리</button>';return `<div class="action-card"><div class="action-top"><strong>${escapeHtml(a.title)}</strong><span class="action-status status-${a.status}">${labels[a.status]||a.status}</span></div><div class="status">${escapeHtml(a.detail||'')}</div><div class="action-buttons" data-action-id="${m.id}">${buttons}</div></div>`}
+function attachmentHtml(a){if(!a)return '';const labels={chart:'현재 차트',dashboard:'대시보드 스냅샷',scenario:'최적화 시나리오'};return `<div class="attachment-card"><strong>📎 ${labels[a.type]||'첨부'}</strong><div class="status">${escapeHtml(a.title||'')}</div>${a.type!=='scenario'?renderMiniSnapshot():`<div style="margin-top:7px"><strong>${escapeHtml(a.summary||'저장된 최적화 결과')}</strong></div>`}</div>`}
+function renderCollab(){const room=activeRoom();if(!room)return;const isAgency=collabAccount==='agency';collabRoomList.innerHTML=collabState.rooms.map(r=>`<div class="collab-room ${r.id===room.id?'active':''}" data-room="${r.id}">${r.unread?`<span class="collab-unread">${r.unread}</span>`:''}<strong>${escapeHtml(r.advertiser)}</strong><span>${escapeHtml(r.campaign)} · ${r.messages.length}개 메시지</span></div>`).join('');collabRoomList.querySelectorAll('[data-room]').forEach(el=>el.onclick=()=>{collabState.activeRoomId=el.dataset.room;const rr=activeRoom();rr.unread=0;saveCollab();renderCollab()});collabRoomTitle.textContent=`${room.advertiser} · ${room.campaign}`;collabRoomMeta.textContent=(isAgency?'대행사 화면 · ':'광고주 화면 · ')+room.members.join(' · ');const visible=room.messages.filter(m=>isAgency||m.visibility!=='internal');collabFeed.innerHTML=visible.map(m=>{const mine=isAgency?m.side==='agency':m.side==='client';return `<div class="message ${mine?'mine':''}"><div class="avatar">${escapeHtml(m.author.slice(0,2))}</div><div class="bubble"><div class="message-meta">${escapeHtml(m.author)} · ${new Date(m.createdAt).toLocaleString('ko-KR')}${m.visibility==='internal'?'<span class="internal-badge">내부 전용</span>':''}</div><div class="message-text">${escapeHtml(m.text)}</div>${m.type==='report'?reportHtml(m.report):''}${m.type==='action'?actionHtml(m):''}${attachmentHtml(m.attachment)}</div></div>`}).join('')||'<div class="empty">첫 메시지를 작성해 대화를 시작하세요.</div>';collabFeed.scrollTop=collabFeed.scrollHeight;messageVisibility.closest('.composer-tools').style.display=isAgency?'flex':'none';generateReportBtn.style.display=isAgency?'inline-flex':'none';suggestActionBtn.style.display=isAgency?'inline-flex':'none';newRoomBtn.style.display=isAgency?'block':'none';messageInput.placeholder=isAgency?'광고주에게 전달할 성과 설명, 확인 요청, 운영 코멘트를 입력하세요.':'대행사 담당자에게 질문이나 승인 의견을 입력하세요.';wireActionButtons();renderPendingActions()}
+function wireActionButtons(){collabFeed.querySelectorAll('[data-action-id]').forEach(box=>{const change=status=>{const m=activeRoom().messages.find(x=>x.id===box.dataset.actionId);if(m){m.action.status=status;m.action.updatedAt=new Date().toISOString();saveCollab();renderCollab();toast('액션 상태를 업데이트했습니다.')}};box.querySelector('.approve-action')?.addEventListener('click',()=>change('approved'));box.querySelector('.reject-action')?.addEventListener('click',()=>change('rejected'));box.querySelector('.progress-action')?.addEventListener('click',()=>change('progress'));box.querySelector('.complete-action')?.addEventListener('click',()=>change('complete'))})}
+function renderPendingActions(){const actions=activeRoom().messages.filter(m=>m.type==='action'&&!['rejected','complete'].includes(m.action.status));pendingActions.innerHTML=actions.length?actions.map(m=>`<div class="pending-action"><strong>${escapeHtml(m.action.title)}</strong><span>${escapeHtml(m.action.detail)} · ${escapeHtml(m.action.status)}</span></div>`).join(''):'<div class="status">승인 대기 액션이 없습니다.</div>'}
+function makeAttachment(){const type=attachmentType.value;if(!type)return null;if(type==='chart')return {type,title:state.builder.title||'현재 차트',config:JSON.parse(JSON.stringify(state.builder))};if(type==='dashboard')return {type,title:state.name,charts:state.dashboard.map(x=>x.config.title)};const sc=getScenarios()[0];return {type,title:sc?.name||'저장된 시나리오 없음',summary:sc?`${objectiveLabel(sc.objective)} · 예상 ROAS ${sc.next.roas.toFixed(2)}x`:'시나리오 관리에서 먼저 저장하세요.',key:sc?.key||null}}
+function sendCollabMessage(){const text=messageInput.value.trim();if(!text)return toast('메시지를 입력해 주세요.');const isAgency=collabAccount==='agency';activeRoom().messages.push({id:uid(),type:'text',author:isAgency?'운영 담당자':activeRoom().advertiser+' 담당자',side:isAgency?'agency':'client',visibility:isAgency?messageVisibility.value:'public',createdAt:new Date().toISOString(),text,attachment:isAgency?makeAttachment():null});messageInput.value='';attachmentType.value='';saveCollab();renderCollab()}
+function generateReportMessage(){const room=activeRoom();room.messages.push({id:uid(),type:'report',author:'운영 담당자',side:'agency',visibility:'public',createdAt:new Date().toISOString(),text:'현재 적용된 대시보드 필터를 기준으로 성과 보고를 생성했습니다.',report:buildPerformanceReport(),attachment:{type:'dashboard',title:state.name,charts:state.dashboard.map(x=>x.config.title)}});saveCollab();renderCollab();toast('성과 보고 카드를 생성했습니다.')}
+function suggestActionMessage(){const r=optimState.result,report=buildPerformanceReport();let title='저효율 항목 예산 재배분',detail='ROAS와 CPA를 기준으로 하위 성과 항목의 예산 10%를 상위 항목으로 이동하고 3일 후 재평가합니다.';if(r){const diffs=r.models.map((m,i)=>({name:m.name,d:r.alloc[i]-r.current[i]})).sort((a,b)=>b.d-a.d);title=`${diffs[0]?.name||'고효율 항목'} 예산 증액`;detail=`최적화 결과에 따라 ${diffs[0]?.name||'상위 항목'} 중심으로 예산을 재배분합니다. 예상 ROAS는 ${r.next.roas.toFixed(2)}x입니다.`}else if(report.roas>5){title='고성과 캠페인 단계적 증액';detail='현재 ROAS가 높아 상위 캠페인 예산을 10% 증액하고 한계 효율을 관찰합니다.'}activeRoom().messages.push({id:uid(),type:'action',author:'운영 담당자',side:'agency',visibility:'public',createdAt:new Date().toISOString(),text:'광고주 검토가 필요한 다음 액션입니다.',action:{title,detail,status:'proposed'}});saveCollab();renderCollab();toast('승인 요청 액션을 생성했습니다.')}
+function openCollabHub(){
+ const modal=document.getElementById('collabModal');
+ if(!modal)return toast('광고주 소통 화면을 찾지 못했습니다.');
+ try{
+  loadCollab();
+  renderCollab();
+ }catch(error){
+  console.error('광고주 소통 복구',error);
+  collabState=defaultCollab();
+  try{saveCollab()}catch(e){}
+  renderCollab();
+  toast('소통 데이터를 기본 상태로 복구했습니다.');
+ }
+ modal.classList.add('show');
+ modal.setAttribute('aria-hidden','false');
+ document.body.style.overflow='hidden';
+ setTimeout(()=>document.getElementById('messageInput')?.focus(),0);
+}
+function closeCollabHub(){
+ const modal=document.getElementById('collabModal');
+ if(!modal)return;
+ modal.classList.remove('show');
+ modal.setAttribute('aria-hidden','true');
+ document.body.style.overflow='';
+ document.getElementById('collabBtn')?.focus();
+}
+function setupCollaboration(){
+ try{loadCollab()}catch(e){collabState=defaultCollab()}
+ const btn=document.getElementById('collabBtn'),modal=document.getElementById('collabModal'),close=document.getElementById('closeCollabModal');
+ if(!btn||!modal||!close)throw new Error('광고주 소통 필수 요소가 없습니다.');
+ btn.disabled=false;
+ btn.style.pointerEvents='auto';
+ btn.style.opacity='1';
+ btn.onclick=openCollabHub;
+ close.onclick=closeCollabHub;
+ modal.onclick=e=>{if(e.target===modal)closeCollabHub()};
+ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&modal.classList.contains('show'))closeCollabHub()});
+ document.getElementById('newRoomBtn').onclick=()=>{const advertiser=prompt('광고주 이름을 입력하세요.','새 광고주');if(!advertiser)return;const campaign=prompt('캠페인 또는 프로젝트 이름을 입력하세요.','통합 광고 운영')||'통합 광고 운영';const room={id:uid(),advertiser,campaign,members:['운영 담당자',advertiser+' 담당자'],unread:0,messages:[]};collabState.rooms.unshift(room);collabState.activeRoomId=room.id;saveCollab();renderCollab()};
+ document.getElementById('sendMessageBtn').onclick=sendCollabMessage;
+ document.getElementById('messageInput').onkeydown=e=>{if((e.ctrlKey||e.metaKey)&&e.key==='Enter')sendCollabMessage()};
+ document.getElementById('generateReportBtn').onclick=generateReportMessage;
+ document.getElementById('suggestActionBtn').onclick=suggestActionMessage;
+ document.getElementById('markAllReadBtn').onclick=()=>{collabState.rooms.forEach(r=>r.unread=0);saveCollab();renderCollab();toast('모든 대화를 읽음 처리했습니다.')};
+ document.getElementById('collabAccount').onchange=e=>{collabAccount=e.target.value;renderCollab();toast(collabAccount==='agency'?'대행사 화면으로 전환했습니다.':'광고주 화면으로 전환했습니다.')};
+ document.getElementById('simulateReplyBtn').onclick=()=>{const room=activeRoom();room.messages.push({id:uid(),type:'text',author:room.advertiser+' 담당자',side:'client',visibility:'public',createdAt:new Date().toISOString(),text:'성과 보고 확인했습니다. 제안된 예산 조정안의 예상 매출과 리스크를 함께 설명해 주세요.'});room.unread=(room.unread||0)+1;saveCollab();renderCollab();toast('샘플 광고주 답변이 도착했습니다.')};
+ document.getElementById('exportConversationBtn').onclick=()=>{const room=activeRoom();if(!room)return toast('내보낼 대화방이 없습니다.');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(room,null,2)],{type:'application/json'}));a.download=`${room.advertiser}-${room.campaign}-conversation.json`;a.click();URL.revokeObjectURL(a.href)};
+}
+
+// Collaboration hub hardened standalone implementation ----------------------
+function collabEl(id){return document.getElementById(id)}
+function safePerformanceReport(){
+ try{return buildPerformanceReport()}catch(e){return {period:'선택 필터 기준',spend:0,revenue:0,conversions:0,roas:0,cpa:0,ctr:0,summary:'데이터 확인 필요'}}
+}
+function ensureCollabState(){
+ try{loadCollab()}catch(e){collabState=defaultCollab();try{saveCollab()}catch(_){}}
+ if(!collabState||!Array.isArray(collabState.rooms)||!collabState.rooms.length){collabState=defaultCollab();try{saveCollab()}catch(_){}}
+ return collabState;
+}
+function hardenedRenderCollab(){
+ ensureCollabState();
+ const room=activeRoom();
+ const roomList=collabEl('collabRoomList'), roomTitle=collabEl('collabRoomTitle'), roomMeta=collabEl('collabRoomMeta');
+ const feed=collabEl('collabFeed'), visibility=collabEl('messageVisibility'), reportBtn=collabEl('generateReportBtn');
+ const actionBtn=collabEl('suggestActionBtn'), newBtn=collabEl('newRoomBtn'), input=collabEl('messageInput'), pending=collabEl('pendingActions');
+ if(!room||!roomList||!feed)return false;
+ const isAgency=collabAccount==='agency';
+ roomList.innerHTML=collabState.rooms.map(r=>`<button type="button" class="collab-room ${r.id===room.id?'active':''}" data-room="${escapeHtml(r.id)}" style="width:100%;text-align:left">${r.unread?`<span class="collab-unread">${r.unread}</span>`:''}<strong>${escapeHtml(r.advertiser)}</strong><span>${escapeHtml(r.campaign)} · ${(r.messages||[]).length}개 메시지</span></button>`).join('');
+ roomList.querySelectorAll('[data-room]').forEach(el=>el.addEventListener('click',()=>{collabState.activeRoomId=el.dataset.room;const rr=activeRoom();if(rr)rr.unread=0;saveCollab();hardenedRenderCollab()}));
+ if(roomTitle)roomTitle.textContent=`${room.advertiser} · ${room.campaign}`;
+ if(roomMeta)roomMeta.textContent=(isAgency?'대행사 화면 · ':'광고주 화면 · ')+(room.members||[]).join(' · ');
+ const visible=(room.messages||[]).filter(m=>isAgency||m.visibility!=='internal');
+ feed.innerHTML=visible.map(m=>{const mine=isAgency?m.side==='agency':m.side==='client';return `<div class="message ${mine?'mine':''}"><div class="avatar">${escapeHtml((m.author||'담당자').slice(0,2))}</div><div class="bubble"><div class="message-meta">${escapeHtml(m.author||'담당자')} · ${new Date(m.createdAt||Date.now()).toLocaleString('ko-KR')}${m.visibility==='internal'?'<span class="internal-badge">내부 전용</span>':''}</div><div class="message-text">${escapeHtml(m.text||'')}</div>${m.type==='report'&&m.report?reportHtml(m.report):''}${m.type==='action'&&m.action?actionHtml(m):''}${m.attachment?attachmentHtml(m.attachment):''}</div></div>`}).join('')||'<div class="empty">첫 메시지를 작성해 대화를 시작하세요.</div>';
+ feed.scrollTop=feed.scrollHeight;
+ if(visibility){const tools=visibility.closest('.composer-tools');if(tools)tools.style.display=isAgency?'flex':'none'}
+ if(reportBtn)reportBtn.style.display=isAgency?'inline-flex':'none';
+ if(actionBtn)actionBtn.style.display=isAgency?'inline-flex':'none';
+ if(newBtn)newBtn.style.display=isAgency?'block':'none';
+ if(input)input.placeholder=isAgency?'광고주에게 전달할 성과 설명, 확인 요청, 운영 코멘트를 입력하세요.':'대행사 담당자에게 질문이나 승인 의견을 입력하세요.';
+ feed.querySelectorAll('[data-action-id]').forEach(box=>{
+   const change=status=>{const m=(activeRoom()?.messages||[]).find(x=>x.id===box.dataset.actionId);if(!m||!m.action)return;m.action.status=status;m.action.updatedAt=new Date().toISOString();saveCollab();hardenedRenderCollab();toast('액션 상태를 업데이트했습니다.')};
+   box.querySelector('.approve-action')?.addEventListener('click',()=>change('approved'));
+   box.querySelector('.reject-action')?.addEventListener('click',()=>change('rejected'));
+   box.querySelector('.progress-action')?.addEventListener('click',()=>change('progress'));
+   box.querySelector('.complete-action')?.addEventListener('click',()=>change('complete'));
+ });
+ const actions=(room.messages||[]).filter(m=>m.type==='action'&&m.action&&!['rejected','complete'].includes(m.action.status));
+ if(pending)pending.innerHTML=actions.length?actions.map(m=>`<div class="pending-action"><strong>${escapeHtml(m.action.title)}</strong><span>${escapeHtml(m.action.detail||'')} · ${escapeHtml(m.action.status)}</span></div>`).join(''):'<div class="status">승인 대기 액션이 없습니다.</div>';
+ return true;
+}
+function openCollabHub(){
+ const modal=collabEl('collabModal');
+ if(!modal){alert('광고주 소통 화면을 찾지 못했습니다.');return}
+ ensureCollabState();
+ try{hardenedRenderCollab()}catch(error){console.error(error);collabState=defaultCollab();try{saveCollab()}catch(_){};try{hardenedRenderCollab()}catch(_){}}
+ modal.classList.add('show');modal.setAttribute('aria-hidden','false');document.body.style.overflow='hidden';
+ setTimeout(()=>collabEl('messageInput')?.focus(),0);
+}
+function closeCollabHub(){const modal=collabEl('collabModal');if(!modal)return;modal.classList.remove('show');modal.setAttribute('aria-hidden','true');document.body.style.overflow='';collabEl('collabBtn')?.focus()}
+function hardenedSendMessage(){
+ ensureCollabState();const input=collabEl('messageInput'),room=activeRoom();if(!input||!room)return;const text=input.value.trim();if(!text)return toast('메시지를 입력해 주세요.');
+ const isAgency=collabAccount==='agency';let attachment=null;const type=collabEl('attachmentType')?.value||'';
+ if(type==='chart')attachment={type,title:state?.builder?.title||'현재 차트'};
+ if(type==='dashboard')attachment={type,title:state?.name||'대시보드',charts:(state?.dashboard||[]).map(x=>x.config?.title).filter(Boolean)};
+ if(type==='scenario'){let sc=null;try{sc=getScenarios()[0]}catch(_){}attachment={type,title:sc?.name||'저장된 시나리오 없음',summary:sc?'저장된 최적화 시나리오':'시나리오 관리에서 먼저 저장하세요.'}}
+ room.messages.push({id:uid(),type:'text',author:isAgency?'운영 담당자':room.advertiser+' 담당자',side:isAgency?'agency':'client',visibility:isAgency?(collabEl('messageVisibility')?.value||'public'):'public',createdAt:new Date().toISOString(),text,attachment});
+ input.value='';if(collabEl('attachmentType'))collabEl('attachmentType').value='';saveCollab();hardenedRenderCollab();
+}
+function setupCollaboration(){
+ ensureCollabState();
+ const btn=collabEl('collabBtn'),modal=collabEl('collabModal'),close=collabEl('closeCollabModal');if(!btn||!modal)return;
+ btn.disabled=false;btn.removeAttribute('disabled');btn.style.pointerEvents='auto';btn.style.opacity='1';btn.onclick=openCollabHub;
+ if(close)close.onclick=closeCollabHub;modal.onclick=e=>{if(e.target===modal)closeCollabHub()};
+ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&modal.classList.contains('show'))closeCollabHub()});
+ collabEl('newRoomBtn').onclick=()=>{const advertiser=prompt('광고주 이름을 입력하세요.','새 광고주');if(!advertiser)return;const campaign=prompt('캠페인 또는 프로젝트 이름을 입력하세요.','통합 광고 운영')||'통합 광고 운영';const room={id:uid(),advertiser,campaign,members:['운영 담당자',advertiser+' 담당자'],unread:0,messages:[]};collabState.rooms.unshift(room);collabState.activeRoomId=room.id;saveCollab();hardenedRenderCollab()};
+ collabEl('sendMessageBtn').onclick=hardenedSendMessage;collabEl('messageInput').onkeydown=e=>{if((e.ctrlKey||e.metaKey)&&e.key==='Enter')hardenedSendMessage()};
+ collabEl('generateReportBtn').onclick=()=>{const room=activeRoom();room.messages.push({id:uid(),type:'report',author:'운영 담당자',side:'agency',visibility:'public',createdAt:new Date().toISOString(),text:'현재 적용된 대시보드 필터를 기준으로 성과 보고를 생성했습니다.',report:safePerformanceReport(),attachment:{type:'dashboard',title:state?.name||'대시보드',charts:(state?.dashboard||[]).map(x=>x.config?.title).filter(Boolean)}});saveCollab();hardenedRenderCollab();toast('성과 보고 카드를 생성했습니다.')};
+ collabEl('suggestActionBtn').onclick=()=>{const report=safePerformanceReport();const room=activeRoom();room.messages.push({id:uid(),type:'action',author:'운영 담당자',side:'agency',visibility:'public',createdAt:new Date().toISOString(),text:'광고주 검토가 필요한 다음 액션입니다.',action:{title:report.roas>=4?'고성과 캠페인 단계적 증액':'저효율 항목 예산 재배분',detail:report.roas>=4?'상위 캠페인 예산을 10% 증액하고 3일 후 한계 효율을 재평가합니다.':'하위 성과 항목 예산 10%를 상위 항목으로 이동하고 CPA와 ROAS를 재평가합니다.',status:'proposed'}});saveCollab();hardenedRenderCollab();toast('승인 요청 액션을 생성했습니다.')};
+ collabEl('markAllReadBtn').onclick=()=>{collabState.rooms.forEach(r=>r.unread=0);saveCollab();hardenedRenderCollab();toast('모든 대화를 읽음 처리했습니다.')};
+ collabEl('collabAccount').onchange=e=>{collabAccount=e.target.value;hardenedRenderCollab();toast(collabAccount==='agency'?'대행사 화면으로 전환했습니다.':'광고주 화면으로 전환했습니다.')};
+ collabEl('simulateReplyBtn').onclick=()=>{const room=activeRoom();room.messages.push({id:uid(),type:'text',author:room.advertiser+' 담당자',side:'client',visibility:'public',createdAt:new Date().toISOString(),text:'성과 보고 확인했습니다. 제안된 예산 조정안의 예상 매출과 리스크를 함께 설명해 주세요.'});room.unread=(room.unread||0)+1;saveCollab();hardenedRenderCollab();toast('샘플 광고주 답변이 도착했습니다.')};
+ collabEl('exportConversationBtn').onclick=()=>{const room=activeRoom();if(!room)return;const url=URL.createObjectURL(new Blob([JSON.stringify(room,null,2)],{type:'application/json'}));const a=document.createElement('a');a.href=url;a.download=`${room.advertiser}-${room.campaign}-conversation.json`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),0)};
+ try{hardenedRenderCollab()}catch(e){console.error('광고주 소통 초기 렌더링 실패',e)}
+}
+window.openCollabHub=openCollabHub;
+function setup(){document.querySelectorAll('[id]').forEach(el=>{try{if(!(el.id in window))window[el.id]=el}catch(e){}});normalizeState();document.getElementById('chartType').innerHTML=CHARTS.map(([v,l])=>`<option value="${v}">${l}</option>`).join('');renderFields();seedDashboard();renderAll();for(const [name,fn] of [['매체 데이터 가져오기',setupImport],['예산 최적화',setupOptimization],['시나리오 관리',setupScenarioManager],['광고주 소통',setupCollaboration]]){try{fn()}catch(error){console.error(name+' 초기화 실패',error);}}chartType.onchange=()=>{state.builder.chartType=chartType.value;state.builder.userSelectedType=true;renderAll()};titleInput.oninput=()=>{state.builder.title=titleInput.value;renderPreview()};descInput.oninput=()=>{state.builder.description=descInput.value;renderPreview()};sortSelect.onchange=()=>{state.builder.sort=sortSelect.value;renderAll()};aggSelect.onchange=()=>{state.builder.agg=aggSelect.value;renderAll()};secondaryAxis.onchange=()=>{state.builder.secondaryAxis=secondaryAxis.checked;renderAll()};quickAddBtn.onclick=()=>addField(quickField.value);resetBuilderBtn.onclick=()=>{editingCardId=null;state.builder=normalizeBuilder({chartType:'line',zones:{x:['date'],y:['spend','revenue'],group:[],filter:[],tooltip:['clicks','conversions'],size:[]},title:'날짜별 광고비와 매출 추이',description:'최근 30일 멀티채널 광고 성과',sort:'none',agg:'sum',secondaryAxis:true});renderAll();toast('차트 빌더를 초기 상태로 복구했습니다.')};newChartBtn.onclick=()=>{editingCardId=null;state.builder=normalizeBuilder({chartType:'kpi',zones:DEFAULT_ZONES(),title:'새 차트',description:'',sort:'none',agg:'sum',secondaryAxis:false});renderAll();document.querySelector('.builder')?.scrollIntoView({behavior:'smooth',block:'start'})};addDashboardBtn.onclick=()=>{const config=JSON.parse(JSON.stringify(state.builder));delete config.userSelectedType;if(editingCardId){const c=state.dashboard.find(x=>x.id===editingCardId);if(c)c.config=config;editingCardId=null;toast('대시보드 차트를 업데이트했습니다.')}else state.dashboard.push({id:uid(),config,x:20+(state.dashboard.length%2)*490,y:20+Math.floor(state.dashboard.length/2)*330,w:460,h:310});renderDashboard()};saveBtn.onclick=()=>{storageSet('adscope-dashboard',JSON.stringify(state));toast('브라우저 메모리에 저장했습니다.')};saveAsBtn.onclick=()=>{const n=prompt('새 대시보드 이름을 입력하세요.',state.name+' 복사본');if(n){state.name=n;storageSet('adscope-dashboard-'+n,JSON.stringify(state));renderAll();toast('다른 이름으로 저장했습니다.')}};resetBtn.onclick=()=>{if(confirm('대시보드를 초기 상태로 되돌릴까요?')){storageRemove('adscope-dashboard');location.reload()}};exportBtn.onclick=()=>{const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='adscope-dashboard.json';a.click();URL.revokeObjectURL(a.href)};importBtn.onclick=()=>importFile.click();importFile.onchange=async()=>{try{state=JSON.parse(await importFile.files[0].text());renderAll();toast('JSON 설정을 불러왔습니다.')}catch(e){alert('올바른 JSON 파일이 아닙니다.')}};const saved=storageGet('adscope-dashboard');if(saved){try{state=JSON.parse(saved);renderAll()}catch(e){}}}
+setup();
+</script>
+</body>
+</html>
