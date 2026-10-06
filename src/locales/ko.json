@@ -1,0 +1,72 @@
+{
+  "common": {
+    "all": "전체",
+    "save": "저장",
+    "cancel": "취소",
+    "edit": "수정",
+    "delete": "삭제",
+    "duplicate": "복제",
+    "view": "보기",
+    "viewAll": "전체 보기",
+    "loading": "불러오는 중입니다.",
+    "logout": "로그아웃"
+  },
+
+  "nav": {
+    "home": "홈",
+    "performance": "성과",
+    "proposals": "제안",
+    "messages": "메시지",
+    "alerts": "이상 알림",
+    "optimization": "최적화"
+  },
+
+  "fields": {
+    "date": "날짜",
+    "brand": "브랜드",
+    "channel": "광고 매체",
+    "campaign": "캠페인",
+    "content": "콘텐츠명",
+    "product": "제품",
+    "spend": "광고비",
+    "revenue": "매출",
+    "impressions": "노출 수",
+    "clicks": "클릭 수",
+    "conversions": "전환 수",
+    "ctr": "CTR",
+    "cpc": "CPC",
+    "cpa": "CPA",
+    "cvr": "CVR",
+    "roas": "ROAS"
+  },
+
+  "client": {
+    "login": {
+      "title": "광고주 로그인",
+      "description": "광고 성과와 제안서를 확인하려면 로그인해주세요.",
+      "email": "이메일",
+      "password": "비밀번호",
+      "passwordPlaceholder": "비밀번호를 입력하세요",
+      "submit": "로그인",
+      "help": "계정 관련 문의는 담당자에게 문의해주세요."
+    },
+
+    "dashboard": {
+      "title": "광고 성과 대시보드",
+      "brandTitle": "{{brand}} 광고 성과 대시보드",
+      "welcome": "현재 광고 성과와 최근 제안 내용을 확인할 수 있습니다.",
+      "welcomeName": "{{name}}님, 현재 광고 성과와 최근 제안 내용을 확인할 수 있습니다.",
+      "totalSpend": "총 광고비",
+      "revenue": "매출",
+      "recentProposal": "최근 제안",
+      "recentMessage": "최근 메시지"
+    }
+  },
+
+  "proposalStatus": {
+    "reviewing": "검토 필요",
+    "revision_requested": "수정 요청",
+    "approved": "승인 완료",
+    "preparing": "제안 준비"
+  }
+}

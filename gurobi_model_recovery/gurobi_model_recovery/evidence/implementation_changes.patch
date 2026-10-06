@@ -1,0 +1,472 @@
+--- original/naver_budget_optimizer.py
++++ recovery/naver_budget_optimizer.py
+@@ -1,7 +1,7 @@
+ """
+ naver_budget_optimizer.py
+ =========================
+-Digital Advertising Budget Allocation Optimizer — Version 1
++Digital Advertising Budget Allocation Optimizer - Version 1 Recovery r1
+ ProgressMedia / Naver Advertising
+ 
+ Architecture
+@@ -40,9 +40,21 @@
+ 
+ import numpy as np
+ import pandas as pd
+-from scipy.optimize import curve_fit
+-import gurobipy as gp
+-from gurobipy import GRB
++from scipy.optimize import least_squares
++try:
++    import gurobipy as gp
++    from gurobipy import GRB
++except ImportError:
++    gp = None
++    GRB = None
++
++
++def require_gurobi():
++    if gp is None:
++        raise RuntimeError(
++            "BLOCKED: gurobipy is not installed. Install requirements.txt "
++            "and check your Gurobi license before running the solver."
++        )
+ 
+ 
+ # ---------------------------------------------------------------------------
+@@ -115,11 +127,18 @@
+         df["date"] = pd.to_datetime(df["date"])
+         df = df.sort_values(["date", "campaign_id"]).reset_index(drop=True)
+ 
+-        # Basic integrity checks
+-        assert (df["spend"] >= 0).all(), "Negative spend detected"
+-        assert (df["revenue"] >= 0).all(), "Negative revenue detected"
+-        assert (df["clicks"] >= 0).all(), "Negative clicks detected"
+-        assert (df["conversions"] >= 0).all(), "Negative conversions detected"
++        # Do not use assert for external data validation: python -O removes it.
++        if df.empty or df["date"].isna().any() or df["campaign_id"].isna().any():
++            raise ValueError("Empty data or missing date/campaign ID")
++        for col in ("spend", "revenue", "clicks", "conversions", "impressions"):
++            df[col] = pd.to_numeric(df[col], errors="raise")
++            if not np.isfinite(df[col]).all() or (df[col] < 0).any():
++                raise ValueError(f"Non-finite or negative values in {col}")
++        if df.duplicated(["date", "campaign_id"]).any():
++            raise ValueError("Duplicate date/campaign rows: aggregate explicitly first")
++        for col in ("advertiser_id", "account_id", "platform"):
++            if col in df and (df[col].isna().any() or df[col].nunique() != 1):
++                raise ValueError(f"V1 requires one non-missing {col}; filter explicitly")
+ 
+         self.df = df
+         return df
+@@ -128,7 +147,11 @@
+               ) -> tuple[pd.DataFrame, pd.DataFrame]:
+         """Chronological 80/20 split by unique dates."""
+         dates = sorted(df["date"].unique())
++        if not 0 < train_fraction < 1 or len(dates) < 2:
++            raise ValueError("Need at least 2 dates and 0 < train_fraction < 1")
+         n_train = int(len(dates) * train_fraction)
++        if not 1 <= n_train < len(dates):
++            raise ValueError("Training and validation periods must both be nonempty")
+         cutoff = dates[n_train - 1]
+         train = df[df["date"] <= cutoff].copy()
+         val = df[df["date"] > cutoff].copy()
+@@ -144,7 +167,7 @@
+             total_revenue=("revenue", "sum"),
+             total_spend=("spend", "sum"),
+         )
+-        return (100.0 * g["total_revenue"] / g["total_spend"]).to_dict()
++        return (100.0 * g["total_revenue"] / g["total_spend"].replace(0, np.nan)).to_dict()
+ 
+ 
+ # ---------------------------------------------------------------------------
+@@ -263,45 +286,63 @@
+         alpha_init = np.clip(alpha_ref, alpha_lb, alpha_ub)
+         beta_init = np.clip(beta_ref, beta_lb, beta_ub)
+ 
+-        # Objective function for curve_fit (residual form).
+-        # x_arr is a dummy argument required by curve_fit's API.
+-        # Predictions are computed over x_tr captured in the closure
+-        # to avoid a shape mismatch with the augmented dummy array.
+-        def residuals(x_arr: np.ndarray, alpha: float, beta: float) -> np.ndarray:
+-            pred = alpha * (1.0 - np.exp(-beta * x_tr))
+-            data_res = (r_tr - pred) / revenue_scale
+-            # Append regularisation as pseudo-residuals (sqrt so that squaring
+-            # them in the least-squares sum gives the L2 penalty terms)
+-            reg_alpha = np.sqrt(lambda_alpha) * (alpha / alpha_ref - 1.0)
+-            reg_beta = np.sqrt(lambda_beta) * (beta / beta_ref - 1.0)
+-            return np.append(data_res, [reg_alpha, reg_beta])
+-
+-        n_tr = len(x_tr)
+-        # Dummy expanded x array: curve_fit passes x as first arg to func.
+-        # The two appended zeros correspond to the two regularisation pseudo-points.
+-        x_aug = np.append(x_tr, [0.0, 0.0])
++        if len(x_tr) < 2 or len(x_val) == 0:
++            raise ValueError(f"{cid}: insufficient train/validation observations")
++        if (lambda_alpha < 0 or lambda_beta < 0
++                or not np.isfinite([lambda_alpha, lambda_beta]).all()):
++            raise ValueError("Regularization strengths must be finite and nonnegative")
++        if not np.isfinite(np.r_[x_tr, r_tr, x_val, r_val]).all():
++            raise ValueError(f"{cid}: non-finite fit data")
++        if np.mean(x_tr) <= 0 or np.mean(r_tr) <= 0:
++            raise ValueError(f"{cid}: V1 needs positive mean spend/revenue; no silent curve fallback")
++
++        # Same specified loss, now represented exactly as least-squares residuals.
++        # a = alpha / revenue_scale, b = beta * spend_scale.
++        # Division by sqrt(n) makes the squared residual sum a MEAN data loss.
++        z = x_tr / spend_scale
++        t = r_tr / revenue_scale
++        n_tr = len(z)
++        root_n = np.sqrt(n_tr)
++        a_ref = alpha_ref / revenue_scale
++        b_ref = beta_ref * spend_scale
++
++        def residuals(theta):
++            a, b = theta
++            prediction = a * (-np.expm1(-b * z))
++            return np.r_[
++                (t - prediction) / root_n,
++                np.sqrt(lambda_alpha) * (a / a_ref - 1.0),
++                np.sqrt(lambda_beta) * (b / b_ref - 1.0),
++            ]
++
++        def jacobian(theta):
++            a, b = theta
++            e = np.exp(-b * z)
++            j = np.zeros((n_tr + 2, 2))
++            j[:n_tr, 0] = np.expm1(-b * z) / root_n
++            j[:n_tr, 1] = -a * z * e / root_n
++            j[n_tr, 0] = np.sqrt(lambda_alpha) / a_ref
++            j[n_tr + 1, 1] = np.sqrt(lambda_beta) / b_ref
++            return j
+ 
+         success = False
+         message = ""
+-        alpha_hat = alpha_init
+-        beta_hat = beta_init
+-
++        alpha_hat, beta_hat = alpha_init, beta_init
+         try:
+-            with warnings.catch_warnings():
+-                warnings.simplefilter("ignore")
+-                popt, _ = curve_fit(
+-                    residuals,
+-                    x_aug,
+-                    np.zeros(n_tr + 2),        # target = zero residuals
+-                    p0=[alpha_init, beta_init],
+-                    bounds=([alpha_lb, beta_lb], [alpha_ub, beta_ub]),
+-                    method="trf",
+-                    max_nfev=5000,
+-                )
+-            alpha_hat, beta_hat = popt
+-            success = True
+-            message = "converged"
+-        except Exception as exc:
++            fitted = least_squares(
++                residuals,
++                [alpha_init / revenue_scale, beta_init * spend_scale],
++                jac=jacobian,
++                bounds=([alpha_lb / revenue_scale, beta_lb * spend_scale],
++                        [alpha_ub / revenue_scale, beta_ub * spend_scale]),
++                method="trf", x_scale="jac", max_nfev=5000,
++                ftol=1e-10, xtol=1e-10, gtol=1e-10,
++            )
++            alpha_hat = float(fitted.x[0] * revenue_scale)
++            beta_hat = float(fitted.x[1] / spend_scale)
++            success = bool(fitted.success and np.isfinite(fitted.x).all())
++            message = str(fitted.message)
++        except (ValueError, RuntimeError, FloatingPointError) as exc:
+             message = str(exc)
+ 
+         # Training loss components
+@@ -375,7 +416,7 @@
+         lambdas: Optional[list] = None,
+     ) -> pd.DataFrame:
+         """Sweep lambda values; return summary DataFrame."""
+-        lambdas = lambdas or self.config.sensitivity_lambdas
++        lambdas = self.config.sensitivity_lambdas if lambdas is None else lambdas
+         rows = []
+         for lam in lambdas:
+             fits = self.fit_all(df_train, df_val, lambda_alpha=lam, lambda_beta=lam)
+@@ -490,8 +531,14 @@
+     ) -> PWLCurve:
+         """Build and validate the PWL curve for one campaign."""
+         cid = fit.campaign_id
++        if not fit.success:
++            raise ValueError(f"{cid}: refusing to optimize a failed response fit: {fit.message}")
+         L, U = self.budget_bounds[cid]
+         K = self.n_breakpoints
++        if not np.isfinite([L, U]).all() or not 0 <= L < U or K < 2:
++            raise ValueError(f"{cid}: need finite 0 <= L < U and at least 2 breakpoints")
++        if not 0 <= self.extrapolation_discount <= 1:
++            raise ValueError("extrapolation_discount must lie in [0, 1]")
+ 
+         # Observed spend support (training period only)
+         tr_c = df_train[df_train["campaign_id"] == cid]["spend"]
+@@ -657,6 +704,7 @@
+     """
+ 
+     def __init__(self, env: gp.Env, config: OptimizerConfig):
++        require_gurobi()
+         self.env = env
+         self.config = config
+         self.model: Optional[gp.Model] = None
+@@ -698,6 +746,7 @@
+         self.model.Params.TimeLimit = self.config.time_limit_sec
+ 
+         campaigns = sorted(self.pwl_curves.keys())
++        effective_bounds(self.pwl_curves, self.current_budgets, self.config.max_budget_change_pct)
+ 
+         # --- Decision variables ---
+         # x_i: allocated budget
+@@ -858,7 +907,7 @@
+ 
+         valid_conv = [r.expected_conversions for r in campaign_results
+                       if not np.isnan(r.expected_conversions)]
+-        total_conv = sum(valid_conv) if valid_conv else np.nan
++        total_conv = sum(valid_conv) if len(valid_conv) == len(campaign_results) and valid_conv else np.nan
+ 
+         port_roas = (total_rev / total_spend * 100.0) if total_spend > 0 else np.nan
+         port_cpa = (total_spend / total_conv
+@@ -917,6 +966,14 @@
+         return allocation, False
+ 
+     campaigns = sorted(allocation.keys())
++    if not campaigns or set(campaigns) != set(bounds):
++        raise ValueError("Allocation and bounds must have identical nonempty campaign keys")
++    if not np.isfinite(budget) or any(
++        not np.isfinite([allocation[c], *bounds[c]]).all()
++        or not 0 <= bounds[c][0] <= bounds[c][1]
++        for c in campaigns
++    ):
++        return allocation, False
+     x = {c: float(allocation[c]) for c in campaigns}
+ 
+     for _ in range(max_iter):
+@@ -941,7 +998,26 @@
+     # Final clip
+     for c in campaigns:
+         x[c] = float(np.clip(x[c], bounds[c][0], bounds[c][1]))
+-    return x, True
++    feasible = (abs(sum(x.values()) - budget) <= 1e-3 and all(
++        bounds[c][0] - 1e-6 <= x[c] <= bounds[c][1] + 1e-6 for c in campaigns
++    ))
++    return x, feasible
++
++
++def effective_bounds(curves, current_budgets, delta=None):
++    """Use the SAME campaign/change bounds for optimizer and all baselines."""
++    if delta is not None and (not np.isfinite(delta) or delta < 0):
++        raise ValueError("Budget-change limit must be finite and nonnegative")
++    result = {}
++    for cid, curve in curves.items():
++        lo, hi = curve.budget_lb, curve.budget_ub
++        if delta is not None:
++            x0 = current_budgets[cid]
++            lo, hi = max(lo, (1-delta)*x0), min(hi, (1+delta)*x0)
++        if lo > hi:
++            raise ValueError(f"{cid}: business and budget-change bounds conflict")
++        result[cid] = (lo, hi)
++    return result
+ 
+ 
+ class StrategyComparator:
+@@ -1023,7 +1099,7 @@
+         total_spend = sum(r.optimized_budget for r in results)
+         valid_conv = [r.expected_conversions for r in results
+                       if not np.isnan(r.expected_conversions)]
+-        total_conv = sum(valid_conv) if valid_conv else np.nan
++        total_conv = sum(valid_conv) if len(valid_conv) == len(results) and valid_conv else np.nan
+         port_roas = (total_rev / total_spend * 100.0) if total_spend > 0 else np.nan
+         port_cpa = (total_spend / total_conv
+                     if (not np.isnan(total_conv) and total_conv > 0) else np.nan)
+@@ -1045,19 +1121,15 @@
+     def evaluate_current(self, total_budget: float) -> tuple[list, PortfolioResult]:
+         """S1: current allocation (or budget-matched proportions if B != sum(x0))."""
+         x0_sum = sum(self.current_budgets.values())
+-        if abs(x0_sum - total_budget) < 1.0:
+-            alloc = {c: self.current_budgets[c] for c in self.campaigns}
+-            feasible = True
+-        else:
+-            # Budget-matched current proportions
+-            alloc = {
+-                c: total_budget * self.current_budgets[c] / x0_sum
+-                for c in self.campaigns
+-            }
+-            alloc, feasible = _project_to_bounds(
+-                alloc, total_budget, self.budget_bounds
+-            )
+-        return self._eval_portfolio(alloc, "S1_Current", feasible)
++        if x0_sum <= 0:
++            raise ValueError("Current proportions require positive total reference spend")
++        same_budget = abs(x0_sum - total_budget) < 1e-3
++        alloc = {c: total_budget * self.current_budgets[c] / x0_sum
++                 for c in self.campaigns}
++        projected, feasible = _project_to_bounds(alloc, total_budget, self.budget_bounds)
++        changed = any(abs(projected[c] - alloc[c]) > 1e-3 for c in self.campaigns)
++        label = "S1_Current" if same_budget and not changed else "S1_Current_Projected"
++        return self._eval_portfolio(projected, label, feasible)
+ 
+     def evaluate_equal(self, total_budget: float) -> tuple[list, PortfolioResult]:
+         """S2: equal allocation, projected to bounds."""
+@@ -1073,7 +1145,7 @@
+     ) -> tuple[list, PortfolioResult]:
+         """S3: volume-weighted ROAS proportional, projected to bounds."""
+         total_roas = sum(self.vw_roas[c] for c in self.campaigns)
+-        if total_roas <= 0:
++        if not np.isfinite(total_roas) or total_roas <= 0:
+             return self._eval_portfolio(
+                 {c: self.budget_bounds[c][0] for c in self.campaigns},
+                 "S3_ROAS_Proportional",
+@@ -1097,7 +1169,7 @@
+         ref_rev = current_portfolio.expected_total_revenue
+         ref_roas = current_portfolio.expected_portfolio_roas
+         for p in all_portfolios:
+-            if p.strategy_name == "S1_Current":
++            if p is current_portfolio or not p.is_feasible or not current_portfolio.is_feasible:
+                 continue
+             p.revenue_lift_vs_current = (
+                 (p.expected_total_revenue - ref_rev) / ref_rev * 100.0
+@@ -1306,12 +1378,14 @@
+     performance_filepath: str,
+     ground_truth_filepath: Optional[str] = None,
+     config: Optional[OptimizerConfig] = None,
++    budget_bounds_filepath: Optional[str] = None,
+ ) -> dict:
+     """
+     Run the full Version 1 demonstration pipeline.
+ 
+     Returns a dict with all key results for programmatic access.
+     """
++    require_gurobi()
+     if config is None:
+         config = OptimizerConfig()
+ 
+@@ -1334,7 +1408,7 @@
+     # Compute campaign-level mean spend from FULL dataset (as x_i^0)
+     current_budgets = loader.campaign_mean_spend(df)
+     B_default = sum(current_budgets.values())
+-    total_budget = config.total_daily_budget if config.total_daily_budget else B_default
++    total_budget = config.total_daily_budget if config.total_daily_budget is not None else B_default
+     print(f"  B_default    : {B_default:,.2f} KRW/day")
+     print(f"  total_budget : {total_budget:,.2f} KRW/day")
+ 
+@@ -1359,7 +1433,14 @@
+             mean_aor[cid] = np.nan
+ 
+     # Budget bounds: from ground truth file (policy input only, no GT curves used)
+-    gt_bounds = pd.read_csv(ground_truth_filepath) if ground_truth_filepath else None
++    policy_path = budget_bounds_filepath
++    if policy_path is None and ground_truth_filepath is not None:
++        warnings.warn("Legacy bounds source: reading ONLY policy columns from ground-truth file. "
++                      "Use budget_bounds_filepath for new runs.", UserWarning)
++        policy_path = ground_truth_filepath
++    gt_bounds = pd.read_csv(policy_path, usecols=[
++        "campaign_id", "min_daily_budget", "max_daily_budget"
++    ]) if policy_path else None
+     if gt_bounds is not None:
+         budget_bounds = {
+             row["campaign_id"]: (
+@@ -1375,6 +1456,14 @@
+             for cid, v in current_budgets.items()
+         }
+ 
++    if set(budget_bounds) != set(current_budgets):
++        raise ValueError("Budget-policy campaigns do not match performance campaigns")
++    if not np.isfinite(total_budget) or total_budget < 0:
++        raise ValueError("total_daily_budget must be finite and nonnegative")
++    for cid, (lo, hi) in budget_bounds.items():
++        if not np.isfinite([lo, hi]).all() or not 0 <= lo < hi:
++            raise ValueError(f"{cid}: invalid budget bounds")
++
+     # Feasibility check
+     L_sum = sum(v[0] for v in budget_bounds.values())
+     U_sum = sum(v[1] for v in budget_bounds.values())
+@@ -1397,7 +1486,10 @@
+     # ------------------------------------------------------------------
+     print("\n[Stage 2b] Regularization sensitivity analysis...")
+     sens_df = estimator.sensitivity_analysis(df_train, df_val)
+-    print_sensitivity_summary(sens_df)
++    if not sens_df.empty:
++        print_sensitivity_summary(sens_df)
++    else:
++        print("  Skipped: no sensitivity settings requested")
+ 
+     # ------------------------------------------------------------------
+     # Stage 3: PWL breakpoint generation
+@@ -1409,6 +1501,9 @@
+         extrapolation_discount=0.10,
+     )
+     pwl_curves = pwl_builder.build_all(fits, df_train)
++    comparison_bounds = effective_bounds(pwl_curves, current_budgets, config.max_budget_change_pct)
++    if not sum(v[0] for v in comparison_bounds.values()) <= total_budget <= sum(v[1] for v in comparison_bounds.values()):
++        raise ValueError("Total budget is infeasible after applying budget-change bounds")
+     n_enforced = sum(1 for c in pwl_curves.values() if c.concavity_enforced)
+     print(f"  {len(pwl_curves)} PWL curves built | "
+           f"{n_enforced} required concavity enforcement")
+@@ -1441,7 +1536,21 @@
+             status = model.Status
+             print(f"  Gurobi status : {status} | solve time: {solve_time:.3f}s")
+ 
+-            if status in (GRB.OPTIMAL, GRB.SUBOPTIMAL):
++            solver_metadata = {
++                "solver": "Gurobi", "status_code": int(status),
++                "version": list(gp.gurobi.version()),
++                "num_variables": int(model.NumVars),
++                "num_constraints": int(model.NumConstrs),
++                "num_integer_variables": int(model.NumIntVars),
++                "num_sos": int(model.NumSOS),
++                "num_general_constraints": int(model.NumGenConstrs),
++                "is_optimal": status == GRB.OPTIMAL,
++            }
++            if status == GRB.OPTIMAL:
++                solver_metadata["objective_value"] = float(model.ObjVal)
++                solver_metadata["max_hypograph_error"] = max(
++                    abs(optimizer.y_vars[c].X - optimizer._evaluate_pwl(c, optimizer.x_vars[c].X))
++                    for c in pwl_curves)
+                 gurobi_campaign_results = optimizer.get_campaign_results()
+                 gurobi_portfolio = optimizer.get_portfolio_result(
+                     gurobi_campaign_results,
+@@ -1450,7 +1559,7 @@
+                 )
+                 print_campaign_results(gurobi_campaign_results, "S4_Gurobi_Optimized")
+             else:
+-                print(f"  Optimization failed with status {status}")
++                raise RuntimeError(f"No certified OPTIMAL result; Gurobi status={status}")
+ 
+     # ------------------------------------------------------------------
+     # Stage 5: Strategy comparison
+@@ -1460,7 +1569,7 @@
+         pwl_curves=pwl_curves,
+         current_budgets=current_budgets,
+         volume_weighted_roas=vw_roas,
+-        budget_bounds=budget_bounds,
++        budget_bounds=comparison_bounds,
+         campaign_names=campaign_names,
+         mean_aor=mean_aor,
+     )
+@@ -1495,6 +1604,9 @@
+ 
+     return {
+         "config": config,
++        "solver_metadata": solver_metadata,
++        "comparison_bounds": comparison_bounds,
++        "evaluation_label": "full-dataset reference demo with training-only curve fit; not an untouched final test",
+         "df": df,
+         "df_train": df_train,
+         "df_val": df_val,
+@@ -1524,8 +1636,11 @@
+ # Entry point
+ # ---------------------------------------------------------------------------
+ if __name__ == "__main__":
+-    results = run_demonstration(
+-        performance_filepath="naver_synthetic_performance.csv",
+-        ground_truth_filepath="naver_synthetic_ground_truth.csv",
+-        config=OptimizerConfig(),
++    from pathlib import Path
++    here = Path(__file__).resolve().parent
++    run_demonstration(
++        performance_filepath=str(here / "naver_synthetic_performance.csv"),
++        budget_bounds_filepath=str(here / "campaign_budget_bounds.csv"),
++        ground_truth_filepath=None,
++        config=OptimizerConfig(sensitivity_lambdas=[]),
+     )

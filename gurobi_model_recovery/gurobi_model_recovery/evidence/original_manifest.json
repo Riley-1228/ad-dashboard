@@ -1,0 +1,50 @@
+{
+  "_fixed2.py": {
+    "sha256": "8eea418b83aacc0fa51bf4c7944188ddb76946c5c9a7f440e2f7f142d27efb63",
+    "bytes": 60042
+  },
+  "_fixed_optimizer.py": {
+    "sha256": "aeffbbb5b84cd664e5a059b68eff8948cc467feaff1e6b436f85d89a5f8095c7",
+    "bytes": 59915
+  },
+  "_test_fixed.py": {
+    "sha256": "5d76c81f0196064bf1b9433714918d85b47d17398488e39b5c4e298cf909efcc",
+    "bytes": 38519
+  },
+  "campaign_stats.csv": {
+    "sha256": "6b7b587096b14af1965e366c7f6693535e404175e9092dc1a93616f0cf67a322",
+    "bytes": 3902
+  },
+  "compute_stats.py": {
+    "sha256": "f509fee6730224960d29ea14708f4473f62bae9864d90455e093e690400ef5b8",
+    "bytes": 2762
+  },
+  "console.log": {
+    "sha256": "97054f5e1669eda8a1095636a1be473ba0014f1404362d13ba544c4eb1d6acae",
+    "bytes": 163723
+  },
+  "math_formulation.md": {
+    "sha256": "a629203fedfa38b2a35c839d096b987880a8011289af96ea3ac04300351a2040",
+    "bytes": 26165
+  },
+  "naver_budget_optimizer.py": {
+    "sha256": "26ea0f7984c4a43448750cd883b98a90f47b1daa75b03a12243794428e905b76",
+    "bytes": 60116
+  },
+  "naver_synthetic_ground_truth.csv": {
+    "sha256": "b3c8dccd3471d34798dafe5bc3792206c953bfcbc65d4ec02ebdf2b8b0372d5e",
+    "bytes": 1292
+  },
+  "naver_synthetic_performance.csv": {
+    "sha256": "e416724ef76ba01f955e917d0c2598b34bdaf8613130127c772925f9f7e0873c",
+    "bytes": 984726
+  },
+  "specification.md": {
+    "sha256": "006ed9397c7070529b45125bd1906720986773aad5d41ca5d57303804147b792",
+    "bytes": 13767
+  },
+  "test_naver_budget_optimizer.py": {
+    "sha256": "f4274a030cb40d20b399f61779f8aac7b00953b72712dc16332861fe3e9aec0c",
+    "bytes": 38028
+  }
+}

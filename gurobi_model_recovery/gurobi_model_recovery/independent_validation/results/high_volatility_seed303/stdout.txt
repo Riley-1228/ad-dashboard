@@ -1,0 +1,46 @@
+[1/4] Loaded 4380 rows; 12 campaigns; B=6,081,946.74
+[2/4] Fitting V2 from training observations only...
+  C01: calendar_robust_saturation; training-block checks finished
+  C02: calendar_robust_saturation; training-block checks finished
+  C03: calendar_robust_saturation; training-block checks finished
+  C04: calendar_robust_saturation; training-block checks finished
+  C05: calendar_robust_saturation; training-block checks finished
+  C06: calendar_robust_saturation; training-block checks finished
+  C07: calendar_robust_saturation; training-block checks finished
+  C08: calendar_robust_saturation; training-block checks finished
+  C09: calendar_robust_saturation; training-block checks finished
+  C10: calendar_robust_saturation; training-block checks finished
+  C11: calendar_robust_saturation; training-block checks finished
+  C12: calendar_robust_saturation; training-block checks finished
+[3/4] Diagnostics and PWL tables written.
+[4/4] Solving paired V1/V2 Gurobi models with identical effective bounds...
+[DONE] V2 Gurobi demo completed. This is not a predictive-accuracy certificate.
+[REVIEW] C01: TRAINING_BLOCK_SLOPE_SENSITIVE (heuristic 25% flag)
+[REVIEW] C01: LESS_THAN_ONE_YEAR_OF_CALENDAR_TRAINING
+[REVIEW] C01: OBSERVATIONAL_NOT_CAUSALLY_IDENTIFIED
+[REVIEW] C02: LESS_THAN_ONE_YEAR_OF_CALENDAR_TRAINING
+[REVIEW] C02: OBSERVATIONAL_NOT_CAUSALLY_IDENTIFIED
+[REVIEW] C03: LESS_THAN_ONE_YEAR_OF_CALENDAR_TRAINING
+[REVIEW] C03: OBSERVATIONAL_NOT_CAUSALLY_IDENTIFIED
+[REVIEW] C04: LESS_THAN_ONE_YEAR_OF_CALENDAR_TRAINING
+[REVIEW] C04: OBSERVATIONAL_NOT_CAUSALLY_IDENTIFIED
+[REVIEW] C05: LESS_THAN_ONE_YEAR_OF_CALENDAR_TRAINING
+[REVIEW] C05: OBSERVATIONAL_NOT_CAUSALLY_IDENTIFIED
+[REVIEW] C06: LESS_THAN_ONE_YEAR_OF_CALENDAR_TRAINING
+[REVIEW] C06: OBSERVATIONAL_NOT_CAUSALLY_IDENTIFIED
+[REVIEW] C07: LESS_THAN_ONE_YEAR_OF_CALENDAR_TRAINING
+[REVIEW] C07: OBSERVATIONAL_NOT_CAUSALLY_IDENTIFIED
+[REVIEW] C08: LESS_THAN_ONE_YEAR_OF_CALENDAR_TRAINING
+[REVIEW] C08: OBSERVATIONAL_NOT_CAUSALLY_IDENTIFIED
+[REVIEW] C09: LESS_THAN_ONE_YEAR_OF_CALENDAR_TRAINING
+[REVIEW] C09: OBSERVATIONAL_NOT_CAUSALLY_IDENTIFIED
+[REVIEW] C10: LESS_THAN_ONE_YEAR_OF_CALENDAR_TRAINING
+[REVIEW] C10: OBSERVATIONAL_NOT_CAUSALLY_IDENTIFIED
+[REVIEW] C11: LESS_THAN_ONE_YEAR_OF_CALENDAR_TRAINING
+[REVIEW] C11: OBSERVATIONAL_NOT_CAUSALLY_IDENTIFIED
+[REVIEW] C12: LESS_THAN_ONE_YEAR_OF_CALENDAR_TRAINING
+[REVIEW] C12: OBSERVATIONAL_NOT_CAUSALLY_IDENTIFIED
+[REVIEW] V2_HAS_CAMPAIGNS_WITH_WORSE_VALIDATION_RMSE; no forced improvement
+Output folder: C:\Users\SAMSUNG\Desktop\adscope-dashboard\gurobi_model_recovery\gurobi_model_recovery\independent_validation\results\high_volatility_seed303\demo_20260923T043730349742Z
+
+--- STDERR ---

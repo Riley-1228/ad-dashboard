@@ -1,0 +1,210 @@
+{
+  "version": "response-estimator-v2.0.0",
+  "mode": "demo",
+  "status": "V2_DEMO_COMPLETED_NOT_PRODUCTION_APPROVAL",
+  "production_approved": false,
+  "python": "3.14.4",
+  "config_v2": {
+    "lambda_level": 0.01,
+    "lambda_shape": 0.01,
+    "lambda_calendar": 0.01,
+    "shape_prior_log_scale": 4.605170185988092,
+    "robust_delta": 0.15,
+    "min_train_rows": 56,
+    "annual_min_span_days": 180,
+    "include_annual": true,
+    "include_weekday": true,
+    "kappa_min": 0.001,
+    "kappa_max": 30.0,
+    "start_kappas": [
+      0.1,
+      0.5,
+      2.0,
+      8.0
+    ],
+    "max_nfev": 800,
+    "stability_folds": 4
+  },
+  "config_experiment": {
+    "mode": "demo",
+    "performance": "C:\\Users\\SAMSUNG\\Desktop\\adscope-dashboard\\gurobi_model_recovery\\gurobi_model_recovery\\independent_validation\\scenarios\\narrow_spend_seed101\\naver_synthetic_performance.csv",
+    "bounds": "C:\\Users\\SAMSUNG\\Desktop\\adscope-dashboard\\gurobi_model_recovery\\gurobi_model_recovery\\independent_validation\\scenarios\\narrow_spend_seed101\\campaign_budget_bounds.csv",
+    "max_change": 0.3,
+    "budget": 6103449.517399302,
+    "lambda_value": 0.01,
+    "train_fraction": 0.8,
+    "stability_folds": 4,
+    "support_policy": "review",
+    "reference": "full_demo",
+    "output_root": "C:\\Users\\SAMSUNG\\Desktop\\adscope-dashboard\\gurobi_model_recovery\\gurobi_model_recovery\\independent_validation\\results\\narrow_spend_seed101"
+  },
+  "ground_truth_used_for_fitting": false,
+  "ground_truth_evaluated": false,
+  "gurobi_executed": true,
+  "unrecorded_promotions_inferred": false,
+  "inputs_unchanged": true,
+  "warnings": [
+    "C02: TRAINING_BLOCK_SLOPE_SENSITIVE (heuristic 25% flag)",
+    "C01: LESS_THAN_ONE_YEAR_OF_CALENDAR_TRAINING",
+    "C01: NARROW_SPEND_COVERAGE",
+    "C01: OBSERVATIONAL_NOT_CAUSALLY_IDENTIFIED",
+    "C02: LESS_THAN_ONE_YEAR_OF_CALENDAR_TRAINING",
+    "C02: NARROW_SPEND_COVERAGE",
+    "C02: OBSERVATIONAL_NOT_CAUSALLY_IDENTIFIED",
+    "C03: LESS_THAN_ONE_YEAR_OF_CALENDAR_TRAINING",
+    "C03: NARROW_SPEND_COVERAGE",
+    "C03: OBSERVATIONAL_NOT_CAUSALLY_IDENTIFIED",
+    "C04: LESS_THAN_ONE_YEAR_OF_CALENDAR_TRAINING",
+    "C04: NARROW_SPEND_COVERAGE",
+    "C04: OBSERVATIONAL_NOT_CAUSALLY_IDENTIFIED",
+    "C05: LESS_THAN_ONE_YEAR_OF_CALENDAR_TRAINING",
+    "C05: NARROW_SPEND_COVERAGE",
+    "C05: OBSERVATIONAL_NOT_CAUSALLY_IDENTIFIED",
+    "C06: LESS_THAN_ONE_YEAR_OF_CALENDAR_TRAINING",
+    "C06: NARROW_SPEND_COVERAGE",
+    "C06: OBSERVATIONAL_NOT_CAUSALLY_IDENTIFIED",
+    "C07: LESS_THAN_ONE_YEAR_OF_CALENDAR_TRAINING",
+    "C07: NARROW_SPEND_COVERAGE",
+    "C07: OBSERVATIONAL_NOT_CAUSALLY_IDENTIFIED",
+    "C08: LESS_THAN_ONE_YEAR_OF_CALENDAR_TRAINING",
+    "C08: NARROW_SPEND_COVERAGE",
+    "C08: OBSERVATIONAL_NOT_CAUSALLY_IDENTIFIED",
+    "C09: LESS_THAN_ONE_YEAR_OF_CALENDAR_TRAINING",
+    "C09: NARROW_SPEND_COVERAGE",
+    "C09: OBSERVATIONAL_NOT_CAUSALLY_IDENTIFIED",
+    "C10: LESS_THAN_ONE_YEAR_OF_CALENDAR_TRAINING",
+    "C10: NARROW_SPEND_COVERAGE",
+    "C10: OBSERVATIONAL_NOT_CAUSALLY_IDENTIFIED",
+    "C11: LESS_THAN_ONE_YEAR_OF_CALENDAR_TRAINING",
+    "C11: NARROW_SPEND_COVERAGE",
+    "C11: OBSERVATIONAL_NOT_CAUSALLY_IDENTIFIED",
+    "C12: LESS_THAN_ONE_YEAR_OF_CALENDAR_TRAINING",
+    "C12: NARROW_SPEND_COVERAGE",
+    "C12: OBSERVATIONAL_NOT_CAUSALLY_IDENTIFIED",
+    "V1/C06: OUTSIDE_TRAINING_SPEND_SUPPORT",
+    "V1/C08: OUTSIDE_TRAINING_SPEND_SUPPORT",
+    "V1/C12: OUTSIDE_TRAINING_SPEND_SUPPORT",
+    "V2/C10: OUTSIDE_TRAINING_SPEND_SUPPORT",
+    "V2/C12: OUTSIDE_TRAINING_SPEND_SUPPORT"
+  ],
+  "limitations": [
+    "Development dataset and prior ground truth have already been inspected; not an untouched test.",
+    "Calendar controls and robust residual loss do not establish causal effects or remove all confounding.",
+    "Robust fitted location is a revenue proxy, not guaranteed unbiased conditional mean.",
+    "V2 log-reference-level/log-shape penalties differ from V1 alpha/beta relative penalties.",
+    "V1 uses original adjusted PWL; V2 uses plain concave PWL. Pipeline comparison is not pure estimator ablation.",
+    "Calendar mean for a fixed daily allocation is a scenario assumption, not a live platform budget schedule.",
+    "Training-block deletion slope ranges are sensitivity diagnostics, not confidence intervals.",
+    "No ground-truth comparison or real advertising writes are performed."
+  ],
+  "input_sha256": {
+    "C:\\Users\\SAMSUNG\\Desktop\\adscope-dashboard\\gurobi_model_recovery\\gurobi_model_recovery\\independent_validation\\scenarios\\narrow_spend_seed101\\naver_synthetic_performance.csv": "789eb5ac1456c4ba625fcf18807f92f9e837fbbcc0eb364c09e14010b19fd51b",
+    "C:\\Users\\SAMSUNG\\Desktop\\adscope-dashboard\\gurobi_model_recovery\\gurobi_model_recovery\\independent_validation\\scenarios\\narrow_spend_seed101\\campaign_budget_bounds.csv": "62d663ee4403e6c3619ec69ce0d74733ddb801383b00336d88ba356135a638fe",
+    "C:\\Users\\SAMSUNG\\Desktop\\adscope-dashboard\\gurobi_model_recovery\\gurobi_model_recovery\\frozen_v2\\naver_budget_optimizer.py": "28c5473e29d99ac2915ed63a0215c083a92e5238e2b796c2aef07c0cffee7726",
+    "C:\\Users\\SAMSUNG\\Desktop\\adscope-dashboard\\gurobi_model_recovery\\gurobi_model_recovery\\frozen_v2\\run_v2.py": "74609e63891a77c5d4efb87b130f16efd8959ea20e241a188e8995d5926d73e5",
+    "C:\\Users\\SAMSUNG\\Desktop\\adscope-dashboard\\gurobi_model_recovery\\gurobi_model_recovery\\frozen_v2\\response_estimator_v2.py": "21654815d08e24583207d164baa7c75e01e5063d0fa14b8bebe6ca4878780968"
+  },
+  "package_versions": {
+    "numpy": "2.5.3",
+    "pandas": "2.3.3",
+    "scipy": "1.18.1"
+  },
+  "rows": 4380,
+  "campaigns": 12,
+  "training_dates": 292,
+  "validation_dates": 73,
+  "total_daily_budget_KRW": 6103449.517399302,
+  "effective_bounds": {
+    "C01": [
+      348666.0656392612,
+      647522.6933300566
+    ],
+    "C02": [
+      243792.52732639507,
+      452757.5507490194
+    ],
+    "C03": [
+      456378.87337897683,
+      847560.7648466713
+    ],
+    "C04": [
+      387321.89727785037,
+      719312.0949445793
+    ],
+    "C05": [
+      556772.1759310606,
+      1034005.4695862554
+    ],
+    "C06": [
+      317577.6920523347,
+      589787.1423829074
+    ],
+    "C07": [
+      208970.97987003493,
+      388088.9626157792
+    ],
+    "C08": [
+      280038.6184845643,
+      520071.7200427623
+    ],
+    "C09": [
+      488844.31989946536,
+      907853.73695615
+    ],
+    "C10": [
+      350504.65480961977,
+      650937.2160750083
+    ],
+    "C11": [
+      422746.0098754273,
+      785099.7326257937
+    ],
+    "C12": [
+      210800.8476345205,
+      391487.28846410953
+    ]
+  },
+  "fallback_campaigns": [],
+  "training_start": "2027-01-01",
+  "training_end": "2027-10-19",
+  "validation_start": "2027-10-20",
+  "validation_end": "2027-12-31",
+  "reference_start": "2027-01-01",
+  "reference_end": "2027-12-31",
+  "solver": {
+    "V1": {
+      "solver": "Gurobi",
+      "status_code": 2,
+      "version": [
+        13,
+        0,
+        3
+      ],
+      "num_variables": 24,
+      "num_constraints": 253,
+      "num_integer_variables": 0,
+      "num_sos": 0,
+      "num_general_constraints": 0,
+      "is_optimal": true,
+      "objective_value": 44491879.72248504,
+      "max_hypograph_error": 9.313225746154785e-10
+    },
+    "V2": {
+      "solver": "Gurobi",
+      "status_code": 2,
+      "version": [
+        13,
+        0,
+        3
+      ],
+      "num_variables": 24,
+      "num_constraints": 253,
+      "num_integer_variables": 0,
+      "num_sos": 0,
+      "num_general_constraints": 0,
+      "is_optimal": true,
+      "objective_value": 45416058.343980305,
+      "max_hypograph_error": 9.313225746154785e-10
+    }
+  }
+}

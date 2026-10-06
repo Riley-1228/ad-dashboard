@@ -1,0 +1,184 @@
+{
+  "validator_version": "ground-truth-validator-1.0",
+  "completed_at_utc": "20260917T035224778650Z",
+  "status": "VALIDATION_COMPLETED_NOT_A_PRODUCTION_APPROVAL",
+  "python": "3.14.4",
+  "numpy": "2.5.3",
+  "pandas": "2.3.3",
+  "selected_runs": [
+    {
+      "scenario": "lambda=0.01, no change limit",
+      "explicit": false,
+      "selected": "C:\\Users\\SAMSUNG\\Desktop\\adscope-dashboard\\gurobi_model_recovery\\gurobi_model_recovery\\outputs\\demo_20260917T021008444832Z",
+      "matching_candidates": [
+        "C:\\Users\\SAMSUNG\\Desktop\\adscope-dashboard\\gurobi_model_recovery\\gurobi_model_recovery\\outputs\\demo_20260917T015521980326Z",
+        "C:\\Users\\SAMSUNG\\Desktop\\adscope-dashboard\\gurobi_model_recovery\\gurobi_model_recovery\\outputs\\demo_20260917T021008444832Z"
+      ],
+      "unreadable_metadata": []
+    },
+    {
+      "scenario": "lambda=0.01, change limit=0.30",
+      "explicit": false,
+      "selected": "C:\\Users\\SAMSUNG\\Desktop\\adscope-dashboard\\gurobi_model_recovery\\gurobi_model_recovery\\outputs\\demo_20260917T023549713209Z",
+      "matching_candidates": [
+        "C:\\Users\\SAMSUNG\\Desktop\\adscope-dashboard\\gurobi_model_recovery\\gurobi_model_recovery\\outputs\\demo_20260917T023549713209Z"
+      ],
+      "unreadable_metadata": []
+    }
+  ],
+  "fitting_performed": false,
+  "gurobi_executed_by_validator": false,
+  "existing_allocations_modified": false,
+  "lambda_frozen": 0.01,
+  "scenarios": {
+    "no_change_limit": null,
+    "change30": 0.3
+  },
+  "reference_start": "2025-09-01",
+  "reference_end": "2026-08-31",
+  "generator_reference": {
+    "name": "original_synthetic_v1",
+    "phase_by_campaign": {
+      "C01": 0.0,
+      "C02": 0.35,
+      "C03": 0.7,
+      "C04": 1.0499999999999998,
+      "C05": 1.4,
+      "C06": 1.75,
+      "C07": 2.0999999999999996,
+      "C08": 2.4499999999999997,
+      "C09": 2.8,
+      "C10": 3.15,
+      "C11": 3.5,
+      "C12": 3.8499999999999996
+    },
+    "seasonal_formula": "1 + seasonality_strength * sin(2*pi*day_of_year/365 + phase)",
+    "promotion_windows_inclusive": [
+      [
+        "2025-11-10",
+        "2025-11-20"
+      ],
+      [
+        "2026-05-01",
+        "2026-05-10"
+      ]
+    ],
+    "promotion_multiplier": 1.25,
+    "noise": "max(0, Normal(mean=1, std=revenue_noise_std)) expectation",
+    "weekday_note": "Original weekday factors affected generated spend, not conditional revenue; do not apply them twice.",
+    "mean_multiplier_by_campaign": {
+      "C01": 1.0144001685195085,
+      "C02": 1.0144245616930967,
+      "C03": 1.0145044052024954,
+      "C04": 1.01452859582837,
+      "C05": 1.0145352003959394,
+      "C06": 1.014523418071174,
+      "C07": 1.0144391195793419,
+      "C08": 1.0144869150836244,
+      "C09": 1.0144110622623457,
+      "C10": 1.014280187761623,
+      "C11": 1.014258954876346,
+      "C12": 1.0143227556288463
+    }
+  },
+  "input_sha256": {
+    "C:\\Users\\SAMSUNG\\Desktop\\adscope-dashboard\\gurobi_model_recovery\\gurobi_model_recovery\\naver_synthetic_performance.csv": "e416724ef76ba01f955e917d0c2598b34bdaf8613130127c772925f9f7e0873c",
+    "C:\\Users\\SAMSUNG\\Desktop\\adscope-dashboard\\gurobi_model_recovery\\gurobi_model_recovery\\naver_synthetic_ground_truth.csv": "b3c8dccd3471d34798dafe5bc3792206c953bfcbc65d4ec02ebdf2b8b0372d5e",
+    "C:\\Users\\SAMSUNG\\Desktop\\adscope-dashboard\\gurobi_model_recovery\\gurobi_model_recovery\\campaign_budget_bounds.csv": "62d663ee4403e6c3619ec69ce0d74733ddb801383b00336d88ba356135a638fe",
+    "C:\\Users\\SAMSUNG\\Desktop\\adscope-dashboard\\gurobi_model_recovery\\gurobi_model_recovery\\outputs\\demo_20260917T021008444832Z\\run_metadata.json": "9b8ffb44529271949a8c2057d0d267e1f8e57481df5d97172bb9b916fa5ef861",
+    "C:\\Users\\SAMSUNG\\Desktop\\adscope-dashboard\\gurobi_model_recovery\\gurobi_model_recovery\\outputs\\demo_20260917T021008444832Z\\campaign_allocations.csv": "204fb8b33fff591ab85c7ed7c8686c8a12a41148fbda9af970d8a35e6ef6e4ed",
+    "C:\\Users\\SAMSUNG\\Desktop\\adscope-dashboard\\gurobi_model_recovery\\gurobi_model_recovery\\outputs\\demo_20260917T021008444832Z\\pwl_breakpoints.csv": "c37b84cce4d311bd55031928eb07b816b8fd6ee68923e64524505dbbe0edcf7f",
+    "C:\\Users\\SAMSUNG\\Desktop\\adscope-dashboard\\gurobi_model_recovery\\gurobi_model_recovery\\outputs\\demo_20260917T023549713209Z\\run_metadata.json": "5db05c42c0796b3f8317970774e6b989c8e85a0b6d2c06cd2d5bb46e0a1528e1",
+    "C:\\Users\\SAMSUNG\\Desktop\\adscope-dashboard\\gurobi_model_recovery\\gurobi_model_recovery\\outputs\\demo_20260917T023549713209Z\\campaign_allocations.csv": "8912fc793c40be8743baddd78bc6c3514266e8144c5a57a15c8dd3bf382c3816",
+    "C:\\Users\\SAMSUNG\\Desktop\\adscope-dashboard\\gurobi_model_recovery\\gurobi_model_recovery\\outputs\\demo_20260917T023549713209Z\\pwl_breakpoints.csv": "c37b84cce4d311bd55031928eb07b816b8fd6ee68923e64524505dbbe0edcf7f"
+  },
+  "script_sha256": "62098388b7aae01e3a6b13a29d0489bc4d17c2715b27b72d6af5f47953a6fb81",
+  "checks": {
+    "paired_same_budget_and_curves": true,
+    "all_saved_allocations_feasible": true,
+    "all_oracle_certificates_checked": true,
+    "inputs_unchanged": true
+  },
+  "oracle_certificates": [
+    {
+      "method": "analytic_KKT_log_multiplier_bisection",
+      "iterations": 44,
+      "objective_krw": 45685052.52384329,
+      "concave_tangent_upper_bound_krw": 45685052.52384348,
+      "numerical_certificate_gap_krw": 1.9371509552001953e-07,
+      "budget_error_krw": 9.313225746154785e-10,
+      "bound_error_krw": 0.0,
+      "budget_shadow_price_revenue_per_krw": 3.2940383813876664,
+      "is_gurobi_run": false,
+      "reference": "continuous exponential response, not PWL",
+      "scenario": "no_change_limit",
+      "environment": "generator_period_mean"
+    },
+    {
+      "method": "analytic_KKT_log_multiplier_bisection",
+      "iterations": 43,
+      "objective_krw": 45035011.23379825,
+      "concave_tangent_upper_bound_krw": 45035011.233801015,
+      "numerical_certificate_gap_krw": 2.7641654014587402e-06,
+      "budget_error_krw": 0.0,
+      "bound_error_krw": 0.0,
+      "budget_shadow_price_revenue_per_krw": 3.2471717565727034,
+      "is_gurobi_run": false,
+      "reference": "continuous exponential response, not PWL",
+      "scenario": "no_change_limit",
+      "environment": "base_no_seasonality"
+    },
+    {
+      "method": "analytic_KKT_log_multiplier_bisection",
+      "iterations": 39,
+      "objective_krw": 45587701.47615295,
+      "concave_tangent_upper_bound_krw": 45587701.476153,
+      "numerical_certificate_gap_krw": 5.21540641784668e-08,
+      "budget_error_krw": 9.313225746154785e-10,
+      "bound_error_krw": 0.0,
+      "budget_shadow_price_revenue_per_krw": 3.3797174715104004,
+      "is_gurobi_run": false,
+      "reference": "continuous exponential response, not PWL",
+      "scenario": "change30",
+      "environment": "generator_period_mean"
+    },
+    {
+      "method": "analytic_KKT_log_multiplier_bisection",
+      "iterations": 43,
+      "objective_krw": 44939072.858370274,
+      "concave_tangent_upper_bound_krw": 44939072.85837029,
+      "numerical_certificate_gap_krw": 1.4901161193847656e-08,
+      "budget_error_krw": 0.0,
+      "bound_error_krw": 0.0,
+      "budget_shadow_price_revenue_per_krw": 3.331631829396847,
+      "is_gurobi_run": false,
+      "reference": "continuous exponential response, not PWL",
+      "scenario": "change30",
+      "environment": "base_no_seasonality"
+    }
+  ],
+  "review_flags": [
+    "no_change_limit/generator_period_mean: saved Gurobi policy is BELOW Current under this synthetic reference. Do not hide this result or tune on ground truth.",
+    "no_change_limit/base_no_seasonality: saved Gurobi policy is BELOW Current under this synthetic reference. Do not hide this result or tune on ground truth.",
+    "change30/generator_period_mean: saved Gurobi policy is BELOW Current under this synthetic reference. Do not hide this result or tune on ground truth.",
+    "change30/base_no_seasonality: saved Gurobi policy is BELOW Current under this synthetic reference. Do not hide this result or tune on ground truth."
+  ],
+  "limitations": [
+    "Synthetic post-development evaluation only; this is NOT real Naver performance or a causal validation.",
+    "The final 20% has already been used for tuning decisions. This is NOT a new untouched holdout.",
+    "Full-period current budgets are frozen from the earlier demonstration. They are not configured platform budgets.",
+    "Each strategy and oracle uses one constant daily allocation across all reference dates, not day-specific foresight.",
+    "The period-mean reference reconstructs the original generator's explicit phases/promotions from the supplied generation code, not from the ground-truth CSV alone.",
+    "The controlled base reference switches off seasonality, promotion and noise; do not call it the full historical generating environment.",
+    "Expected noise is integrated analytically after zero clipping; rounding revenue to cents is omitted (at most 0.005 KRW per row).",
+    "Only revenue and ROAS are validated. Conversions and CPA require a separately specified ground-truth mechanism.",
+    "Oracle regret combines response-estimation, extrapolation-policy and PWL approximation effects; it is NOT a Gurobi MIPGap or proof of a solver bug.",
+    "Original run metadata lacks input hashes, so past byte-for-byte provenance cannot be proven. This run verifies budget means, policy/PWL endpoints, identical PWL curves and saved revenue consistency, and captures hashes now.",
+    "If ground-truth feedback is used for further tuning, validate on new independent synthetic experiments before claiming generalization."
+  ],
+  "outputs": [
+    "ground_truth_summary.csv",
+    "ground_truth_campaigns.csv",
+    "ground_truth_validation_metadata.json"
+  ]
+}

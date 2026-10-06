@@ -1,0 +1,72 @@
+{
+  "common": {
+    "all": "All",
+    "save": "Save",
+    "cancel": "Cancel",
+    "edit": "Edit",
+    "delete": "Delete",
+    "duplicate": "Duplicate",
+    "view": "View",
+    "viewAll": "View All",
+    "loading": "Loading...",
+    "logout": "Log Out"
+  },
+
+  "nav": {
+    "home": "Home",
+    "performance": "Performance",
+    "proposals": "Proposals",
+    "messages": "Messages",
+    "alerts": "Alerts",
+    "optimization": "Optimization"
+  },
+
+  "fields": {
+    "date": "Date",
+    "brand": "Brand",
+    "channel": "Ad Channel",
+    "campaign": "Campaign",
+    "content": "Content",
+    "product": "Product",
+    "spend": "Ad Spend",
+    "revenue": "Revenue",
+    "impressions": "Impressions",
+    "clicks": "Clicks",
+    "conversions": "Conversions",
+    "ctr": "CTR",
+    "cpc": "CPC",
+    "cpa": "CPA",
+    "cvr": "CVR",
+    "roas": "ROAS"
+  },
+
+  "client": {
+    "login": {
+      "title": "Advertiser Login",
+      "description": "Log in to view your advertising performance and proposals.",
+      "email": "Email",
+      "password": "Password",
+      "passwordPlaceholder": "Enter your password",
+      "submit": "Log In",
+      "help": "Please contact your account manager for account-related inquiries."
+    },
+
+    "dashboard": {
+      "title": "Advertising Performance Dashboard",
+      "brandTitle": "{{brand}} Advertising Performance Dashboard",
+      "welcome": "View your current advertising performance and recent proposals.",
+      "welcomeName": "{{name}}, you can view your current advertising performance and recent proposals.",
+      "totalSpend": "Total Ad Spend",
+      "revenue": "Revenue",
+      "recentProposal": "Recent Proposal",
+      "recentMessage": "Recent Message"
+    }
+  },
+
+  "proposalStatus": {
+    "reviewing": "Review Required",
+    "revision_requested": "Revision Requested",
+    "approved": "Approved",
+    "preparing": "Preparing"
+  }
+}

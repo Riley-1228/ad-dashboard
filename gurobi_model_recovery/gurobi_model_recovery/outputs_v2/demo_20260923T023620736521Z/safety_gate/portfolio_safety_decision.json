@@ -1,0 +1,50 @@
+{
+  "gate_version": "safety-gate-1.0",
+  "portfolio_action": "SHADOW_WITH_GUARDRAILS",
+  "production_write_enabled": false,
+  "note": "This gate can qualify a model for read-only/shadow evaluation only. It never authorizes automatic real-ad budget writes.",
+  "config": {
+    "min_training_days": 180,
+    "max_slope_spread_review": 0.25,
+    "min_validation_gain_vs_train_mean_pct": 0.0,
+    "independent_min_pct_cases_beating_current": 80.0,
+    "independent_max_mean_oracle_gap_pct": 0.5,
+    "independent_min_mean_lift_vs_current_pct": 0.0
+  },
+  "meta_checks": {
+    "demo_completed": true,
+    "gurobi_executed": true,
+    "solver_optimal_v1_v2": true,
+    "inputs_unchanged": true,
+    "enough_training_days": true,
+    "ground_truth_not_used_for_fitting": true,
+    "not_production_approved_by_runner": true
+  },
+  "independent_validation": {
+    "passed": true,
+    "checks": {
+      "mean_lift_positive": true,
+      "cases_beating_current": true,
+      "oracle_gap": true
+    },
+    "metrics": {
+      "cases": 18,
+      "mean_lift_vs_current_pct": 0.6501211817038919,
+      "mean_oracle_gap_pct": 0.1287832318965259,
+      "pct_cases_beating_current": 100.0
+    }
+  },
+  "campaign_counts": {
+    "total": 12,
+    "eligible": 8,
+    "review": 2,
+    "hold_current": 2
+  },
+  "campaigns_requiring_constraint_rerun": [
+    "C01",
+    "C08",
+    "C09",
+    "C12"
+  ],
+  "important": "Do not manually replace held campaign budgets after optimization because that breaks total-budget optimality. Freeze/restrict them in a new optimization run."
+}

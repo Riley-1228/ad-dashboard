@@ -1,0 +1,32 @@
+# Node
+node_modules/
+dist/
+build/
+
+# Python virtual environments
+.venv/
+venv/
+gurobi_model_recovery/.venv/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db

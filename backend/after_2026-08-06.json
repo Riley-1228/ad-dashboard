@@ -1,0 +1,182 @@
+[
+  {
+    "campaign_id": "cmp-a001-01-000000009618149",
+    "spend": 2117.0,
+    "clicks": 3.0,
+    "conversions": 0.0,
+    "revenue": 0.0,
+    "cvr": 0.0,
+    "cpa": 0.0,
+    "roas": 0.0
+  },
+  {
+    "campaign_id": "cmp-a001-01-000000009618152",
+    "spend": 3672.0,
+    "clicks": 3.0,
+    "conversions": 0.0,
+    "revenue": 0.0,
+    "cvr": 0.0,
+    "cpa": 0.0,
+    "roas": 0.0
+  },
+  {
+    "campaign_id": "cmp-a001-01-000000009618157",
+    "spend": 4819.0,
+    "clicks": 5.0,
+    "conversions": 0.0,
+    "revenue": 0.0,
+    "cvr": 0.0,
+    "cpa": 0.0,
+    "roas": 0.0
+  },
+  {
+    "campaign_id": "cmp-a001-01-000000009618163",
+    "spend": 1997.0,
+    "clicks": 3.0,
+    "conversions": 0.0,
+    "revenue": 0.0,
+    "cvr": 0.0,
+    "cpa": 0.0,
+    "roas": 0.0
+  },
+  {
+    "campaign_id": "cmp-a001-02-000000008000267",
+    "spend": 12209.0,
+    "clicks": 7.0,
+    "conversions": 2.0,
+    "revenue": 53800.0,
+    "cvr": 28.57142857142857,
+    "cpa": 6104.5,
+    "roas": 440.6585305921861
+  },
+  {
+    "campaign_id": "cmp-a001-02-000000008008831",
+    "spend": 53891.0,
+    "clicks": 51.0,
+    "conversions": 29.0,
+    "revenue": 1035780.0,
+    "cvr": 56.86274509803921,
+    "cpa": 1858.3103448275863,
+    "roas": 1921.9906849010038
+  },
+  {
+    "campaign_id": "cmp-a001-02-000000008755736",
+    "spend": 14562.0,
+    "clicks": 6.0,
+    "conversions": 2.0,
+    "revenue": 141800.0,
+    "cvr": 33.33333333333333,
+    "cpa": 7281.0,
+    "roas": 973.7673396511468
+  },
+  {
+    "campaign_id": "cmp-a001-02-000000008761432",
+    "spend": 4364.0,
+    "clicks": 2.0,
+    "conversions": 4.0,
+    "revenue": 295800.0,
+    "cvr": 200.0,
+    "cpa": 1091.0,
+    "roas": 6778.185151237398
+  },
+  {
+    "campaign_id": "cmp-a001-02-000000009311601",
+    "spend": 0.0,
+    "clicks": 0.0,
+    "conversions": 2.0,
+    "revenue": 85000.0,
+    "cvr": 0.0,
+    "cpa": 0.0,
+    "roas": 0.0
+  },
+  {
+    "campaign_id": "cmp-a001-02-000000009450091",
+    "spend": 59458.0,
+    "clicks": 23.0,
+    "conversions": 16.0,
+    "revenue": 1063810.0,
+    "cvr": 69.56521739130434,
+    "cpa": 3716.125,
+    "roas": 1789.1789162097616
+  },
+  {
+    "campaign_id": "cmp-a001-02-000000009504642",
+    "spend": 5744.0,
+    "clicks": 5.0,
+    "conversions": 4.0,
+    "revenue": 137600.0,
+    "cvr": 80.0,
+    "cpa": 1436.0,
+    "roas": 2395.5431754874653
+  },
+  {
+    "campaign_id": "cmp-a001-02-000000009594790",
+    "spend": 27053.0,
+    "clicks": 27.0,
+    "conversions": 10.0,
+    "revenue": 301900.0,
+    "cvr": 37.03703703703704,
+    "cpa": 2705.3,
+    "roas": 1115.9575647802462
+  },
+  {
+    "campaign_id": "cmp-a001-02-000000009627378",
+    "spend": 51387.0,
+    "clicks": 101.0,
+    "conversions": 41.0,
+    "revenue": 1645660.0,
+    "cvr": 40.5940594059406,
+    "cpa": 1253.341463414634,
+    "roas": 3202.483118298402
+  },
+  {
+    "campaign_id": "cmp-a001-02-000000009686974",
+    "spend": 14229.0,
+    "clicks": 16.0,
+    "conversions": 9.0,
+    "revenue": 114820.0,
+    "cvr": 56.25,
+    "cpa": 1581.0,
+    "roas": 806.9435659568487
+  },
+  {
+    "campaign_id": "cmp-a001-02-000000010099801",
+    "spend": 87938.0,
+    "clicks": 34.0,
+    "conversions": 8.0,
+    "revenue": 627500.0,
+    "cvr": 23.52941176470588,
+    "cpa": 10992.25,
+    "roas": 713.5709249698651
+  },
+  {
+    "campaign_id": "cmp-a001-02-000000010727159",
+    "spend": 15138.0,
+    "clicks": 3.0,
+    "conversions": 0.0,
+    "revenue": 0.0,
+    "cvr": 0.0,
+    "cpa": 0.0,
+    "roas": 0.0
+  },
+  {
+    "campaign_id": "cmp-a001-04-000000000893000",
+    "spend": 0.0,
+    "clicks": 3.0,
+    "conversions": 0.0,
+    "revenue": 0.0,
+    "cvr": 0.0,
+    "cpa": 0.0,
+    "roas": 0.0
+  },
+  {
+    "campaign_id": "cmp-a001-04-000000001118427",
+    "spend": 0.0,
+    "clicks": 22.0,
+    "conversions": 12.0,
+    "revenue": 655780.0,
+    "cvr": 54.54545454545454,
+    "cpa": 0.0,
+    "roas": 0.0
+  }
+]

@@ -1,0 +1,734 @@
+{
+  "C01": {
+    "campaign_id": "C01",
+    "level_at_reference": 4539622.130819487,
+    "kappa": 1.7308406168791284,
+    "spend_scale": 497282.18067118176,
+    "revenue_scale": 4556161.968068769,
+    "feature_names": [
+      "annual_sin",
+      "annual_cos",
+      "weekday_1",
+      "weekday_2",
+      "weekday_3",
+      "weekday_4",
+      "weekday_5",
+      "weekday_6"
+    ],
+    "feature_center": [
+      0.13834677570131917,
+      -0.1894259918420568,
+      0.14383561643835616,
+      0.1404109589041096,
+      0.1404109589041096,
+      0.14383561643835616,
+      0.14383561643835616,
+      0.14383561643835616
+    ],
+    "calendar_coefficients": [
+      0.08998442829490498,
+      0.00943369283524055,
+      -0.03212677588375865,
+      -0.03921458546368148,
+      -0.047045741828869,
+      -0.0348943502821302,
+      -0.0665165555195896,
+      -0.02268229666108419
+    ],
+    "observed_support": [
+      387263.5815230325,
+      633258.2230184309
+    ],
+    "train_start": "2027-01-01",
+    "train_end": "2027-10-19",
+    "n_train": 292,
+    "success": true,
+    "mode": "calendar_robust_saturation",
+    "message": "`ftol` termination condition is satisfied.",
+    "data_mse_scaled": 0.010738042186033333,
+    "robust_data_loss": 0.008228956560424926,
+    "regularization_loss": 0.00016595580452434986,
+    "objective": 0.008394912364949275,
+    "fitted_calendar_r2_for_spend": 0.2894157066041557,
+    "residual_spend_cv": 0.07544533210962086,
+    "jacobian_condition": 32.998349809277705,
+    "start_slope_spread_ratio": 5.1979803251388945e-06,
+    "bounds_active": [],
+    "warnings": [
+      "LESS_THAN_ONE_YEAR_OF_CALENDAR_TRAINING",
+      "NARROW_SPEND_COVERAGE",
+      "OBSERVATIONAL_NOT_CAUSALLY_IDENTIFIED"
+    ]
+  },
+  "C02": {
+    "campaign_id": "C02",
+    "level_at_reference": 2469274.5708738235,
+    "kappa": 1.2061451545494373,
+    "spend_scale": 347645.79989224195,
+    "revenue_scale": 2472978.9392989827,
+    "feature_names": [
+      "annual_sin",
+      "annual_cos",
+      "weekday_1",
+      "weekday_2",
+      "weekday_3",
+      "weekday_4",
+      "weekday_5",
+      "weekday_6"
+    ],
+    "feature_center": [
+      0.13834677570131917,
+      -0.1894259918420568,
+      0.14383561643835616,
+      0.1404109589041096,
+      0.1404109589041096,
+      0.14383561643835616,
+      0.14383561643835616,
+      0.14383561643835616
+    ],
+    "calendar_coefficients": [
+      0.0777271671841416,
+      0.03628144306090645,
+      0.012948224287610605,
+      0.0013661827883073682,
+      0.014661686506178615,
+      0.0010449999082310546,
+      -0.02155712030062861,
+      0.005171908209982379
+    ],
+    "observed_support": [
+      268839.5916998756,
+      426569.3200657563
+    ],
+    "train_start": "2027-01-01",
+    "train_end": "2027-10-19",
+    "n_train": 292,
+    "success": true,
+    "mode": "calendar_robust_saturation",
+    "message": "`ftol` termination condition is satisfied.",
+    "data_mse_scaled": 0.010546807184737356,
+    "robust_data_loss": 0.008253322445327971,
+    "regularization_loss": 2.6880816638734866e-05,
+    "objective": 0.008280203261966707,
+    "fitted_calendar_r2_for_spend": 0.3248959536387247,
+    "residual_spend_cv": 0.06868321505656577,
+    "jacobian_condition": 40.55221321882397,
+    "start_slope_spread_ratio": 5.698738570976341e-06,
+    "bounds_active": [],
+    "warnings": [
+      "LESS_THAN_ONE_YEAR_OF_CALENDAR_TRAINING",
+      "NARROW_SPEND_COVERAGE",
+      "OBSERVATIONAL_NOT_CAUSALLY_IDENTIFIED"
+    ]
+  },
+  "C03": {
+    "campaign_id": "C03",
+    "level_at_reference": 5338979.478871706,
+    "kappa": 1.1967828641060356,
+    "spend_scale": 651737.1141327997,
+    "revenue_scale": 5367983.266416462,
+    "feature_names": [
+      "annual_sin",
+      "annual_cos",
+      "weekday_1",
+      "weekday_2",
+      "weekday_3",
+      "weekday_4",
+      "weekday_5",
+      "weekday_6"
+    ],
+    "feature_center": [
+      0.13834677570131917,
+      -0.1894259918420568,
+      0.14383561643835616,
+      0.1404109589041096,
+      0.1404109589041096,
+      0.14383561643835616,
+      0.14383561643835616,
+      0.14383561643835616
+    ],
+    "calendar_coefficients": [
+      0.0684007437163033,
+      0.07371260572546134,
+      0.01584186562093217,
+      0.024280692645189353,
+      0.008085179709075753,
+      -0.0024197538610694416,
+      -2.915425863887708e-05,
+      -0.005353812878199562
+    ],
+    "observed_support": [
+      510770.7072136551,
+      849123.2391541506
+    ],
+    "train_start": "2027-01-01",
+    "train_end": "2027-10-19",
+    "n_train": 292,
+    "success": true,
+    "mode": "calendar_robust_saturation",
+    "message": "`ftol` termination condition is satisfied.",
+    "data_mse_scaled": 0.010137748655179128,
+    "robust_data_loss": 0.007595290982976635,
+    "regularization_loss": 2.9325282989633467e-05,
+    "objective": 0.00762461626596627,
+    "fitted_calendar_r2_for_spend": 0.29640680333716285,
+    "residual_spend_cv": 0.07288600664180821,
+    "jacobian_condition": 37.97964642076666,
+    "start_slope_spread_ratio": 2.1933420853938097e-06,
+    "bounds_active": [],
+    "warnings": [
+      "LESS_THAN_ONE_YEAR_OF_CALENDAR_TRAINING",
+      "NARROW_SPEND_COVERAGE",
+      "OBSERVATIONAL_NOT_CAUSALLY_IDENTIFIED"
+    ]
+  },
+  "C04": {
+    "campaign_id": "C04",
+    "level_at_reference": 3834730.4363967828,
+    "kappa": 1.261315585785147,
+    "spend_scale": 553557.0190221674,
+    "revenue_scale": 3845081.7289860994,
+    "feature_names": [
+      "annual_sin",
+      "annual_cos",
+      "weekday_1",
+      "weekday_2",
+      "weekday_3",
+      "weekday_4",
+      "weekday_5",
+      "weekday_6"
+    ],
+    "feature_center": [
+      0.13834677570131917,
+      -0.1894259918420568,
+      0.14383561643835616,
+      0.1404109589041096,
+      0.1404109589041096,
+      0.14383561643835616,
+      0.14383561643835616,
+      0.14383561643835616
+    ],
+    "calendar_coefficients": [
+      0.03605801981717323,
+      0.08993144224454282,
+      -0.004089583953187318,
+      -0.004129966672292477,
+      0.0030796421803895163,
+      0.009504621704750707,
+      -0.01946652942711196,
+      -0.014994131344614437
+    ],
+    "observed_support": [
+      424623.22346412746,
+      733443.6077516469
+    ],
+    "train_start": "2027-01-01",
+    "train_end": "2027-10-19",
+    "n_train": 292,
+    "success": true,
+    "mode": "calendar_robust_saturation",
+    "message": "`ftol` termination condition is satisfied.",
+    "data_mse_scaled": 0.00920009112297561,
+    "robust_data_loss": 0.00716965198461731,
+    "regularization_loss": 3.8142769204319545e-05,
+    "objective": 0.007207794753821632,
+    "fitted_calendar_r2_for_spend": 0.34414718794632104,
+    "residual_spend_cv": 0.07584975168879542,
+    "jacobian_condition": 35.807554674102086,
+    "start_slope_spread_ratio": 5.490018523755998e-06,
+    "bounds_active": [],
+    "warnings": [
+      "LESS_THAN_ONE_YEAR_OF_CALENDAR_TRAINING",
+      "NARROW_SPEND_COVERAGE",
+      "OBSERVATIONAL_NOT_CAUSALLY_IDENTIFIED"
+    ]
+  },
+  "C05": {
+    "campaign_id": "C05",
+    "level_at_reference": 6757590.629732893,
+    "kappa": 1.5790616797368702,
+    "spend_scale": 796672.0336522176,
+    "revenue_scale": 6782373.587320793,
+    "feature_names": [
+      "annual_sin",
+      "annual_cos",
+      "weekday_1",
+      "weekday_2",
+      "weekday_3",
+      "weekday_4",
+      "weekday_5",
+      "weekday_6"
+    ],
+    "feature_center": [
+      0.13834677570131917,
+      -0.1894259918420568,
+      0.14383561643835616,
+      0.1404109589041096,
+      0.1404109589041096,
+      0.14383561643835616,
+      0.14383561643835616,
+      0.14383561643835616
+    ],
+    "calendar_coefficients": [
+      0.003239778106827869,
+      0.1044804553860287,
+      0.011107304908098754,
+      0.008433928703304054,
+      0.006486779512128596,
+      -0.03015551669252467,
+      -0.0009797138027213162,
+      -0.008094068976697476
+    ],
+    "observed_support": [
+      613411.5596405669,
+      1026449.972375445
+    ],
+    "train_start": "2027-01-01",
+    "train_end": "2027-10-19",
+    "n_train": 292,
+    "success": true,
+    "mode": "calendar_robust_saturation",
+    "message": "`ftol` termination condition is satisfied.",
+    "data_mse_scaled": 0.006407220720780429,
+    "robust_data_loss": 0.005330376217468693,
+    "regularization_loss": 0.0001137133504981574,
+    "objective": 0.0054440895679668515,
+    "fitted_calendar_r2_for_spend": 0.35230641897485837,
+    "residual_spend_cv": 0.07165678704636533,
+    "jacobian_condition": 35.541972268647044,
+    "start_slope_spread_ratio": 2.6821457340800444e-06,
+    "bounds_active": [],
+    "warnings": [
+      "LESS_THAN_ONE_YEAR_OF_CALENDAR_TRAINING",
+      "NARROW_SPEND_COVERAGE",
+      "OBSERVATIONAL_NOT_CAUSALLY_IDENTIFIED"
+    ]
+  },
+  "C06": {
+    "campaign_id": "C06",
+    "level_at_reference": 2550987.535875275,
+    "kappa": 1.0026548500902788,
+    "spend_scale": 453799.91075294523,
+    "revenue_scale": 2557135.093987605,
+    "feature_names": [
+      "annual_sin",
+      "annual_cos",
+      "weekday_1",
+      "weekday_2",
+      "weekday_3",
+      "weekday_4",
+      "weekday_5",
+      "weekday_6"
+    ],
+    "feature_center": [
+      0.13834677570131917,
+      -0.1894259918420568,
+      0.14383561643835616,
+      0.1404109589041096,
+      0.1404109589041096,
+      0.14383561643835616,
+      0.14383561643835616,
+      0.14383561643835616
+    ],
+    "calendar_coefficients": [
+      -0.04808606157698683,
+      0.11186965569258171,
+      0.0035095090326492722,
+      0.01202810846568012,
+      0.00887980117070822,
+      -0.004257395718658955,
+      0.01992246845262462,
+      0.0052342776738602955
+    ],
+    "observed_support": [
+      352918.5078189728,
+      567216.3013815728
+    ],
+    "train_start": "2027-01-01",
+    "train_end": "2027-10-19",
+    "n_train": 292,
+    "success": true,
+    "mode": "calendar_robust_saturation",
+    "message": "`ftol` termination condition is satisfied.",
+    "data_mse_scaled": 0.006900788045300057,
+    "robust_data_loss": 0.005691194381192538,
+    "regularization_loss": 1.944294982947759e-05,
+    "objective": 0.005710637331022018,
+    "fitted_calendar_r2_for_spend": 0.299471876937512,
+    "residual_spend_cv": 0.07688955265660542,
+    "jacobian_condition": 38.71905145392058,
+    "start_slope_spread_ratio": 5.77073663834598e-07,
+    "bounds_active": [],
+    "warnings": [
+      "LESS_THAN_ONE_YEAR_OF_CALENDAR_TRAINING",
+      "NARROW_SPEND_COVERAGE",
+      "OBSERVATIONAL_NOT_CAUSALLY_IDENTIFIED"
+    ]
+  },
+  "C07": {
+    "campaign_id": "C07",
+    "level_at_reference": 3125461.117414047,
+    "kappa": 1.5332724621072449,
+    "spend_scale": 298730.13374417357,
+    "revenue_scale": 3131364.9949868764,
+    "feature_names": [
+      "annual_sin",
+      "annual_cos",
+      "weekday_1",
+      "weekday_2",
+      "weekday_3",
+      "weekday_4",
+      "weekday_5",
+      "weekday_6"
+    ],
+    "feature_center": [
+      0.13834677570131917,
+      -0.1894259918420568,
+      0.14383561643835616,
+      0.1404109589041096,
+      0.1404109589041096,
+      0.14383561643835616,
+      0.14383561643835616,
+      0.14383561643835616
+    ],
+    "calendar_coefficients": [
+      -0.0620690921175054,
+      0.07320528515819034,
+      0.005355586379266606,
+      0.013025509318179909,
+      0.00105842265453064,
+      0.0037329066507238123,
+      0.03728558290446357,
+      -0.00732092332078427
+    ],
+    "observed_support": [
+      231821.90440947085,
+      387711.74976906815
+    ],
+    "train_start": "2027-01-01",
+    "train_end": "2027-10-19",
+    "n_train": 292,
+    "success": true,
+    "mode": "calendar_robust_saturation",
+    "message": "`ftol` termination condition is satisfied.",
+    "data_mse_scaled": 0.006890130552196266,
+    "robust_data_loss": 0.005574080671051671,
+    "regularization_loss": 9.975795601991326e-05,
+    "objective": 0.005673838627071585,
+    "fitted_calendar_r2_for_spend": 0.4057839641379485,
+    "residual_spend_cv": 0.06956781166146056,
+    "jacobian_condition": 36.1309626696448,
+    "start_slope_spread_ratio": 4.8397755244356015e-06,
+    "bounds_active": [],
+    "warnings": [
+      "LESS_THAN_ONE_YEAR_OF_CALENDAR_TRAINING",
+      "NARROW_SPEND_COVERAGE",
+      "OBSERVATIONAL_NOT_CAUSALLY_IDENTIFIED"
+    ]
+  },
+  "C08": {
+    "campaign_id": "C08",
+    "level_at_reference": 2419783.261456004,
+    "kappa": 1.0527935431857673,
+    "spend_scale": 399345.5644357666,
+    "revenue_scale": 2427134.6484177816,
+    "feature_names": [
+      "annual_sin",
+      "annual_cos",
+      "weekday_1",
+      "weekday_2",
+      "weekday_3",
+      "weekday_4",
+      "weekday_5",
+      "weekday_6"
+    ],
+    "feature_center": [
+      0.13834677570131917,
+      -0.1894259918420568,
+      0.14383561643835616,
+      0.1404109589041096,
+      0.1404109589041096,
+      0.14383561643835616,
+      0.14383561643835616,
+      0.14383561643835616
+    ],
+    "calendar_coefficients": [
+      -0.07943589640531065,
+      0.04794172661644886,
+      -0.006297114792145353,
+      0.000348050654132629,
+      -0.00539596770016824,
+      -0.019266403790161396,
+      0.0002126424895882859,
+      -0.015362013472233054
+    ],
+    "observed_support": [
+      313962.9580409824,
+      501378.9323886616
+    ],
+    "train_start": "2027-01-01",
+    "train_end": "2027-10-19",
+    "n_train": 292,
+    "success": true,
+    "mode": "calendar_robust_saturation",
+    "message": "`ftol` termination condition is satisfied.",
+    "data_mse_scaled": 0.00826351029275606,
+    "robust_data_loss": 0.006646600009553413,
+    "regularization_loss": 1.2945806151468426e-05,
+    "objective": 0.006659545815704881,
+    "fitted_calendar_r2_for_spend": 0.2659020882140377,
+    "residual_spend_cv": 0.07785207412434282,
+    "jacobian_condition": 37.203169176164465,
+    "start_slope_spread_ratio": 9.64577012174098e-07,
+    "bounds_active": [],
+    "warnings": [
+      "LESS_THAN_ONE_YEAR_OF_CALENDAR_TRAINING",
+      "NARROW_SPEND_COVERAGE",
+      "OBSERVATIONAL_NOT_CAUSALLY_IDENTIFIED"
+    ]
+  },
+  "C09": {
+    "campaign_id": "C09",
+    "level_at_reference": 4837111.972334282,
+    "kappa": 1.2030588231469523,
+    "spend_scale": 698452.0653076293,
+    "revenue_scale": 4856036.358953525,
+    "feature_names": [
+      "annual_sin",
+      "annual_cos",
+      "weekday_1",
+      "weekday_2",
+      "weekday_3",
+      "weekday_4",
+      "weekday_5",
+      "weekday_6"
+    ],
+    "feature_center": [
+      0.13834677570131917,
+      -0.1894259918420568,
+      0.14383561643835616,
+      0.1404109589041096,
+      0.1404109589041096,
+      0.14383561643835616,
+      0.14383561643835616,
+      0.14383561643835616
+    ],
+    "calendar_coefficients": [
+      -0.11792761506634855,
+      0.02999299866006073,
+      -0.012432713748000849,
+      0.0020610219226477157,
+      0.008541799225898285,
+      0.00018334115416708871,
+      -0.003365374144825845,
+      -0.004134260171191473
+    ],
+    "observed_support": [
+      557338.9675495063,
+      846579.4168257419
+    ],
+    "train_start": "2027-01-01",
+    "train_end": "2027-10-19",
+    "n_train": 292,
+    "success": true,
+    "mode": "calendar_robust_saturation",
+    "message": "`ftol` termination condition is satisfied.",
+    "data_mse_scaled": 0.008605302507777232,
+    "robust_data_loss": 0.006781404293131897,
+    "regularization_loss": 3.510083787173387e-05,
+    "objective": 0.006816505131003629,
+    "fitted_calendar_r2_for_spend": 0.2870403359144559,
+    "residual_spend_cv": 0.07246179804783616,
+    "jacobian_condition": 37.740081420234475,
+    "start_slope_spread_ratio": 5.01927883725494e-06,
+    "bounds_active": [],
+    "warnings": [
+      "LESS_THAN_ONE_YEAR_OF_CALENDAR_TRAINING",
+      "NARROW_SPEND_COVERAGE",
+      "OBSERVATIONAL_NOT_CAUSALLY_IDENTIFIED"
+    ]
+  },
+  "C10": {
+    "campaign_id": "C10",
+    "level_at_reference": 4246695.878590796,
+    "kappa": 1.023457554313426,
+    "spend_scale": 500393.6764056024,
+    "revenue_scale": 4259275.927909318,
+    "feature_names": [
+      "annual_sin",
+      "annual_cos",
+      "weekday_1",
+      "weekday_2",
+      "weekday_3",
+      "weekday_4",
+      "weekday_5",
+      "weekday_6"
+    ],
+    "feature_center": [
+      0.13834677570131917,
+      -0.1894259918420568,
+      0.14383561643835616,
+      0.1404109589041096,
+      0.1404109589041096,
+      0.14383561643835616,
+      0.14383561643835616,
+      0.14383561643835616
+    ],
+    "calendar_coefficients": [
+      -0.0732775641418,
+      -0.009909472883053244,
+      0.017938299238345164,
+      -0.005389766998404124,
+      0.008959821619138407,
+      -0.004385334036312151,
+      -0.004891244019842345,
+      -0.006382720476772029
+    ],
+    "observed_support": [
+      381247.1887863564,
+      643192.346844023
+    ],
+    "train_start": "2027-01-01",
+    "train_end": "2027-10-19",
+    "n_train": 292,
+    "success": true,
+    "mode": "calendar_robust_saturation",
+    "message": "`ftol` termination condition is satisfied.",
+    "data_mse_scaled": 0.007063140767411778,
+    "robust_data_loss": 0.0057573010391664715,
+    "regularization_loss": 7.819503038892475e-06,
+    "objective": 0.005765120542205366,
+    "fitted_calendar_r2_for_spend": 0.3360781063740691,
+    "residual_spend_cv": 0.07506654424030344,
+    "jacobian_condition": 39.597250047194414,
+    "start_slope_spread_ratio": 3.042443502613329e-07,
+    "bounds_active": [],
+    "warnings": [
+      "LESS_THAN_ONE_YEAR_OF_CALENDAR_TRAINING",
+      "NARROW_SPEND_COVERAGE",
+      "OBSERVATIONAL_NOT_CAUSALLY_IDENTIFIED"
+    ]
+  },
+  "C11": {
+    "campaign_id": "C11",
+    "level_at_reference": 3678227.7683530967,
+    "kappa": 0.9374119015946356,
+    "spend_scale": 605450.7216243928,
+    "revenue_scale": 3701491.6868945607,
+    "feature_names": [
+      "annual_sin",
+      "annual_cos",
+      "weekday_1",
+      "weekday_2",
+      "weekday_3",
+      "weekday_4",
+      "weekday_5",
+      "weekday_6"
+    ],
+    "feature_center": [
+      0.13834677570131917,
+      -0.1894259918420568,
+      0.14383561643835616,
+      0.1404109589041096,
+      0.1404109589041096,
+      0.14383561643835616,
+      0.14383561643835616,
+      0.14383561643835616
+    ],
+    "calendar_coefficients": [
+      -0.12181564246955137,
+      -0.05256508714226135,
+      0.021451242945879048,
+      0.014017623264251202,
+      -0.0006230978389820417,
+      0.005361634841437588,
+      0.026917858883716696,
+      0.013813117074573817
+    ],
+    "observed_support": [
+      465680.21558992064,
+      781032.3895876869
+    ],
+    "train_start": "2027-01-01",
+    "train_end": "2027-10-19",
+    "n_train": 292,
+    "success": true,
+    "mode": "calendar_robust_saturation",
+    "message": "`ftol` termination condition is satisfied.",
+    "data_mse_scaled": 0.01048081958236899,
+    "robust_data_loss": 0.008212001691158991,
+    "regularization_loss": 2.6371379812623933e-05,
+    "objective": 0.008238373070971612,
+    "fitted_calendar_r2_for_spend": 0.35125844960335706,
+    "residual_spend_cv": 0.07023475402123895,
+    "jacobian_condition": 44.28821762258292,
+    "start_slope_spread_ratio": 1.395529884518028e-07,
+    "bounds_active": [],
+    "warnings": [
+      "LESS_THAN_ONE_YEAR_OF_CALENDAR_TRAINING",
+      "NARROW_SPEND_COVERAGE",
+      "OBSERVATIONAL_NOT_CAUSALLY_IDENTIFIED"
+    ]
+  },
+  "C12": {
+    "campaign_id": "C12",
+    "level_at_reference": 686845.0892248506,
+    "kappa": 0.8447102401986023,
+    "spend_scale": 300760.37044826,
+    "revenue_scale": 690301.9379704443,
+    "feature_names": [
+      "annual_sin",
+      "annual_cos",
+      "weekday_1",
+      "weekday_2",
+      "weekday_3",
+      "weekday_4",
+      "weekday_5",
+      "weekday_6"
+    ],
+    "feature_center": [
+      0.13834677570131917,
+      -0.1894259918420568,
+      0.14383561643835616,
+      0.1404109589041096,
+      0.1404109589041096,
+      0.14383561643835616,
+      0.14383561643835616,
+      0.14383561643835616
+    ],
+    "calendar_coefficients": [
+      -0.07623269936729317,
+      -0.0828417481330303,
+      0.015049306280317733,
+      0.021568790548468202,
+      0.02891765997142852,
+      0.049261656243907735,
+      0.01269667244262576,
+      0.02744447728990947
+    ],
+    "observed_support": [
+      235791.1109836455,
+      393254.6740180869
+    ],
+    "train_start": "2027-01-01",
+    "train_end": "2027-10-19",
+    "n_train": 292,
+    "success": true,
+    "mode": "calendar_robust_saturation",
+    "message": "`ftol` termination condition is satisfied.",
+    "data_mse_scaled": 0.006908016212663518,
+    "robust_data_loss": 0.0055483100308792044,
+    "regularization_loss": 3.56104429583155e-05,
+    "objective": 0.005583920473837519,
+    "fitted_calendar_r2_for_spend": 0.33881275539644284,
+    "residual_spend_cv": 0.0727317703040101,
+    "jacobian_condition": 45.44346447753305,
+    "start_slope_spread_ratio": 1.8468850270772968e-07,
+    "bounds_active": [],
+    "warnings": [
+      "LESS_THAN_ONE_YEAR_OF_CALENDAR_TRAINING",
+      "NARROW_SPEND_COVERAGE",
+      "OBSERVATIONAL_NOT_CAUSALLY_IDENTIFIED"
+    ]
+  }
+}

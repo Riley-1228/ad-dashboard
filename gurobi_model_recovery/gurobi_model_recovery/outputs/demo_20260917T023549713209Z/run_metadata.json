@@ -1,0 +1,39 @@
+{
+  "mode": "demo",
+  "python": "3.14.4",
+  "config": {
+    "lambda_alpha": 0.01,
+    "lambda_beta": 0.01,
+    "n_pwl_breakpoints": 20,
+    "train_fraction": 0.8,
+    "total_daily_budget": null,
+    "max_budget_change_pct": 0.3,
+    "time_limit_sec": 60.0,
+    "sensitivity_lambdas": []
+  },
+  "dataset_kind": "synthetic, not real advertising observations",
+  "evaluation": "Full-dataset budget/reference demonstration; response fit uses first 80% of dates. Final 20% is validation, not an untouched final test.",
+  "ground_truth_used_for_fitting": false,
+  "policy_source": "Approved synthetic min/max budgets extracted to separate 3-column file.",
+  "conversion_model": "AOR approximation; conversions/CPA are not independently validated.",
+  "gurobi_executed": true,
+  "status": "GUROBI_DEMO_COMPLETED",
+  "solver": {
+    "solver": "Gurobi",
+    "status_code": 2,
+    "version": [
+      13,
+      0,
+      3
+    ],
+    "num_variables": 24,
+    "num_constraints": 253,
+    "num_integer_variables": 0,
+    "num_sos": 0,
+    "num_general_constraints": 0,
+    "is_optimal": true,
+    "objective_value": 45699684.774045765,
+    "max_hypograph_error": 4.656612873077393e-10
+  },
+  "total_daily_budget_KRW": 5993525.794684932
+}

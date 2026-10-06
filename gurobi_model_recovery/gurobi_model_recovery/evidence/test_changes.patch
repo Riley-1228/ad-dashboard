@@ -1,0 +1,174 @@
+--- original/test_naver_budget_optimizer.py
++++ recovery/test_naver_budget_optimizer.py
+@@ -36,6 +36,8 @@
+ T24  Sensitivity — lambda=0 yields zero regularization penalty
+ """
+ 
++from __future__ import annotations
++
+ import time
+ import warnings
+ 
+@@ -43,8 +45,7 @@
+ import pandas as pd
+ import pytest
+ 
+-import gurobipy as gp
+-from gurobipy import GRB
++from naver_budget_optimizer import gp, GRB
+ 
+ from naver_budget_optimizer import (
+     DataLoader,
+@@ -155,6 +156,8 @@
+ 
+ 
+ def make_gurobi_env() -> gp.Env:
++    if gp is None:
++        pytest.skip("BLOCKED: gurobipy is unavailable; solver NOT executed")
+     env = gp.Env(empty=True)
+     env.setParam("OutputFlag", 0)
+     env.setParam("TimeLimit", 10)
+@@ -284,32 +287,20 @@
+         for cid, f in fits.items():
+             assert f.train_loss_reg == pytest.approx(0.0, abs=1e-10)
+ 
+-    def test_T03_larger_lambda_increases_reg_penalty(self, tmp_path):
+-        """T03: Larger lambda produces larger regularization penalty."""
+-        df_train, df_val = self._make_loader_and_data(tmp_path)
+-        config_small = OptimizerConfig(lambda_alpha=0.001, lambda_beta=0.001)
+-        config_large = OptimizerConfig(lambda_alpha=0.10, lambda_beta=0.10)
+-        est = ResponseEstimator(config_small)
+-        fits_small = est.fit_all(df_train, df_val)
+-        est2 = ResponseEstimator(config_large)
+-        fits_large = est2.fit_all(df_train, df_val)
+-        total_reg_small = sum(f.train_loss_reg for f in fits_small.values())
+-        total_reg_large = sum(f.train_loss_reg for f in fits_large.values())
+-        # With larger lambda, the optimal point is closer to the prior,
+-        # so the penalty at the optimum should be smaller (more constrained),
+-        # but it's weighted more heavily.  We verify the weighted penalty is larger.
+-        # lambda=0.1 * penalty_0.1 vs lambda=0.001 * penalty_0.001
+-        # Note: we compare lambda*pen (from loss_reg definition), not raw pen
+-        # Actually train_loss_reg already includes lambda, so compare directly.
+-        # With larger lambda, parameters are pulled toward prior -> smaller raw deviation
+-        # but larger lambda*deviation^2 is not guaranteed.
+-        # We verify that the parameter deviation from prior is smaller under large lambda.
+-        for cid in CAMPAIGNS:
+-            f_s = fits_small[cid]
+-            f_l = fits_large[cid]
+-            dev_small = abs(f_s.alpha_hat / f_s.alpha_ref - 1.0)
+-            dev_large = abs(f_l.alpha_hat / f_l.alpha_ref - 1.0)
+-            assert dev_large <= dev_small + 0.5  # larger lambda pulls toward prior
++    def test_T03_reported_penalty_matches_defined_formula(self, tmp_path):
++        """No universal monotonicity claim for lambda*penalty at fitted points."""
++        tr, va = self._make_loader_and_data(tmp_path)
++        for lam in [0.001, 0.10]:
++            fits = ResponseEstimator(OptimizerConfig(lambda_alpha=lam, lambda_beta=lam)).fit_all(tr, va)
++            for cid, fit in fits.items():
++                assert fit.success, fit.message
++                expected = lam*((fit.alpha_hat/fit.alpha_ref-1)**2 + (fit.beta_hat/fit.beta_ref-1)**2)
++                assert fit.train_loss_reg == pytest.approx(expected, rel=1e-10, abs=1e-12)
++                x = tr.loc[tr.campaign_id == cid, "spend"].to_numpy()
++                y = tr.loc[tr.campaign_id == cid, "revenue"].to_numpy()
++                at_prior = fit.alpha_ref * (-np.expm1(-fit.beta_ref*x))
++                initial_loss = np.mean(((y-at_prior)/fit.revenue_scale)**2)
++                assert fit.train_loss_data + fit.train_loss_reg <= initial_loss + 1e-8
+ 
+     def test_T04_sensitivity_analysis_shape(self, tmp_path):
+         """T04: sensitivity_analysis returns DataFrame with correct shape."""
+@@ -435,8 +426,12 @@
+         infeasible_budget = 100_000.0  # far below sum(L_i) = 900,000
+         L_sum = sum(v[0] for v in bounds.values())
+         U_sum = sum(v[1] for v in bounds.values())
+-        assert infeasible_budget < L_sum
+-
++        _, feasible = _project_to_bounds(
++            {"C_A": 50000.0, "C_B": 50000.0}, infeasible_budget, bounds
++        )
++        assert not feasible
++
++    @pytest.mark.gurobi
+     def test_T09_core_lp_optimal(self):
+         """T09: Core LP returns OPTIMAL status."""
+         t0 = time.perf_counter()
+@@ -452,6 +447,7 @@
+ 
+         assert time.perf_counter() - t0 < 10.0
+ 
++    @pytest.mark.gurobi
+     def test_T10_budget_conservation(self):
+         """T10: sum(x_i*) == B within numerical tolerance."""
+         curves, current_budgets, total_budget, bounds, mean_aor = self._make_optimizer_inputs()
+@@ -466,6 +462,7 @@
+                 assert abs(x_sum - total_budget) < 1.0, \
+                     f"Budget conservation violated: {x_sum:.2f} vs {total_budget:.2f}"
+ 
++    @pytest.mark.gurobi
+     def test_T11_campaign_bounds(self):
+         """T11: All x_i* are within [L_i, U_i]."""
+         curves, current_budgets, total_budget, bounds, mean_aor = self._make_optimizer_inputs()
+@@ -482,6 +479,7 @@
+                     assert xv.X >= L - 1.0, f"{cid}: x={xv.X:.0f} < L={L:.0f}"
+                     assert xv.X <= U + 1.0, f"{cid}: x={xv.X:.0f} > U={U:.0f}"
+ 
++    @pytest.mark.gurobi
+     def test_T12_hypograph_exactness(self):
+         """T12: y_i* ≈ R_i(x_i*) at LP optimum (hypograph tightness)."""
+         curves, current_budgets, total_budget, bounds, mean_aor = self._make_optimizer_inputs()
+@@ -503,6 +501,7 @@
+                     assert abs(yi_val - pwl_rev) < 1.0, \
+                         f"{cid}: y*={yi_val:.2f} != R(x*)={pwl_rev:.2f}"
+ 
++    @pytest.mark.gurobi
+     def test_T13_budget_change_constraint(self):
+         """T13: 30% budget-change constraint limits x_i to ±30% of x_i^0."""
+         curves, current_budgets, total_budget, bounds, mean_aor = self._make_optimizer_inputs()
+@@ -516,15 +515,16 @@
+                 opt.set_data(curves, current_budgets, total_budget, CAMPAIGN_NAMES, mean_aor)
+                 opt.build_model()
+                 model = opt.solve()
+-                if model.Status == GRB.OPTIMAL:
+-                    for cid in CAMPAIGNS:
+-                        x0 = current_budgets[cid]
+-                        xi = opt.x_vars[cid].X
+-                        assert xi >= (1.0 - 0.30) * x0 - 1.0, \
+-                            f"{cid}: xi={xi:.0f} < 0.70*x0={0.70*x0:.0f}"
+-                        assert xi <= (1.0 + 0.30) * x0 + 1.0, \
+-                            f"{cid}: xi={xi:.0f} > 1.30*x0={1.30*x0:.0f}"
+-
++                assert model.Status == GRB.OPTIMAL
++                for cid in CAMPAIGNS:
++                    x0 = current_budgets[cid]
++                    xi = opt.x_vars[cid].X
++                    assert xi >= (1.0 - 0.30) * x0 - 1.0, \
++                        f"{cid}: xi={xi:.0f} < 0.70*x0={0.70*x0:.0f}"
++                    assert xi <= (1.0 + 0.30) * x0 + 1.0, \
++                        f"{cid}: xi={xi:.0f} > 1.30*x0={1.30*x0:.0f}"
++
++    @pytest.mark.gurobi
+     def test_T14_gurobi_no_worse_than_best_baseline(self):
+         """T14: Gurobi revenue >= best feasible baseline revenue (within 1e-4 rel tol)."""
+         curves, current_budgets, total_budget, bounds, mean_aor = self._make_optimizer_inputs()
+@@ -553,10 +553,10 @@
+                 opt.set_data(curves, current_budgets, total_budget, CAMPAIGN_NAMES, mean_aor)
+                 opt.build_model()
+                 model = opt.solve()
+-                if model.Status == GRB.OPTIMAL:
+-                    gurobi_rev = model.ObjVal
+-                    assert gurobi_rev >= best_baseline * (1.0 - 1e-4), \
+-                        f"Gurobi {gurobi_rev:.0f} < best baseline {best_baseline:.0f}"
++                assert model.Status == GRB.OPTIMAL
++                gurobi_rev = model.ObjVal
++                assert gurobi_rev >= best_baseline * (1.0 - 1e-4), \
++                    f"Gurobi {gurobi_rev:.0f} < best baseline {best_baseline:.0f}"
+ 
+ 
+ # ---------------------------------------------------------------------------
+@@ -723,6 +723,8 @@
+ # T22–T24: Integration tests
+ # ---------------------------------------------------------------------------
+ 
++@pytest.mark.gurobi
++@pytest.mark.skipif(gp is None, reason="BLOCKED: gurobipy unavailable; integration NOT executed")
+ class TestIntegration:
+ 
+     def test_T22_run_demonstration_completes(self, tmp_path):

@@ -1,0 +1,7 @@
+..............ssssss.....s.sss...............                            [100%]
+=========================== short test summary info ============================
+SKIPPED [7] test_naver_budget_optimizer.py:160: BLOCKED: gurobipy is unavailable; solver NOT executed
+SKIPPED [1] test_naver_budget_optimizer.py:730: BLOCKED: gurobipy unavailable; integration NOT executed
+SKIPPED [1] test_naver_budget_optimizer.py:779: BLOCKED: gurobipy unavailable; integration NOT executed
+SKIPPED [1] test_naver_budget_optimizer.py:818: BLOCKED: gurobipy unavailable; integration NOT executed
+35 passed, 10 skipped in 0.73s

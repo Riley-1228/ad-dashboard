@@ -1,0 +1,625 @@
+{
+  "status": "ok",
+  "optimizationScope": "channel",
+  "revenueValidity": {
+    "Google": {
+      "startDate": "2026-02-21",
+      "validDays": 220
+    },
+    "Meta": {
+      "startDate": "2026-02-21",
+      "validDays": 220
+    },
+    "Naver": {
+      "startDate": "2026-02-21",
+      "validDays": 220
+    }
+  },
+  "portfolioAction": "SHADOW_ELIGIBLE",
+  "productionWriteEnabled": false,
+  "shadowOnly": true,
+  "advertiserId": "synthetic-channel-test",
+  "accountId": null,
+  "platform": "channel_portfolio",
+  "baselineSource": "historical_mean_daily_spend",
+  "dataWindow": {
+    "start": "2026-02-21",
+    "end": "2026-09-28",
+    "portfolioUniqueDates": 220,
+    "minimumHistoryDays": 70,
+    "modeledTrainingDays": {
+      "min": 176,
+      "max": 176
+    },
+    "modeledValidationDays": {
+      "min": 44,
+      "max": 44
+    }
+  },
+  "totalDailyBudget": 1016340.1120909092,
+  "modeledDailyBudget": 1016340.1120909092,
+  "heldDailyBudget": 0.0,
+  "recommendedTotalBudget": 1016340.1120909092,
+  "maxBudgetChangePct": 0.3,
+  "estimatedCurrentRevenue": 5314149.583190596,
+  "estimatedRecommendedRevenue": 5316883.589289367,
+  "estimatedLiftPct": 0.05144766920787316,
+  "revenueEstimateComposition": {
+    "modeledCampaignRevenueSource": "v2_response_curve",
+    "historyHoldRevenueSource": "historical_mean_daily_revenue_proxy"
+  },
+  "campaignCounts": {
+    "total": 3,
+    "modeled": 3,
+    "eligible": 3,
+    "review": 0,
+    "gateHoldCurrent": 0,
+    "historyHoldCurrent": 0,
+    "totalHoldCurrent": 0
+  },
+  "historyClassification": {
+    "totalUniqueDates": 220,
+    "minimumRequiredDays": 70,
+    "campaignSummary": [
+      {
+        "campaign_id": "Google",
+        "observed_days": 220,
+        "first_date": "2026-02-21",
+        "last_date": "2026-09-28",
+        "calendar_days": 220,
+        "missing_within_span": 0,
+        "history_eligible": true,
+        "history_action": "MODEL_CANDIDATE",
+        "history_reason": null
+      },
+      {
+        "campaign_id": "Meta",
+        "observed_days": 220,
+        "first_date": "2026-02-21",
+        "last_date": "2026-09-28",
+        "calendar_days": 220,
+        "missing_within_span": 0,
+        "history_eligible": true,
+        "history_action": "MODEL_CANDIDATE",
+        "history_reason": null
+      },
+      {
+        "campaign_id": "Naver",
+        "observed_days": 220,
+        "first_date": "2026-02-21",
+        "last_date": "2026-09-28",
+        "calendar_days": 220,
+        "missing_within_span": 0,
+        "history_eligible": true,
+        "history_action": "MODEL_CANDIDATE",
+        "history_reason": null
+      }
+    ],
+    "eligibleCampaignIds": [
+      "Google",
+      "Meta",
+      "Naver"
+    ],
+    "holdCampaignIds": []
+  },
+  "independentValidation": {
+    "passed": true,
+    "checks": {
+      "mean_lift_positive": true,
+      "cases_beating_current": true,
+      "oracle_gap": true
+    },
+    "metrics": {
+      "cases": 18,
+      "mean_lift_vs_current_pct": 0.6501211817038919,
+      "mean_oracle_gap_pct": 0.1287832318965259,
+      "pct_cases_beating_current": 100.0
+    }
+  },
+  "slopeDiagnostics": {
+    "summary": [
+      {
+        "campaign_id": "Google",
+        "successful_refits": 4,
+        "requested_refits": 4,
+        "slope_spread_ratio_at_reference": 0.0023551116234381505,
+        "min_marginal_roas_pct": 275.0414561266342,
+        "max_marginal_roas_pct": 275.68936617995143,
+        "is_confidence_interval": false
+      },
+      {
+        "campaign_id": "Meta",
+        "successful_refits": 4,
+        "requested_refits": 4,
+        "slope_spread_ratio_at_reference": 0.0025975751933053812,
+        "min_marginal_roas_pct": 254.46026397210017,
+        "max_marginal_roas_pct": 255.1225156249594,
+        "is_confidence_interval": false
+      },
+      {
+        "campaign_id": "Naver",
+        "successful_refits": 4,
+        "requested_refits": 4,
+        "slope_spread_ratio_at_reference": 0.006789706803603639,
+        "min_marginal_roas_pct": 249.50588370502223,
+        "max_marginal_roas_pct": 251.20275346332392,
+        "is_confidence_interval": false
+      }
+    ],
+    "refits": [
+      {
+        "campaign_id": "Google",
+        "omitted_block": 0,
+        "probe_spend_krw": 186377.35406818183,
+        "refit_success": true,
+        "mode": "calendar_robust_saturation",
+        "marginal_roas_pct": 392.4926252224339,
+        "base_marginal_roas_pct": 392.606700363172,
+        "message": "`gtol` termination condition is satisfied."
+      },
+      {
+        "campaign_id": "Google",
+        "omitted_block": 0,
+        "probe_spend_krw": 266253.3629545455,
+        "refit_success": true,
+        "mode": "calendar_robust_saturation",
+        "marginal_roas_pct": 275.0414561266342,
+        "base_marginal_roas_pct": 275.2187322732691,
+        "message": "`gtol` termination condition is satisfied."
+      },
+      {
+        "campaign_id": "Google",
+        "omitted_block": 0,
+        "probe_spend_krw": 346129.3718409091,
+        "refit_success": true,
+        "mode": "calendar_robust_saturation",
+        "marginal_roas_pct": 192.73687638178694,
+        "base_marginal_roas_pct": 192.92933748720753,
+        "message": "`gtol` termination condition is satisfied."
+      },
+      {
+        "campaign_id": "Google",
+        "omitted_block": 1,
+        "probe_spend_krw": 186377.35406818183,
+        "refit_success": true,
+        "mode": "calendar_robust_saturation",
+        "marginal_roas_pct": 392.61851981301805,
+        "base_marginal_roas_pct": 392.606700363172,
+        "message": "`gtol` termination condition is satisfied."
+      },
+      {
+        "campaign_id": "Google",
+        "omitted_block": 1,
+        "probe_spend_krw": 266253.3629545455,
+        "refit_success": true,
+        "mode": "calendar_robust_saturation",
+        "marginal_roas_pct": 275.1267759942957,
+        "base_marginal_roas_pct": 275.2187322732691,
+        "message": "`gtol` termination condition is satisfied."
+      },
+      {
+        "campaign_id": "Google",
+        "omitted_block": 1,
+        "probe_spend_krw": 346129.3718409091,
+        "refit_success": true,
+        "mode": "calendar_robust_saturation",
+        "marginal_roas_pct": 192.79463155498743,
+        "base_marginal_roas_pct": 192.92933748720753,
+        "message": "`gtol` termination condition is satisfied."
+      },
+      {
+        "campaign_id": "Google",
+        "omitted_block": 2,
+        "probe_spend_krw": 186377.35406818183,
+        "refit_success": true,
+        "mode": "calendar_robust_saturation",
+        "marginal_roas_pct": 392.4271593373001,
+        "base_marginal_roas_pct": 392.606700363172,
+        "message": "`gtol` termination condition is satisfied."
+      },
+      {
+        "campaign_id": "Google",
+        "omitted_block": 2,
+        "probe_spend_krw": 266253.3629545455,
+        "refit_success": true,
+        "mode": "calendar_robust_saturation",
+        "marginal_roas_pct": 275.08922809586784,
+        "base_marginal_roas_pct": 275.2187322732691,
+        "message": "`gtol` termination condition is satisfied."
+      },
+      {
+        "campaign_id": "Google",
+        "omitted_block": 2,
+        "probe_spend_krw": 346129.3718409091,
+        "refit_success": true,
+        "mode": "calendar_robust_saturation",
+        "marginal_roas_pct": 192.83599927735077,
+        "base_marginal_roas_pct": 192.92933748720753,
+        "message": "`gtol` termination condition is satisfied."
+      },
+      {
+        "campaign_id": "Google",
+        "omitted_block": 3,
+        "probe_spend_krw": 186377.35406818183,
+        "refit_success": true,
+        "mode": "calendar_robust_saturation",
+        "marginal_roas_pct": 392.94135267299316,
+        "base_marginal_roas_pct": 392.606700363172,
+        "message": "`gtol` termination condition is satisfied."
+      },
+      {
+        "campaign_id": "Google",
+        "omitted_block": 3,
+        "probe_spend_krw": 266253.3629545455,
+        "refit_success": true,
+        "mode": "calendar_robust_saturation",
+        "marginal_roas_pct": 275.68936617995143,
+        "base_marginal_roas_pct": 275.2187322732691,
+        "message": "`gtol` termination condition is satisfied."
+      },
+      {
+        "campaign_id": "Google",
+        "omitted_block": 3,
+        "probe_spend_krw": 346129.3718409091,
+        "refit_success": true,
+        "mode": "calendar_robust_saturation",
+        "marginal_roas_pct": 193.4248612615598,
+        "base_marginal_roas_pct": 192.92933748720753,
+        "message": "`gtol` termination condition is satisfied."
+      },
+      {
+        "campaign_id": "Meta",
+        "omitted_block": 0,
+        "probe_spend_krw": 229923.79534090907,
+        "refit_success": true,
+        "mode": "calendar_robust_saturation",
+        "marginal_roas_pct": 368.5466583663151,
+        "base_marginal_roas_pct": 368.8145114550503,
+        "message": "`gtol` termination condition is satisfied."
+      },
+      {
+        "campaign_id": "Meta",
+        "omitted_block": 0,
+        "probe_spend_krw": 328462.56477272726,
+        "refit_success": true,
+        "mode": "calendar_robust_saturation",
+        "marginal_roas_pct": 254.46026397210017,
+        "base_marginal_roas_pct": 254.87972788842802,
+        "message": "`gtol` termination condition is satisfied."
+      },
+      {
+        "campaign_id": "Meta",
+        "omitted_block": 0,
+        "probe_spend_krw": 427001.3342045455,
+        "refit_success": true,
+        "mode": "calendar_robust_saturation",
+        "marginal_roas_pct": 175.69017238624076,
+        "base_marginal_roas_pct": 176.14186446239287,
+        "message": "`gtol` termination condition is satisfied."
+      },
+      {
+        "campaign_id": "Meta",
+        "omitted_block": 1,
+        "probe_spend_krw": 229923.79534090907,
+        "refit_success": true,
+        "mode": "calendar_robust_saturation",
+        "marginal_roas_pct": 368.84102056682843,
+        "base_marginal_roas_pct": 368.8145114550503,
+        "message": "`gtol` termination condition is satisfied."
+      },
+      {
+        "campaign_id": "Meta",
+        "omitted_block": 1,
+        "probe_spend_krw": 328462.56477272726,
+        "refit_success": true,
+        "mode": "calendar_robust_saturation",
+        "marginal_roas_pct": 254.97350214235848,
+        "base_marginal_roas_pct": 254.87972788842802,
+        "message": "`gtol` termination condition is satisfied."
+      },
+      {
+        "campaign_id": "Meta",
+        "omitted_block": 1,
+        "probe_spend_krw": 427001.3342045455,
+        "refit_success": true,
+        "mode": "calendar_robust_saturation",
+        "marginal_roas_pct": 176.25883014538556,
+        "base_marginal_roas_pct": 176.14186446239287,
+        "message": "`gtol` termination condition is satisfied."
+      },
+      {
+        "campaign_id": "Meta",
+        "omitted_block": 2,
+        "probe_spend_krw": 229923.79534090907,
+        "refit_success": true,
+        "mode": "calendar_robust_saturation",
+        "marginal_roas_pct": 369.035314560773,
+        "base_marginal_roas_pct": 368.8145114550503,
+        "message": "`gtol` termination condition is satisfied."
+      },
+      {
+        "campaign_id": "Meta",
+        "omitted_block": 2,
+        "probe_spend_krw": 328462.56477272726,
+        "refit_success": true,
+        "mode": "calendar_robust_saturation",
+        "marginal_roas_pct": 255.1225156249594,
+        "base_marginal_roas_pct": 254.87972788842802,
+        "message": "`gtol` termination condition is satisfied."
+      },
+      {
+        "campaign_id": "Meta",
+        "omitted_block": 2,
+        "probe_spend_krw": 427001.3342045455,
+        "refit_success": true,
+        "mode": "calendar_robust_saturation",
+        "marginal_roas_pct": 176.37200400800393,
+        "base_marginal_roas_pct": 176.14186446239287,
+        "message": "`gtol` termination condition is satisfied."
+      },
+      {
+        "campaign_id": "Meta",
+        "omitted_block": 3,
+        "probe_spend_krw": 229923.79534090907,
+        "refit_success": true,
+        "mode": "calendar_robust_saturation",
+        "marginal_roas_pct": 368.8027466337298,
+        "base_marginal_roas_pct": 368.8145114550503,
+        "message": "`gtol` termination condition is satisfied."
+      },
+      {
+        "campaign_id": "Meta",
+        "omitted_block": 3,
+        "probe_spend_krw": 328462.56477272726,
+        "refit_success": true,
+        "mode": "calendar_robust_saturation",
+        "marginal_roas_pct": 254.92638800597553,
+        "base_marginal_roas_pct": 254.87972788842802,
+        "message": "`gtol` termination condition is satisfied."
+      },
+      {
+        "campaign_id": "Meta",
+        "omitted_block": 3,
+        "probe_spend_krw": 427001.3342045455,
+        "refit_success": true,
+        "mode": "calendar_robust_saturation",
+        "marginal_roas_pct": 176.2119829501009,
+        "base_marginal_roas_pct": 176.14186446239287,
+        "message": "`gtol` termination condition is satisfied."
+      },
+      {
+        "campaign_id": "Naver",
+        "omitted_block": 0,
+        "probe_spend_krw": 295483.7256477272,
+        "refit_success": true,
+        "mode": "calendar_robust_saturation",
+        "marginal_roas_pct": 378.3265072648569,
+        "base_marginal_roas_pct": 377.474957758612,
+        "message": "`gtol` termination condition is satisfied."
+      },
+      {
+        "campaign_id": "Naver",
+        "omitted_block": 0,
+        "probe_spend_krw": 422119.6080681818,
+        "refit_success": true,
+        "mode": "calendar_robust_saturation",
+        "marginal_roas_pct": 251.20275346332392,
+        "base_marginal_roas_pct": 250.10206766405884,
+        "message": "`gtol` termination condition is satisfied."
+      },
+      {
+        "campaign_id": "Naver",
+        "omitted_block": 0,
+        "probe_spend_krw": 548755.4904886363,
+        "refit_success": true,
+        "mode": "calendar_robust_saturation",
+        "marginal_roas_pct": 166.79461294891186,
+        "base_marginal_roas_pct": 165.70912311973197,
+        "message": "`gtol` termination condition is satisfied."
+      },
+      {
+        "campaign_id": "Naver",
+        "omitted_block": 1,
+        "probe_spend_krw": 295483.7256477272,
+        "refit_success": true,
+        "mode": "calendar_robust_saturation",
+        "marginal_roas_pct": 377.6555113661478,
+        "base_marginal_roas_pct": 377.474957758612,
+        "message": "`gtol` termination condition is satisfied."
+      },
+      {
+        "campaign_id": "Naver",
+        "omitted_block": 1,
+        "probe_spend_krw": 422119.6080681818,
+        "refit_success": true,
+        "mode": "calendar_robust_saturation",
+        "marginal_roas_pct": 250.29388271616156,
+        "base_marginal_roas_pct": 250.10206766405884,
+        "message": "`gtol` termination condition is satisfied."
+      },
+      {
+        "campaign_id": "Naver",
+        "omitted_block": 1,
+        "probe_spend_krw": 548755.4904886363,
+        "refit_success": true,
+        "mode": "calendar_robust_saturation",
+        "marginal_roas_pct": 165.88405528231144,
+        "base_marginal_roas_pct": 165.70912311973197,
+        "message": "`gtol` termination condition is satisfied."
+      },
+      {
+        "campaign_id": "Naver",
+        "omitted_block": 2,
+        "probe_spend_krw": 295483.7256477272,
+        "refit_success": true,
+        "mode": "calendar_robust_saturation",
+        "marginal_roas_pct": 377.115865283826,
+        "base_marginal_roas_pct": 377.474957758612,
+        "message": "`gtol` termination condition is satisfied."
+      },
+      {
+        "campaign_id": "Naver",
+        "omitted_block": 2,
+        "probe_spend_krw": 422119.6080681818,
+        "refit_success": true,
+        "mode": "calendar_robust_saturation",
+        "marginal_roas_pct": 249.54206230611055,
+        "base_marginal_roas_pct": 250.10206766405884,
+        "message": "`gtol` termination condition is satisfied."
+      },
+      {
+        "campaign_id": "Naver",
+        "omitted_block": 2,
+        "probe_spend_krw": 548755.4904886363,
+        "refit_success": true,
+        "mode": "calendar_robust_saturation",
+        "marginal_roas_pct": 165.1249565252844,
+        "base_marginal_roas_pct": 165.70912311973197,
+        "message": "`gtol` termination condition is satisfied."
+      },
+      {
+        "campaign_id": "Naver",
+        "omitted_block": 3,
+        "probe_spend_krw": 295483.7256477272,
+        "refit_success": true,
+        "mode": "calendar_robust_saturation",
+        "marginal_roas_pct": 376.9024926634282,
+        "base_marginal_roas_pct": 377.474957758612,
+        "message": "`gtol` termination condition is satisfied."
+      },
+      {
+        "campaign_id": "Naver",
+        "omitted_block": 3,
+        "probe_spend_krw": 422119.6080681818,
+        "refit_success": true,
+        "mode": "calendar_robust_saturation",
+        "marginal_roas_pct": 249.50588370502223,
+        "base_marginal_roas_pct": 250.10206766405884,
+        "message": "`gtol` termination condition is satisfied."
+      },
+      {
+        "campaign_id": "Naver",
+        "omitted_block": 3,
+        "probe_spend_krw": 548755.4904886363,
+        "refit_success": true,
+        "mode": "calendar_robust_saturation",
+        "marginal_roas_pct": 165.17053406440544,
+        "base_marginal_roas_pct": 165.70912311973197,
+        "message": "`gtol` termination condition is satisfied."
+      }
+    ]
+  },
+  "solver": {
+    "unguarded": {
+      "solver": "Gurobi",
+      "status_code": 2,
+      "version": [
+        13,
+        0,
+        3
+      ],
+      "num_variables": 6,
+      "num_constraints": 64,
+      "num_integer_variables": 0,
+      "num_sos": 0,
+      "num_general_constraints": 0,
+      "is_optimal": true,
+      "objective_value": 5316883.589289367,
+      "max_hypograph_error": 0.0
+    },
+    "guarded": {
+      "solver": "Gurobi",
+      "status_code": 2,
+      "version": [
+        13,
+        0,
+        3
+      ],
+      "num_variables": 6,
+      "num_constraints": 64,
+      "num_integer_variables": 0,
+      "num_sos": 0,
+      "num_general_constraints": 0,
+      "is_optimal": true,
+      "objective_value": 5316883.589289367,
+      "max_hypograph_error": 0.0
+    }
+  },
+  "warnings": [],
+  "campaigns": [
+    {
+      "campaignId": "Google",
+      "campaignName": "Google",
+      "currentBudget": 267213.90431818186,
+      "candidateBudget": 271228.96315789456,
+      "recommendedBudget": 271228.96315789456,
+      "changePct": 1.5025635922492322,
+      "expectedRevenue": 1416968.8477550957,
+      "expectedRevenueSource": "v2_response_curve",
+      "expectedRoas": 522.4253454562722,
+      "marginalRoasLeft": 293.7816140387226,
+      "marginalRoasRight": 247.27782799562803,
+      "isInObservedSupport": true,
+      "safetyAction": "ELIGIBLE",
+      "safetyReasons": [],
+      "history": {
+        "observedDays": 220,
+        "firstDate": "2026-02-21",
+        "lastDate": "2026-09-28",
+        "missingWithinSpan": 0
+      }
+    },
+    {
+      "campaignId": "Meta",
+      "campaignName": "Meta",
+      "currentBudget": 328128.5207272727,
+      "candidateBudget": 328683.96366985666,
+      "recommendedBudget": 328683.96366985666,
+      "changePct": 0.1692760328644505,
+      "expectedRevenue": 1649358.9903864332,
+      "expectedRevenueSource": "v2_response_curve",
+      "expectedRoas": 501.8069552194872,
+      "marginalRoasLeft": 274.7782469007292,
+      "marginalRoasRight": 274.7782469007292,
+      "isInObservedSupport": true,
+      "safetyAction": "ELIGIBLE",
+      "safetyReasons": [],
+      "history": {
+        "observedDays": 220,
+        "firstDate": "2026-02-21",
+        "lastDate": "2026-09-28",
+        "missingWithinSpan": 0
+      }
+    },
+    {
+      "campaignId": "Naver",
+      "campaignName": "Naver",
+      "currentBudget": 420997.6870454546,
+      "candidateBudget": 416427.18526315794,
+      "recommendedBudget": 416427.18526315794,
+      "changePct": -1.0856358414632243,
+      "expectedRevenue": 2250555.751147839,
+      "expectedRevenueSource": "v2_response_curve",
+      "expectedRoas": 540.4440033677479,
+      "marginalRoasLeft": 281.07367224714375,
+      "marginalRoasRight": 231.6536662629887,
+      "isInObservedSupport": true,
+      "safetyAction": "ELIGIBLE",
+      "safetyReasons": [],
+      "history": {
+        "observedDays": 220,
+        "firstDate": "2026-02-21",
+        "lastDate": "2026-09-28",
+        "missingWithinSpan": 0
+      }
+    }
+  ],
+  "limitations": [
+    "Shadow preview only; no Naver budget write is performed.",
+    "Current budget baseline is historical mean daily spend, not a persisted configured Naver daily budget.",
+    "Estimated lift is model-based and is not a causal or realized revenue guarantee.",
+    "Campaigns with insufficient history are excluded from response-curve fitting and fixed at current budget.",
+    "Missing campaign dates are never silently filled with zero spend.",
+    "Revenue for history-HOLD campaigns is represented by historical mean daily revenue only for portfolio-level display; it is not a fitted response estimate."
+  ]
+}

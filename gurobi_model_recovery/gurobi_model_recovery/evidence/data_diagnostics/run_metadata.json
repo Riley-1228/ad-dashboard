@@ -1,0 +1,37 @@
+{
+  "mode": "diagnostics",
+  "python": "3.13.5",
+  "config": {
+    "lambda_alpha": 0.01,
+    "lambda_beta": 0.01,
+    "n_pwl_breakpoints": 20,
+    "train_fraction": 0.8,
+    "total_daily_budget": null,
+    "max_budget_change_pct": null,
+    "time_limit_sec": 60.0,
+    "sensitivity_lambdas": []
+  },
+  "dataset_kind": "synthetic, not real advertising observations",
+  "evaluation": "Full-dataset budget/reference demonstration; response fit uses first 80% of dates. Final 20% is validation, not an untouched final test.",
+  "ground_truth_used_for_fitting": false,
+  "policy_source": "Approved synthetic min/max budgets extracted to separate 3-column file.",
+  "conversion_model": "AOR approximation; conversions/CPA are not independently validated.",
+  "gurobi_executed": false,
+  "status": "DIAGNOSTICS_COMPLETED_NOT_SOLVED",
+  "rows": 4380,
+  "campaigns": 12,
+  "dates": 365,
+  "training_dates": 292,
+  "validation_dates": 73,
+  "total_daily_budget_KRW": 5993525.794684932,
+  "fits_converged": 12,
+  "zero_conversion_positive_revenue_rows": 32,
+  "expected_core_lp_variables": 24,
+  "expected_core_lp_constraints": 229,
+  "limitations": [
+    "Narrow spend coverage",
+    "Shared spend/revenue seasonality confounding",
+    "10% extrapolation adjustment is a heuristic, not a confidence bound",
+    "Fixed prior and 0.01 regularization are not tuned for accuracy"
+  ]
+}

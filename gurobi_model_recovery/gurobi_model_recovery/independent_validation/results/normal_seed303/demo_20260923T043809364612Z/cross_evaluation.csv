@@ -1,0 +1,7 @@
+﻿evaluation_curve,allocation_source,is_feasible,estimated_revenue_krw,is_independent_accuracy_test
+V1,Current,True,42925741.70820006,False
+V1,V1_Optimized,True,43792074.40668961,False
+V1,V2_Optimized,True,42931680.501441866,False
+V2,Current,True,44786060.99114896,False
+V2,V1_Optimized,True,44137444.65117049,False
+V2,V2_Optimized,True,45243160.30655248,False

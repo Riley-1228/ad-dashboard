@@ -1,0 +1,90 @@
+{
+  "guardrail_version": "guarded-reoptimization-1.0",
+  "review_policy": "freeze",
+  "review_max_change_pct": 0.1,
+  "production_write_enabled": false,
+  "shadow_only": true,
+  "source_demo_dir": "C:\\Users\\SAMSUNG\\Desktop\\adscope-dashboard\\gurobi_model_recovery\\gurobi_model_recovery\\outputs_v2\\demo_20260923T023620736521Z",
+  "safety_decisions_path": "C:\\Users\\SAMSUNG\\Desktop\\adscope-dashboard\\gurobi_model_recovery\\gurobi_model_recovery\\outputs_v2\\demo_20260923T023620736521Z\\safety_gate\\campaign_safety_decisions.csv",
+  "total_daily_budget_KRW": 5993525.794684932,
+  "solver": {
+    "solver": "Gurobi",
+    "status_code": 2,
+    "version": [
+      13,
+      0,
+      3
+    ],
+    "num_variables": 24,
+    "num_constraints": 229,
+    "num_integer_variables": 0,
+    "num_sos": 0,
+    "num_general_constraints": 0,
+    "is_optimal": true,
+    "objective_value": 45465980.03711372,
+    "max_hypograph_error": 4.656612873077393e-10
+  },
+  "guarded_bounds": {
+    "C01": [
+      491070.40695890406,
+      491070.40695890406
+    ],
+    "C02": [
+      241318.8546328767,
+      448163.5871753425
+    ],
+    "C03": [
+      445745.9730931507,
+      827813.9500301371
+    ],
+    "C04": [
+      378485.3762219178,
+      702901.4129835616
+    ],
+    "C05": [
+      546794.8096301369,
+      1015476.0750273971
+    ],
+    "C06": [
+      309130.3913945205,
+      574099.2983041096
+    ],
+    "C07": [
+      204980.82060821916,
+      380678.6668438356
+    ],
+    "C08": [
+      392659.6517808219,
+      392659.6517808219
+    ],
+    "C09": [
+      693340.0916986301,
+      693340.0916986301
+    ],
+    "C10": [
+      343066.9629972602,
+      637124.3598520547
+    ],
+    "C11": [
+      415687.30130410957,
+      771990.7024219178
+    ],
+    "C12": [
+      294726.3729863014,
+      294726.3729863014
+    ]
+  },
+  "notes": [
+    "C01: REVIEW -> fixed at current in strict shadow mode",
+    "C08: REVIEW -> fixed at current in strict shadow mode",
+    "C09: HOLD_CURRENT -> fixed at current",
+    "C12: HOLD_CURRENT -> fixed at current"
+  ],
+  "important": [
+    "HOLD_CURRENT campaigns are fixed inside the optimization model.",
+    "In strict mode REVIEW campaigns are also fixed at current until human review.",
+    "Eligible campaigns absorb the remaining budget subject to their original effective bounds.",
+    "Estimated revenue is model-based and is not an independent accuracy certificate.",
+    "Real advertising writes remain disabled."
+  ]
+}

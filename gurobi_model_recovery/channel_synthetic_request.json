@@ -1,0 +1,6614 @@
+{
+  "advertiserId": "synthetic-channel-test",
+  "accountId": null,
+  "optimizationScope": "channel",
+  "maxBudgetChangePct": 0.3,
+  "reviewPolicy": "freeze",
+  "revenueValidStartDates": {
+    "Naver": "2026-02-21",
+    "Meta": "2026-02-21",
+    "Google": "2026-02-21"
+  },
+  "performance": [
+    {
+      "date": "2026-02-21",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 465513.56,
+      "revenue": 2341884.39,
+      "impressions": 29273.55,
+      "clicks": 731.84,
+      "conversions": 29.2736
+    },
+    {
+      "date": "2026-02-21",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 417429.87,
+      "revenue": 1828008.97,
+      "impressions": 24373.45,
+      "clicks": 609.34,
+      "conversions": 24.3735
+    },
+    {
+      "date": "2026-02-21",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 337342.42,
+      "revenue": 1573930.33,
+      "impressions": 18516.83,
+      "clicks": 462.92,
+      "conversions": 18.5168
+    },
+    {
+      "date": "2026-02-22",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 502278.44,
+      "revenue": 2417522.24,
+      "impressions": 30219.03,
+      "clicks": 755.48,
+      "conversions": 30.219
+    },
+    {
+      "date": "2026-02-22",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 427246.8,
+      "revenue": 1837849.32,
+      "impressions": 24504.66,
+      "clicks": 612.62,
+      "conversions": 24.5047
+    },
+    {
+      "date": "2026-02-22",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 314430.67,
+      "revenue": 1521176.55,
+      "impressions": 17896.19,
+      "clicks": 447.4,
+      "conversions": 17.8962
+    },
+    {
+      "date": "2026-02-23",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 507225.43,
+      "revenue": 2432119.21,
+      "impressions": 30401.49,
+      "clicks": 760.04,
+      "conversions": 30.4015
+    },
+    {
+      "date": "2026-02-23",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 430998.02,
+      "revenue": 1863339.96,
+      "impressions": 24844.53,
+      "clicks": 621.11,
+      "conversions": 24.8445
+    },
+    {
+      "date": "2026-02-23",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 295353.19,
+      "revenue": 1480261.84,
+      "impressions": 17414.85,
+      "clicks": 435.37,
+      "conversions": 17.4148
+    },
+    {
+      "date": "2026-02-24",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 547447.12,
+      "revenue": 2491426.24,
+      "impressions": 31142.83,
+      "clicks": 778.57,
+      "conversions": 31.1428
+    },
+    {
+      "date": "2026-02-24",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 425462.46,
+      "revenue": 1859574.21,
+      "impressions": 24794.32,
+      "clicks": 619.86,
+      "conversions": 24.7943
+    },
+    {
+      "date": "2026-02-24",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 275149.96,
+      "revenue": 1417545.63,
+      "impressions": 16677.01,
+      "clicks": 416.93,
+      "conversions": 16.677
+    },
+    {
+      "date": "2026-02-25",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 563305.2,
+      "revenue": 2532863.45,
+      "impressions": 31660.79,
+      "clicks": 791.52,
+      "conversions": 31.6608
+    },
+    {
+      "date": "2026-02-25",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 395394.5,
+      "revenue": 1782842.08,
+      "impressions": 23771.23,
+      "clicks": 594.28,
+      "conversions": 23.7712
+    },
+    {
+      "date": "2026-02-25",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 260024.86,
+      "revenue": 1389504.79,
+      "impressions": 16347.12,
+      "clicks": 408.68,
+      "conversions": 16.3471
+    },
+    {
+      "date": "2026-02-26",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 561953.36,
+      "revenue": 2550762.25,
+      "impressions": 31884.53,
+      "clicks": 797.11,
+      "conversions": 31.8845
+    },
+    {
+      "date": "2026-02-26",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 382113.09,
+      "revenue": 1787752.29,
+      "impressions": 23836.7,
+      "clicks": 595.92,
+      "conversions": 23.8367
+    },
+    {
+      "date": "2026-02-26",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 229848.09,
+      "revenue": 1297799.75,
+      "impressions": 15268.23,
+      "clicks": 381.71,
+      "conversions": 15.2682
+    },
+    {
+      "date": "2026-02-27",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 554773.27,
+      "revenue": 2533924.06,
+      "impressions": 31674.05,
+      "clicks": 791.85,
+      "conversions": 31.6741
+    },
+    {
+      "date": "2026-02-27",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 362162.53,
+      "revenue": 1731478.99,
+      "impressions": 23086.39,
+      "clicks": 577.16,
+      "conversions": 23.0864
+    },
+    {
+      "date": "2026-02-27",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 215213.79,
+      "revenue": 1236722.16,
+      "impressions": 14549.67,
+      "clicks": 363.74,
+      "conversions": 14.5497
+    },
+    {
+      "date": "2026-02-28",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 522159.49,
+      "revenue": 2463298.75,
+      "impressions": 30791.23,
+      "clicks": 769.78,
+      "conversions": 30.7912
+    },
+    {
+      "date": "2026-02-28",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 318136.93,
+      "revenue": 1614737.34,
+      "impressions": 21529.83,
+      "clicks": 538.25,
+      "conversions": 21.5298
+    },
+    {
+      "date": "2026-02-28",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 189846.56,
+      "revenue": 1151025.5,
+      "impressions": 13541.48,
+      "clicks": 338.54,
+      "conversions": 13.5415
+    },
+    {
+      "date": "2026-03-01",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 506609.42,
+      "revenue": 2439108.62,
+      "impressions": 30488.86,
+      "clicks": 762.22,
+      "conversions": 30.4889
+    },
+    {
+      "date": "2026-03-01",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 295579.24,
+      "revenue": 1553014.99,
+      "impressions": 20706.87,
+      "clicks": 517.67,
+      "conversions": 20.7069
+    },
+    {
+      "date": "2026-03-01",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 182543.92,
+      "revenue": 1137527.22,
+      "impressions": 13382.67,
+      "clicks": 334.57,
+      "conversions": 13.3827
+    },
+    {
+      "date": "2026-03-02",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 474831.72,
+      "revenue": 2388988.38,
+      "impressions": 29862.35,
+      "clicks": 746.56,
+      "conversions": 29.8624
+    },
+    {
+      "date": "2026-03-02",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 265931.2,
+      "revenue": 1479710.7,
+      "impressions": 19729.48,
+      "clicks": 493.24,
+      "conversions": 19.7295
+    },
+    {
+      "date": "2026-03-02",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 177234.09,
+      "revenue": 1103701.65,
+      "impressions": 12984.73,
+      "clicks": 324.62,
+      "conversions": 12.9847
+    },
+    {
+      "date": "2026-03-03",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 447762.27,
+      "revenue": 2332109.46,
+      "impressions": 29151.37,
+      "clicks": 728.78,
+      "conversions": 29.1514
+    },
+    {
+      "date": "2026-03-03",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 252587.21,
+      "revenue": 1434684.31,
+      "impressions": 19129.12,
+      "clicks": 478.23,
+      "conversions": 19.1291
+    },
+    {
+      "date": "2026-03-03",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 191151.46,
+      "revenue": 1167559.32,
+      "impressions": 13735.99,
+      "clicks": 343.4,
+      "conversions": 13.736
+    },
+    {
+      "date": "2026-03-04",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 392334.17,
+      "revenue": 2168259.06,
+      "impressions": 27103.24,
+      "clicks": 677.58,
+      "conversions": 27.1032
+    },
+    {
+      "date": "2026-03-04",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 233232.58,
+      "revenue": 1355798.29,
+      "impressions": 18077.31,
+      "clicks": 451.93,
+      "conversions": 18.0773
+    },
+    {
+      "date": "2026-03-04",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 189956.71,
+      "revenue": 1166827.05,
+      "impressions": 13727.38,
+      "clicks": 343.18,
+      "conversions": 13.7274
+    },
+    {
+      "date": "2026-03-05",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 374831.44,
+      "revenue": 2132070.76,
+      "impressions": 26650.88,
+      "clicks": 666.27,
+      "conversions": 26.6509
+    },
+    {
+      "date": "2026-03-05",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 232894.53,
+      "revenue": 1358064.69,
+      "impressions": 18107.53,
+      "clicks": 452.69,
+      "conversions": 18.1075
+    },
+    {
+      "date": "2026-03-05",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 215564.05,
+      "revenue": 1248227.05,
+      "impressions": 14685.02,
+      "clicks": 367.13,
+      "conversions": 14.685
+    },
+    {
+      "date": "2026-03-06",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 330852.59,
+      "revenue": 1994064.45,
+      "impressions": 24925.81,
+      "clicks": 623.15,
+      "conversions": 24.9258
+    },
+    {
+      "date": "2026-03-06",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 231866.46,
+      "revenue": 1350744.71,
+      "impressions": 18009.93,
+      "clicks": 450.25,
+      "conversions": 18.0099
+    },
+    {
+      "date": "2026-03-06",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 228174.53,
+      "revenue": 1301350.42,
+      "impressions": 15310.0,
+      "clicks": 382.75,
+      "conversions": 15.31
+    },
+    {
+      "date": "2026-03-07",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 313215.09,
+      "revenue": 1933009.68,
+      "impressions": 24162.62,
+      "clicks": 604.07,
+      "conversions": 24.1626
+    },
+    {
+      "date": "2026-03-07",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 248916.76,
+      "revenue": 1417299.08,
+      "impressions": 18897.32,
+      "clicks": 472.43,
+      "conversions": 18.8973
+    },
+    {
+      "date": "2026-03-07",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 240135.3,
+      "revenue": 1316557.13,
+      "impressions": 15488.91,
+      "clicks": 387.22,
+      "conversions": 15.4889
+    },
+    {
+      "date": "2026-03-08",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 294011.68,
+      "revenue": 1878887.48,
+      "impressions": 23486.09,
+      "clicks": 587.15,
+      "conversions": 23.4861
+    },
+    {
+      "date": "2026-03-08",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 259827.08,
+      "revenue": 1451051.86,
+      "impressions": 19347.36,
+      "clicks": 483.68,
+      "conversions": 19.3474
+    },
+    {
+      "date": "2026-03-08",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 259753.51,
+      "revenue": 1382589.97,
+      "impressions": 16265.76,
+      "clicks": 406.64,
+      "conversions": 16.2658
+    },
+    {
+      "date": "2026-03-09",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 314302.34,
+      "revenue": 1948876.68,
+      "impressions": 24360.96,
+      "clicks": 609.02,
+      "conversions": 24.361
+    },
+    {
+      "date": "2026-03-09",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 283308.3,
+      "revenue": 1537443.36,
+      "impressions": 20499.24,
+      "clicks": 512.48,
+      "conversions": 20.4992
+    },
+    {
+      "date": "2026-03-09",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 277202.39,
+      "revenue": 1439022.67,
+      "impressions": 16929.68,
+      "clicks": 423.24,
+      "conversions": 16.9297
+    },
+    {
+      "date": "2026-03-10",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 313992.74,
+      "revenue": 1948095.42,
+      "impressions": 24351.19,
+      "clicks": 608.78,
+      "conversions": 24.3512
+    },
+    {
+      "date": "2026-03-10",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 292219.92,
+      "revenue": 1556871.38,
+      "impressions": 20758.29,
+      "clicks": 518.96,
+      "conversions": 20.7583
+    },
+    {
+      "date": "2026-03-10",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 293676.31,
+      "revenue": 1471704.34,
+      "impressions": 17314.17,
+      "clicks": 432.85,
+      "conversions": 17.3142
+    },
+    {
+      "date": "2026-03-11",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 324437.79,
+      "revenue": 2000694.66,
+      "impressions": 25008.68,
+      "clicks": 625.22,
+      "conversions": 25.0087
+    },
+    {
+      "date": "2026-03-11",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 327776.11,
+      "revenue": 1640238.63,
+      "impressions": 21869.85,
+      "clicks": 546.75,
+      "conversions": 21.8698
+    },
+    {
+      "date": "2026-03-11",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 310084.22,
+      "revenue": 1501742.32,
+      "impressions": 17667.56,
+      "clicks": 441.69,
+      "conversions": 17.6676
+    },
+    {
+      "date": "2026-03-12",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 358899.53,
+      "revenue": 2108607.34,
+      "impressions": 26357.59,
+      "clicks": 658.94,
+      "conversions": 26.3576
+    },
+    {
+      "date": "2026-03-12",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 338186.62,
+      "revenue": 1678277.61,
+      "impressions": 22377.03,
+      "clicks": 559.43,
+      "conversions": 22.377
+    },
+    {
+      "date": "2026-03-12",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 316374.93,
+      "revenue": 1514638.06,
+      "impressions": 17819.27,
+      "clicks": 445.48,
+      "conversions": 17.8193
+    },
+    {
+      "date": "2026-03-13",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 382250.53,
+      "revenue": 2162711.69,
+      "impressions": 27033.9,
+      "clicks": 675.85,
+      "conversions": 27.0339
+    },
+    {
+      "date": "2026-03-13",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 365788.47,
+      "revenue": 1737769.33,
+      "impressions": 23170.26,
+      "clicks": 579.26,
+      "conversions": 23.1703
+    },
+    {
+      "date": "2026-03-13",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 305220.23,
+      "revenue": 1495257.67,
+      "impressions": 17591.27,
+      "clicks": 439.78,
+      "conversions": 17.5913
+    },
+    {
+      "date": "2026-03-14",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 392065.85,
+      "revenue": 2206792.86,
+      "impressions": 27584.91,
+      "clicks": 689.62,
+      "conversions": 27.5849
+    },
+    {
+      "date": "2026-03-14",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 380422.07,
+      "revenue": 1779267.42,
+      "impressions": 23723.57,
+      "clicks": 593.09,
+      "conversions": 23.7236
+    },
+    {
+      "date": "2026-03-14",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 303380.45,
+      "revenue": 1483110.63,
+      "impressions": 17448.36,
+      "clicks": 436.21,
+      "conversions": 17.4484
+    },
+    {
+      "date": "2026-03-15",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 440729.3,
+      "revenue": 2330246.36,
+      "impressions": 29128.08,
+      "clicks": 728.2,
+      "conversions": 29.1281
+    },
+    {
+      "date": "2026-03-15",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 370796.89,
+      "revenue": 1746972.2,
+      "impressions": 23292.96,
+      "clicks": 582.32,
+      "conversions": 23.293
+    },
+    {
+      "date": "2026-03-15",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 288063.07,
+      "revenue": 1467633.62,
+      "impressions": 17266.28,
+      "clicks": 431.66,
+      "conversions": 17.2663
+    },
+    {
+      "date": "2026-03-16",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 460697.47,
+      "revenue": 2336562.47,
+      "impressions": 29207.03,
+      "clicks": 730.18,
+      "conversions": 29.207
+    },
+    {
+      "date": "2026-03-16",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 377551.98,
+      "revenue": 1763387.22,
+      "impressions": 23511.83,
+      "clicks": 587.8,
+      "conversions": 23.5118
+    },
+    {
+      "date": "2026-03-16",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 276465.59,
+      "revenue": 1441452.49,
+      "impressions": 16958.26,
+      "clicks": 423.96,
+      "conversions": 16.9583
+    },
+    {
+      "date": "2026-03-17",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 468357.93,
+      "revenue": 2356680.74,
+      "impressions": 29458.51,
+      "clicks": 736.46,
+      "conversions": 29.4585
+    },
+    {
+      "date": "2026-03-17",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 371070.57,
+      "revenue": 1756081.73,
+      "impressions": 23414.42,
+      "clicks": 585.36,
+      "conversions": 23.4144
+    },
+    {
+      "date": "2026-03-17",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 259009.78,
+      "revenue": 1378580.65,
+      "impressions": 16218.6,
+      "clicks": 405.46,
+      "conversions": 16.2186
+    },
+    {
+      "date": "2026-03-18",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 490979.87,
+      "revenue": 2423320.01,
+      "impressions": 30291.5,
+      "clicks": 757.29,
+      "conversions": 30.2915
+    },
+    {
+      "date": "2026-03-18",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 355461.03,
+      "revenue": 1714492.99,
+      "impressions": 22859.91,
+      "clicks": 571.5,
+      "conversions": 22.8599
+    },
+    {
+      "date": "2026-03-18",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 241472.01,
+      "revenue": 1325320.49,
+      "impressions": 15592.01,
+      "clicks": 389.8,
+      "conversions": 15.592
+    },
+    {
+      "date": "2026-03-19",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 473776.11,
+      "revenue": 2385819.72,
+      "impressions": 29822.75,
+      "clicks": 745.57,
+      "conversions": 29.8227
+    },
+    {
+      "date": "2026-03-19",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 333404.8,
+      "revenue": 1652700.06,
+      "impressions": 22036.0,
+      "clicks": 550.9,
+      "conversions": 22.036
+    },
+    {
+      "date": "2026-03-19",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 226424.71,
+      "revenue": 1288787.38,
+      "impressions": 15162.2,
+      "clicks": 379.06,
+      "conversions": 15.1622
+    },
+    {
+      "date": "2026-03-20",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 461662.35,
+      "revenue": 2375236.89,
+      "impressions": 29690.46,
+      "clicks": 742.26,
+      "conversions": 29.6905
+    },
+    {
+      "date": "2026-03-20",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 325566.84,
+      "revenue": 1628376.93,
+      "impressions": 21711.69,
+      "clicks": 542.79,
+      "conversions": 21.7117
+    },
+    {
+      "date": "2026-03-20",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 218527.89,
+      "revenue": 1263557.22,
+      "impressions": 14865.38,
+      "clicks": 371.63,
+      "conversions": 14.8654
+    },
+    {
+      "date": "2026-03-21",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 444231.38,
+      "revenue": 2300570.26,
+      "impressions": 28757.13,
+      "clicks": 718.93,
+      "conversions": 28.7571
+    },
+    {
+      "date": "2026-03-21",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 306621.55,
+      "revenue": 1595036.78,
+      "impressions": 21267.16,
+      "clicks": 531.68,
+      "conversions": 21.2672
+    },
+    {
+      "date": "2026-03-21",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 216645.32,
+      "revenue": 1260068.09,
+      "impressions": 14824.33,
+      "clicks": 370.61,
+      "conversions": 14.8243
+    },
+    {
+      "date": "2026-03-22",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 436230.27,
+      "revenue": 2284933.08,
+      "impressions": 28561.66,
+      "clicks": 714.04,
+      "conversions": 28.5617
+    },
+    {
+      "date": "2026-03-22",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 271678.71,
+      "revenue": 1488986.45,
+      "impressions": 19853.15,
+      "clicks": 496.33,
+      "conversions": 19.8532
+    },
+    {
+      "date": "2026-03-22",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 215891.75,
+      "revenue": 1249547.93,
+      "impressions": 14700.56,
+      "clicks": 367.51,
+      "conversions": 14.7006
+    },
+    {
+      "date": "2026-03-23",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 407828.56,
+      "revenue": 2237308.12,
+      "impressions": 27966.35,
+      "clicks": 699.16,
+      "conversions": 27.9664
+    },
+    {
+      "date": "2026-03-23",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 275084.72,
+      "revenue": 1489510.76,
+      "impressions": 19860.14,
+      "clicks": 496.5,
+      "conversions": 19.8601
+    },
+    {
+      "date": "2026-03-23",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 221570.12,
+      "revenue": 1265393.46,
+      "impressions": 14886.98,
+      "clicks": 372.17,
+      "conversions": 14.887
+    },
+    {
+      "date": "2026-03-24",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 384063.09,
+      "revenue": 2155174.96,
+      "impressions": 26939.69,
+      "clicks": 673.49,
+      "conversions": 26.9397
+    },
+    {
+      "date": "2026-03-24",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 251061.93,
+      "revenue": 1422820.43,
+      "impressions": 18970.94,
+      "clicks": 474.27,
+      "conversions": 18.9709
+    },
+    {
+      "date": "2026-03-24",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 233540.94,
+      "revenue": 1302367.41,
+      "impressions": 15321.97,
+      "clicks": 383.05,
+      "conversions": 15.322
+    },
+    {
+      "date": "2026-03-25",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 343753.9,
+      "revenue": 2063457.05,
+      "impressions": 25793.21,
+      "clicks": 644.83,
+      "conversions": 25.7932
+    },
+    {
+      "date": "2026-03-25",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 254753.55,
+      "revenue": 1447012.74,
+      "impressions": 19293.5,
+      "clicks": 482.34,
+      "conversions": 19.2935
+    },
+    {
+      "date": "2026-03-25",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 252028.62,
+      "revenue": 1351664.87,
+      "impressions": 15901.94,
+      "clicks": 397.55,
+      "conversions": 15.9019
+    },
+    {
+      "date": "2026-03-26",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 342689.17,
+      "revenue": 2056472.88,
+      "impressions": 25705.91,
+      "clicks": 642.65,
+      "conversions": 25.7059
+    },
+    {
+      "date": "2026-03-26",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 271296.36,
+      "revenue": 1502556.53,
+      "impressions": 20034.09,
+      "clicks": 500.85,
+      "conversions": 20.0341
+    },
+    {
+      "date": "2026-03-26",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 276648.21,
+      "revenue": 1421715.3,
+      "impressions": 16726.06,
+      "clicks": 418.15,
+      "conversions": 16.7261
+    },
+    {
+      "date": "2026-03-27",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 317012.79,
+      "revenue": 1946001.58,
+      "impressions": 24325.02,
+      "clicks": 608.13,
+      "conversions": 24.325
+    },
+    {
+      "date": "2026-03-27",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 273372.72,
+      "revenue": 1483087.89,
+      "impressions": 19774.51,
+      "clicks": 494.36,
+      "conversions": 19.7745
+    },
+    {
+      "date": "2026-03-27",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 290485.86,
+      "revenue": 1480166.52,
+      "impressions": 17413.72,
+      "clicks": 435.34,
+      "conversions": 17.4137
+    },
+    {
+      "date": "2026-03-28",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 307558.9,
+      "revenue": 1934751.94,
+      "impressions": 24184.4,
+      "clicks": 604.61,
+      "conversions": 24.1844
+    },
+    {
+      "date": "2026-03-28",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 294001.17,
+      "revenue": 1555199.68,
+      "impressions": 20736.0,
+      "clicks": 518.4,
+      "conversions": 20.736
+    },
+    {
+      "date": "2026-03-28",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 321057.44,
+      "revenue": 1550438.1,
+      "impressions": 18240.45,
+      "clicks": 456.01,
+      "conversions": 18.2404
+    },
+    {
+      "date": "2026-03-29",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 320604.8,
+      "revenue": 1978221.6,
+      "impressions": 24727.77,
+      "clicks": 618.19,
+      "conversions": 24.7278
+    },
+    {
+      "date": "2026-03-29",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 312289.64,
+      "revenue": 1601486.61,
+      "impressions": 21353.15,
+      "clicks": 533.83,
+      "conversions": 21.3532
+    },
+    {
+      "date": "2026-03-29",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 340285.05,
+      "revenue": 1576615.08,
+      "impressions": 18548.41,
+      "clicks": 463.71,
+      "conversions": 18.5484
+    },
+    {
+      "date": "2026-03-30",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 335489.31,
+      "revenue": 2029508.61,
+      "impressions": 25368.86,
+      "clicks": 634.22,
+      "conversions": 25.3689
+    },
+    {
+      "date": "2026-03-30",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 337228.89,
+      "revenue": 1674128.82,
+      "impressions": 22321.72,
+      "clicks": 558.04,
+      "conversions": 22.3217
+    },
+    {
+      "date": "2026-03-30",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 347879.34,
+      "revenue": 1599778.96,
+      "impressions": 18820.93,
+      "clicks": 470.52,
+      "conversions": 18.8209
+    },
+    {
+      "date": "2026-03-31",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 349499.0,
+      "revenue": 2083251.94,
+      "impressions": 26040.65,
+      "clicks": 651.02,
+      "conversions": 26.0406
+    },
+    {
+      "date": "2026-03-31",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 364883.51,
+      "revenue": 1723850.71,
+      "impressions": 22984.68,
+      "clicks": 574.62,
+      "conversions": 22.9847
+    },
+    {
+      "date": "2026-03-31",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 359206.55,
+      "revenue": 1614858.84,
+      "impressions": 18998.34,
+      "clicks": 474.96,
+      "conversions": 18.9983
+    },
+    {
+      "date": "2026-04-01",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 381806.17,
+      "revenue": 2143346.97,
+      "impressions": 26791.84,
+      "clicks": 669.8,
+      "conversions": 26.7918
+    },
+    {
+      "date": "2026-04-01",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 406078.9,
+      "revenue": 1808350.98,
+      "impressions": 24111.35,
+      "clicks": 602.78,
+      "conversions": 24.1113
+    },
+    {
+      "date": "2026-04-01",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 362789.37,
+      "revenue": 1619389.55,
+      "impressions": 19051.64,
+      "clicks": 476.29,
+      "conversions": 19.0516
+    },
+    {
+      "date": "2026-04-02",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 420949.27,
+      "revenue": 2266332.52,
+      "impressions": 28329.16,
+      "clicks": 708.23,
+      "conversions": 28.3292
+    },
+    {
+      "date": "2026-04-02",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 419695.66,
+      "revenue": 1858208.04,
+      "impressions": 24776.11,
+      "clicks": 619.4,
+      "conversions": 24.7761
+    },
+    {
+      "date": "2026-04-02",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 353439.9,
+      "revenue": 1605754.29,
+      "impressions": 18891.23,
+      "clicks": 472.28,
+      "conversions": 18.8912
+    },
+    {
+      "date": "2026-04-03",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 452164.75,
+      "revenue": 2330554.65,
+      "impressions": 29131.93,
+      "clicks": 728.3,
+      "conversions": 29.1319
+    },
+    {
+      "date": "2026-04-03",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 437430.74,
+      "revenue": 1864888.87,
+      "impressions": 24865.18,
+      "clicks": 621.63,
+      "conversions": 24.8652
+    },
+    {
+      "date": "2026-04-03",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 345827.32,
+      "revenue": 1592699.74,
+      "impressions": 18737.64,
+      "clicks": 468.44,
+      "conversions": 18.7376
+    },
+    {
+      "date": "2026-04-04",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 481957.07,
+      "revenue": 2396248.02,
+      "impressions": 29953.1,
+      "clicks": 748.83,
+      "conversions": 29.9531
+    },
+    {
+      "date": "2026-04-04",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 451276.32,
+      "revenue": 1913352.23,
+      "impressions": 25511.36,
+      "clicks": 637.78,
+      "conversions": 25.5114
+    },
+    {
+      "date": "2026-04-04",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 326864.07,
+      "revenue": 1538456.11,
+      "impressions": 18099.48,
+      "clicks": 452.49,
+      "conversions": 18.0995
+    },
+    {
+      "date": "2026-04-05",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 516098.06,
+      "revenue": 2484319.28,
+      "impressions": 31053.99,
+      "clicks": 776.35,
+      "conversions": 31.054
+    },
+    {
+      "date": "2026-04-05",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 448272.39,
+      "revenue": 1904178.31,
+      "impressions": 25389.04,
+      "clicks": 634.73,
+      "conversions": 25.389
+    },
+    {
+      "date": "2026-04-05",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 312331.1,
+      "revenue": 1506040.54,
+      "impressions": 17718.12,
+      "clicks": 442.95,
+      "conversions": 17.7181
+    },
+    {
+      "date": "2026-04-06",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 552520.72,
+      "revenue": 2534650.22,
+      "impressions": 31683.13,
+      "clicks": 792.08,
+      "conversions": 31.6831
+    },
+    {
+      "date": "2026-04-06",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 434299.54,
+      "revenue": 1885392.68,
+      "impressions": 25138.57,
+      "clicks": 628.46,
+      "conversions": 25.1386
+    },
+    {
+      "date": "2026-04-06",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 294980.49,
+      "revenue": 1462201.81,
+      "impressions": 17202.37,
+      "clicks": 430.06,
+      "conversions": 17.2024
+    },
+    {
+      "date": "2026-04-07",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 565151.18,
+      "revenue": 2533775.37,
+      "impressions": 31672.19,
+      "clicks": 791.8,
+      "conversions": 31.6722
+    },
+    {
+      "date": "2026-04-07",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 419512.95,
+      "revenue": 1858039.02,
+      "impressions": 24773.85,
+      "clicks": 619.35,
+      "conversions": 24.7739
+    },
+    {
+      "date": "2026-04-07",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 263878.17,
+      "revenue": 1386530.85,
+      "impressions": 16312.13,
+      "clicks": 407.8,
+      "conversions": 16.3121
+    },
+    {
+      "date": "2026-04-08",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 550222.22,
+      "revenue": 2523399.15,
+      "impressions": 31542.49,
+      "clicks": 788.56,
+      "conversions": 31.5425
+    },
+    {
+      "date": "2026-04-08",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 390232.24,
+      "revenue": 1791005.98,
+      "impressions": 23880.08,
+      "clicks": 597.0,
+      "conversions": 23.8801
+    },
+    {
+      "date": "2026-04-08",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 251866.42,
+      "revenue": 1355372.37,
+      "impressions": 15945.56,
+      "clicks": 398.64,
+      "conversions": 15.9456
+    },
+    {
+      "date": "2026-04-09",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 556258.85,
+      "revenue": 2518320.07,
+      "impressions": 31479.0,
+      "clicks": 786.98,
+      "conversions": 31.479
+    },
+    {
+      "date": "2026-04-09",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 369190.62,
+      "revenue": 1758176.15,
+      "impressions": 23442.35,
+      "clicks": 586.06,
+      "conversions": 23.4423
+    },
+    {
+      "date": "2026-04-09",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 235518.1,
+      "revenue": 1303633.89,
+      "impressions": 15336.87,
+      "clicks": 383.42,
+      "conversions": 15.3369
+    },
+    {
+      "date": "2026-04-10",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 534279.73,
+      "revenue": 2483415.38,
+      "impressions": 31042.69,
+      "clicks": 776.07,
+      "conversions": 31.0427
+    },
+    {
+      "date": "2026-04-10",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 332746.07,
+      "revenue": 1669384.77,
+      "impressions": 22258.46,
+      "clicks": 556.46,
+      "conversions": 22.2585
+    },
+    {
+      "date": "2026-04-10",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 218238.74,
+      "revenue": 1252336.44,
+      "impressions": 14733.37,
+      "clicks": 368.33,
+      "conversions": 14.7334
+    },
+    {
+      "date": "2026-04-11",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 517828.09,
+      "revenue": 2468614.05,
+      "impressions": 30857.68,
+      "clicks": 771.44,
+      "conversions": 30.8577
+    },
+    {
+      "date": "2026-04-11",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 315153.73,
+      "revenue": 1599761.79,
+      "impressions": 21330.16,
+      "clicks": 533.25,
+      "conversions": 21.3302
+    },
+    {
+      "date": "2026-04-11",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 200838.88,
+      "revenue": 1206459.77,
+      "impressions": 14193.64,
+      "clicks": 354.84,
+      "conversions": 14.1936
+    },
+    {
+      "date": "2026-04-12",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 492007.6,
+      "revenue": 2420279.43,
+      "impressions": 30253.49,
+      "clicks": 756.34,
+      "conversions": 30.2535
+    },
+    {
+      "date": "2026-04-12",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 300327.18,
+      "revenue": 1578043.18,
+      "impressions": 21040.58,
+      "clicks": 526.01,
+      "conversions": 21.0406
+    },
+    {
+      "date": "2026-04-12",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 199836.5,
+      "revenue": 1184726.51,
+      "impressions": 13937.96,
+      "clicks": 348.45,
+      "conversions": 13.938
+    },
+    {
+      "date": "2026-04-13",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 444399.97,
+      "revenue": 2336493.58,
+      "impressions": 29206.17,
+      "clicks": 730.15,
+      "conversions": 29.2062
+    },
+    {
+      "date": "2026-04-13",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 281717.52,
+      "revenue": 1532659.25,
+      "impressions": 20435.46,
+      "clicks": 510.89,
+      "conversions": 20.4355
+    },
+    {
+      "date": "2026-04-13",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 215865.36,
+      "revenue": 1243032.93,
+      "impressions": 14623.92,
+      "clicks": 365.6,
+      "conversions": 14.6239
+    },
+    {
+      "date": "2026-04-14",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 410635.5,
+      "revenue": 2218983.3,
+      "impressions": 27737.29,
+      "clicks": 693.43,
+      "conversions": 27.7373
+    },
+    {
+      "date": "2026-04-14",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 270009.95,
+      "revenue": 1497248.96,
+      "impressions": 19963.32,
+      "clicks": 499.08,
+      "conversions": 19.9633
+    },
+    {
+      "date": "2026-04-14",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 217157.47,
+      "revenue": 1257700.82,
+      "impressions": 14796.48,
+      "clicks": 369.91,
+      "conversions": 14.7965
+    },
+    {
+      "date": "2026-04-15",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 379176.24,
+      "revenue": 2170873.09,
+      "impressions": 27135.91,
+      "clicks": 678.4,
+      "conversions": 27.1359
+    },
+    {
+      "date": "2026-04-15",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 267533.83,
+      "revenue": 1492120.03,
+      "impressions": 19894.93,
+      "clicks": 497.37,
+      "conversions": 19.8949
+    },
+    {
+      "date": "2026-04-15",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 237234.89,
+      "revenue": 1329747.79,
+      "impressions": 15644.09,
+      "clicks": 391.1,
+      "conversions": 15.6441
+    },
+    {
+      "date": "2026-04-16",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 352609.09,
+      "revenue": 2083692.03,
+      "impressions": 26046.15,
+      "clicks": 651.15,
+      "conversions": 26.0462
+    },
+    {
+      "date": "2026-04-16",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 260161.76,
+      "revenue": 1466935.14,
+      "impressions": 19559.14,
+      "clicks": 488.98,
+      "conversions": 19.5591
+    },
+    {
+      "date": "2026-04-16",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 253331.74,
+      "revenue": 1377639.12,
+      "impressions": 16207.52,
+      "clicks": 405.19,
+      "conversions": 16.2075
+    },
+    {
+      "date": "2026-04-17",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 356841.71,
+      "revenue": 2077121.69,
+      "impressions": 25964.02,
+      "clicks": 649.1,
+      "conversions": 25.964
+    },
+    {
+      "date": "2026-04-17",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 279031.32,
+      "revenue": 1501735.13,
+      "impressions": 20023.14,
+      "clicks": 500.58,
+      "conversions": 20.0231
+    },
+    {
+      "date": "2026-04-17",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 271619.56,
+      "revenue": 1428288.31,
+      "impressions": 16803.39,
+      "clicks": 420.08,
+      "conversions": 16.8034
+    },
+    {
+      "date": "2026-04-18",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 335342.94,
+      "revenue": 2031798.28,
+      "impressions": 25397.48,
+      "clicks": 634.94,
+      "conversions": 25.3975
+    },
+    {
+      "date": "2026-04-18",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 287823.86,
+      "revenue": 1533749.17,
+      "impressions": 20449.99,
+      "clicks": 511.25,
+      "conversions": 20.45
+    },
+    {
+      "date": "2026-04-18",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 286592.16,
+      "revenue": 1448466.94,
+      "impressions": 17040.79,
+      "clicks": 426.02,
+      "conversions": 17.0408
+    },
+    {
+      "date": "2026-04-19",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 332853.73,
+      "revenue": 1998499.62,
+      "impressions": 24981.25,
+      "clicks": 624.53,
+      "conversions": 24.9812
+    },
+    {
+      "date": "2026-04-19",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 304098.44,
+      "revenue": 1597433.51,
+      "impressions": 21299.11,
+      "clicks": 532.48,
+      "conversions": 21.2991
+    },
+    {
+      "date": "2026-04-19",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 302905.14,
+      "revenue": 1488645.91,
+      "impressions": 17513.48,
+      "clicks": 437.84,
+      "conversions": 17.5135
+    },
+    {
+      "date": "2026-04-20",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 359521.47,
+      "revenue": 2090771.49,
+      "impressions": 26134.64,
+      "clicks": 653.37,
+      "conversions": 26.1346
+    },
+    {
+      "date": "2026-04-20",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 337404.07,
+      "revenue": 1672949.39,
+      "impressions": 22305.99,
+      "clicks": 557.65,
+      "conversions": 22.306
+    },
+    {
+      "date": "2026-04-20",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 311844.81,
+      "revenue": 1503692.6,
+      "impressions": 17690.5,
+      "clicks": 442.26,
+      "conversions": 17.6905
+    },
+    {
+      "date": "2026-04-21",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 386032.17,
+      "revenue": 2157559.26,
+      "impressions": 26969.49,
+      "clicks": 674.24,
+      "conversions": 26.9695
+    },
+    {
+      "date": "2026-04-21",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 356641.51,
+      "revenue": 1708493.86,
+      "impressions": 22779.92,
+      "clicks": 569.5,
+      "conversions": 22.7799
+    },
+    {
+      "date": "2026-04-21",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 302587.83,
+      "revenue": 1492566.73,
+      "impressions": 17559.61,
+      "clicks": 438.99,
+      "conversions": 17.5596
+    },
+    {
+      "date": "2026-04-22",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 403130.52,
+      "revenue": 2209154.53,
+      "impressions": 27614.43,
+      "clicks": 690.36,
+      "conversions": 27.6144
+    },
+    {
+      "date": "2026-04-22",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 366248.06,
+      "revenue": 1738106.84,
+      "impressions": 23174.76,
+      "clicks": 579.37,
+      "conversions": 23.1748
+    },
+    {
+      "date": "2026-04-22",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 305576.54,
+      "revenue": 1503642.85,
+      "impressions": 17689.92,
+      "clicks": 442.25,
+      "conversions": 17.6899
+    },
+    {
+      "date": "2026-04-23",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 416718.36,
+      "revenue": 2261476.26,
+      "impressions": 28268.45,
+      "clicks": 706.71,
+      "conversions": 28.2685
+    },
+    {
+      "date": "2026-04-23",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 366126.6,
+      "revenue": 1752235.39,
+      "impressions": 23363.14,
+      "clicks": 584.08,
+      "conversions": 23.3631
+    },
+    {
+      "date": "2026-04-23",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 300930.01,
+      "revenue": 1497241.29,
+      "impressions": 17614.6,
+      "clicks": 440.37,
+      "conversions": 17.6146
+    },
+    {
+      "date": "2026-04-24",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 453998.02,
+      "revenue": 2347454.73,
+      "impressions": 29343.18,
+      "clicks": 733.58,
+      "conversions": 29.3432
+    },
+    {
+      "date": "2026-04-24",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 378954.54,
+      "revenue": 1749353.01,
+      "impressions": 23324.71,
+      "clicks": 583.12,
+      "conversions": 23.3247
+    },
+    {
+      "date": "2026-04-24",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 290840.36,
+      "revenue": 1461816.5,
+      "impressions": 17197.84,
+      "clicks": 429.95,
+      "conversions": 17.1978
+    },
+    {
+      "date": "2026-04-25",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 464879.12,
+      "revenue": 2379446.66,
+      "impressions": 29743.08,
+      "clicks": 743.58,
+      "conversions": 29.7431
+    },
+    {
+      "date": "2026-04-25",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 384682.92,
+      "revenue": 1769104.15,
+      "impressions": 23588.06,
+      "clicks": 589.7,
+      "conversions": 23.5881
+    },
+    {
+      "date": "2026-04-25",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 269112.61,
+      "revenue": 1408863.18,
+      "impressions": 16574.86,
+      "clicks": 414.37,
+      "conversions": 16.5749
+    },
+    {
+      "date": "2026-04-26",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 482964.48,
+      "revenue": 2390456.52,
+      "impressions": 29880.71,
+      "clicks": 747.02,
+      "conversions": 29.8807
+    },
+    {
+      "date": "2026-04-26",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 364615.05,
+      "revenue": 1731407.9,
+      "impressions": 23085.44,
+      "clicks": 577.14,
+      "conversions": 23.0854
+    },
+    {
+      "date": "2026-04-26",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 261059.15,
+      "revenue": 1394432.78,
+      "impressions": 16405.09,
+      "clicks": 410.13,
+      "conversions": 16.4051
+    },
+    {
+      "date": "2026-04-27",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 503712.55,
+      "revenue": 2445980.01,
+      "impressions": 30574.75,
+      "clicks": 764.37,
+      "conversions": 30.5748
+    },
+    {
+      "date": "2026-04-27",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 353333.2,
+      "revenue": 1710712.71,
+      "impressions": 22809.5,
+      "clicks": 570.24,
+      "conversions": 22.8095
+    },
+    {
+      "date": "2026-04-27",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 227060.67,
+      "revenue": 1281992.73,
+      "impressions": 15082.27,
+      "clicks": 377.06,
+      "conversions": 15.0823
+    },
+    {
+      "date": "2026-04-28",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 491070.28,
+      "revenue": 2420118.87,
+      "impressions": 30251.49,
+      "clicks": 756.29,
+      "conversions": 30.2515
+    },
+    {
+      "date": "2026-04-28",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 340525.12,
+      "revenue": 1678059.25,
+      "impressions": 22374.12,
+      "clicks": 559.35,
+      "conversions": 22.3741
+    },
+    {
+      "date": "2026-04-28",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 216838.18,
+      "revenue": 1246412.49,
+      "impressions": 14663.68,
+      "clicks": 366.59,
+      "conversions": 14.6637
+    },
+    {
+      "date": "2026-04-29",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 482305.2,
+      "revenue": 2418194.96,
+      "impressions": 30227.44,
+      "clicks": 755.69,
+      "conversions": 30.2274
+    },
+    {
+      "date": "2026-04-29",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 320237.44,
+      "revenue": 1618096.69,
+      "impressions": 21574.62,
+      "clicks": 539.37,
+      "conversions": 21.5746
+    },
+    {
+      "date": "2026-04-29",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 196848.6,
+      "revenue": 1182959.33,
+      "impressions": 13917.17,
+      "clicks": 347.93,
+      "conversions": 13.9172
+    },
+    {
+      "date": "2026-04-30",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 467982.03,
+      "revenue": 2361743.43,
+      "impressions": 29521.79,
+      "clicks": 738.04,
+      "conversions": 29.5218
+    },
+    {
+      "date": "2026-04-30",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 296495.82,
+      "revenue": 1572546.35,
+      "impressions": 20967.28,
+      "clicks": 524.18,
+      "conversions": 20.9673
+    },
+    {
+      "date": "2026-04-30",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 196866.24,
+      "revenue": 1176146.27,
+      "impressions": 13837.01,
+      "clicks": 345.93,
+      "conversions": 13.837
+    },
+    {
+      "date": "2026-05-01",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 431698.49,
+      "revenue": 2266734.94,
+      "impressions": 28334.19,
+      "clicks": 708.35,
+      "conversions": 28.3342
+    },
+    {
+      "date": "2026-05-01",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 262177.0,
+      "revenue": 1460205.88,
+      "impressions": 19469.41,
+      "clicks": 486.74,
+      "conversions": 19.4694
+    },
+    {
+      "date": "2026-05-01",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 196011.1,
+      "revenue": 1169399.43,
+      "impressions": 13757.64,
+      "clicks": 343.94,
+      "conversions": 13.7576
+    },
+    {
+      "date": "2026-05-02",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 406974.51,
+      "revenue": 2233161.88,
+      "impressions": 27914.52,
+      "clicks": 697.86,
+      "conversions": 27.9145
+    },
+    {
+      "date": "2026-05-02",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 241689.54,
+      "revenue": 1397607.89,
+      "impressions": 18634.77,
+      "clicks": 465.87,
+      "conversions": 18.6348
+    },
+    {
+      "date": "2026-05-02",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 192885.95,
+      "revenue": 1161758.12,
+      "impressions": 13667.74,
+      "clicks": 341.69,
+      "conversions": 13.6677
+    },
+    {
+      "date": "2026-05-03",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 380826.74,
+      "revenue": 2135687.45,
+      "impressions": 26696.09,
+      "clicks": 667.4,
+      "conversions": 26.6961
+    },
+    {
+      "date": "2026-05-03",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 238652.58,
+      "revenue": 1388935.57,
+      "impressions": 18519.14,
+      "clicks": 462.98,
+      "conversions": 18.5191
+    },
+    {
+      "date": "2026-05-03",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 195570.92,
+      "revenue": 1176069.53,
+      "impressions": 13836.11,
+      "clicks": 345.9,
+      "conversions": 13.8361
+    },
+    {
+      "date": "2026-05-04",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 337366.45,
+      "revenue": 2044162.12,
+      "impressions": 25552.03,
+      "clicks": 638.8,
+      "conversions": 25.552
+    },
+    {
+      "date": "2026-05-04",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 226899.34,
+      "revenue": 1326954.63,
+      "impressions": 17692.73,
+      "clicks": 442.32,
+      "conversions": 17.6927
+    },
+    {
+      "date": "2026-05-04",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 212579.06,
+      "revenue": 1247631.29,
+      "impressions": 14678.02,
+      "clicks": 366.95,
+      "conversions": 14.678
+    },
+    {
+      "date": "2026-05-05",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 316887.74,
+      "revenue": 1968568.0,
+      "impressions": 24607.1,
+      "clicks": 615.18,
+      "conversions": 24.6071
+    },
+    {
+      "date": "2026-05-05",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 230500.83,
+      "revenue": 1365414.44,
+      "impressions": 18205.53,
+      "clicks": 455.14,
+      "conversions": 18.2055
+    },
+    {
+      "date": "2026-05-05",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 237478.57,
+      "revenue": 1332318.91,
+      "impressions": 15674.34,
+      "clicks": 391.86,
+      "conversions": 15.6743
+    },
+    {
+      "date": "2026-05-06",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 306736.86,
+      "revenue": 1925196.79,
+      "impressions": 24064.96,
+      "clicks": 601.62,
+      "conversions": 24.065
+    },
+    {
+      "date": "2026-05-06",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 240097.99,
+      "revenue": 1386698.97,
+      "impressions": 18489.32,
+      "clicks": 462.23,
+      "conversions": 18.4893
+    },
+    {
+      "date": "2026-05-06",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 263602.2,
+      "revenue": 1397858.46,
+      "impressions": 16445.39,
+      "clicks": 411.13,
+      "conversions": 16.4454
+    },
+    {
+      "date": "2026-05-07",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 294276.06,
+      "revenue": 1884239.87,
+      "impressions": 23553.0,
+      "clicks": 588.82,
+      "conversions": 23.553
+    },
+    {
+      "date": "2026-05-07",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 251193.94,
+      "revenue": 1417866.98,
+      "impressions": 18904.89,
+      "clicks": 472.62,
+      "conversions": 18.9049
+    },
+    {
+      "date": "2026-05-07",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 277639.19,
+      "revenue": 1437771.0,
+      "impressions": 16914.95,
+      "clicks": 422.87,
+      "conversions": 16.915
+    },
+    {
+      "date": "2026-05-08",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 288175.83,
+      "revenue": 1852783.33,
+      "impressions": 23159.79,
+      "clicks": 578.99,
+      "conversions": 23.1598
+    },
+    {
+      "date": "2026-05-08",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 276265.53,
+      "revenue": 1498403.28,
+      "impressions": 19978.71,
+      "clicks": 499.47,
+      "conversions": 19.9787
+    },
+    {
+      "date": "2026-05-08",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 297583.27,
+      "revenue": 1476537.42,
+      "impressions": 17371.03,
+      "clicks": 434.28,
+      "conversions": 17.371
+    },
+    {
+      "date": "2026-05-09",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 283181.62,
+      "revenue": 1826114.69,
+      "impressions": 22826.43,
+      "clicks": 570.66,
+      "conversions": 22.8264
+    },
+    {
+      "date": "2026-05-09",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 300928.12,
+      "revenue": 1565709.63,
+      "impressions": 20876.13,
+      "clicks": 521.9,
+      "conversions": 20.8761
+    },
+    {
+      "date": "2026-05-09",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 320080.89,
+      "revenue": 1539105.84,
+      "impressions": 18107.13,
+      "clicks": 452.68,
+      "conversions": 18.1071
+    },
+    {
+      "date": "2026-05-10",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 311341.26,
+      "revenue": 1920420.61,
+      "impressions": 24005.26,
+      "clicks": 600.13,
+      "conversions": 24.0053
+    },
+    {
+      "date": "2026-05-10",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 326798.7,
+      "revenue": 1646984.39,
+      "impressions": 21959.79,
+      "clicks": 548.99,
+      "conversions": 21.9598
+    },
+    {
+      "date": "2026-05-10",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 338740.0,
+      "revenue": 1561908.87,
+      "impressions": 18375.4,
+      "clicks": 459.38,
+      "conversions": 18.3754
+    },
+    {
+      "date": "2026-05-11",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 329699.17,
+      "revenue": 2016581.54,
+      "impressions": 25207.27,
+      "clicks": 630.18,
+      "conversions": 25.2073
+    },
+    {
+      "date": "2026-05-11",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 358517.74,
+      "revenue": 1727469.7,
+      "impressions": 23032.93,
+      "clicks": 575.82,
+      "conversions": 23.0329
+    },
+    {
+      "date": "2026-05-11",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 355967.4,
+      "revenue": 1611940.76,
+      "impressions": 18964.01,
+      "clicks": 474.1,
+      "conversions": 18.964
+    },
+    {
+      "date": "2026-05-12",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 360499.44,
+      "revenue": 2077188.59,
+      "impressions": 25964.86,
+      "clicks": 649.12,
+      "conversions": 25.9649
+    },
+    {
+      "date": "2026-05-12",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 379516.35,
+      "revenue": 1774635.83,
+      "impressions": 23661.81,
+      "clicks": 591.55,
+      "conversions": 23.6618
+    },
+    {
+      "date": "2026-05-12",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 359676.29,
+      "revenue": 1624654.17,
+      "impressions": 19113.58,
+      "clicks": 477.84,
+      "conversions": 19.1136
+    },
+    {
+      "date": "2026-05-13",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 396811.9,
+      "revenue": 2211654.5,
+      "impressions": 27645.68,
+      "clicks": 691.14,
+      "conversions": 27.6457
+    },
+    {
+      "date": "2026-05-13",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 404233.02,
+      "revenue": 1817885.56,
+      "impressions": 24238.47,
+      "clicks": 605.96,
+      "conversions": 24.2385
+    },
+    {
+      "date": "2026-05-13",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 346708.12,
+      "revenue": 1577474.31,
+      "impressions": 18558.52,
+      "clicks": 463.96,
+      "conversions": 18.5585
+    },
+    {
+      "date": "2026-05-14",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 433111.08,
+      "revenue": 2270256.28,
+      "impressions": 28378.2,
+      "clicks": 709.46,
+      "conversions": 28.3782
+    },
+    {
+      "date": "2026-05-14",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 414554.67,
+      "revenue": 1839616.98,
+      "impressions": 24528.23,
+      "clicks": 613.21,
+      "conversions": 24.5282
+    },
+    {
+      "date": "2026-05-14",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 340929.57,
+      "revenue": 1564814.58,
+      "impressions": 18409.58,
+      "clicks": 460.24,
+      "conversions": 18.4096
+    },
+    {
+      "date": "2026-05-15",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 467292.49,
+      "revenue": 2350466.99,
+      "impressions": 29380.84,
+      "clicks": 734.52,
+      "conversions": 29.3808
+    },
+    {
+      "date": "2026-05-15",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 427252.32,
+      "revenue": 1837753.64,
+      "impressions": 24503.38,
+      "clicks": 612.58,
+      "conversions": 24.5034
+    },
+    {
+      "date": "2026-05-15",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 326949.83,
+      "revenue": 1549502.4,
+      "impressions": 18229.44,
+      "clicks": 455.74,
+      "conversions": 18.2294
+    },
+    {
+      "date": "2026-05-16",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 484323.96,
+      "revenue": 2409838.25,
+      "impressions": 30122.98,
+      "clicks": 753.07,
+      "conversions": 30.123
+    },
+    {
+      "date": "2026-05-16",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 416838.82,
+      "revenue": 1835726.44,
+      "impressions": 24476.35,
+      "clicks": 611.91,
+      "conversions": 24.4764
+    },
+    {
+      "date": "2026-05-16",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 303945.56,
+      "revenue": 1494011.44,
+      "impressions": 17576.61,
+      "clicks": 439.42,
+      "conversions": 17.5766
+    },
+    {
+      "date": "2026-05-17",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 509584.5,
+      "revenue": 2442701.17,
+      "impressions": 30533.76,
+      "clicks": 763.34,
+      "conversions": 30.5338
+    },
+    {
+      "date": "2026-05-17",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 420992.07,
+      "revenue": 1840009.87,
+      "impressions": 24533.46,
+      "clicks": 613.34,
+      "conversions": 24.5335
+    },
+    {
+      "date": "2026-05-17",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 296001.46,
+      "revenue": 1488980.23,
+      "impressions": 17517.41,
+      "clicks": 437.94,
+      "conversions": 17.5174
+    },
+    {
+      "date": "2026-05-18",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 522163.77,
+      "revenue": 2453041.18,
+      "impressions": 30663.01,
+      "clicks": 766.58,
+      "conversions": 30.663
+    },
+    {
+      "date": "2026-05-18",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 391662.99,
+      "revenue": 1791483.9,
+      "impressions": 23886.45,
+      "clicks": 597.16,
+      "conversions": 23.8865
+    },
+    {
+      "date": "2026-05-18",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 280719.77,
+      "revenue": 1437369.83,
+      "impressions": 16910.23,
+      "clicks": 422.76,
+      "conversions": 16.9102
+    },
+    {
+      "date": "2026-05-19",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 534015.6,
+      "revenue": 2508140.4,
+      "impressions": 31351.75,
+      "clicks": 783.79,
+      "conversions": 31.3518
+    },
+    {
+      "date": "2026-05-19",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 384760.49,
+      "revenue": 1785385.91,
+      "impressions": 23805.15,
+      "clicks": 595.13,
+      "conversions": 23.8051
+    },
+    {
+      "date": "2026-05-19",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 262475.57,
+      "revenue": 1385044.64,
+      "impressions": 16294.64,
+      "clicks": 407.37,
+      "conversions": 16.2946
+    },
+    {
+      "date": "2026-05-20",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 510481.36,
+      "revenue": 2435775.16,
+      "impressions": 30447.19,
+      "clicks": 761.18,
+      "conversions": 30.4472
+    },
+    {
+      "date": "2026-05-20",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 352196.02,
+      "revenue": 1712267.49,
+      "impressions": 22830.23,
+      "clicks": 570.76,
+      "conversions": 22.8302
+    },
+    {
+      "date": "2026-05-20",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 242306.99,
+      "revenue": 1327654.77,
+      "impressions": 15619.47,
+      "clicks": 390.49,
+      "conversions": 15.6195
+    },
+    {
+      "date": "2026-05-21",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 511568.76,
+      "revenue": 2467911.49,
+      "impressions": 30848.89,
+      "clicks": 771.22,
+      "conversions": 30.8489
+    },
+    {
+      "date": "2026-05-21",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 330395.9,
+      "revenue": 1658122.72,
+      "impressions": 22108.3,
+      "clicks": 552.71,
+      "conversions": 22.1083
+    },
+    {
+      "date": "2026-05-21",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 236144.27,
+      "revenue": 1306152.05,
+      "impressions": 15366.49,
+      "clicks": 384.16,
+      "conversions": 15.3665
+    },
+    {
+      "date": "2026-05-22",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 492103.22,
+      "revenue": 2440736.38,
+      "impressions": 30509.2,
+      "clicks": 762.73,
+      "conversions": 30.5092
+    },
+    {
+      "date": "2026-05-22",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 308402.22,
+      "revenue": 1582445.2,
+      "impressions": 21099.27,
+      "clicks": 527.48,
+      "conversions": 21.0993
+    },
+    {
+      "date": "2026-05-22",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 225497.33,
+      "revenue": 1286946.95,
+      "impressions": 15140.55,
+      "clicks": 378.51,
+      "conversions": 15.1406
+    },
+    {
+      "date": "2026-05-23",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 469144.6,
+      "revenue": 2367089.72,
+      "impressions": 29588.62,
+      "clicks": 739.72,
+      "conversions": 29.5886
+    },
+    {
+      "date": "2026-05-23",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 303479.91,
+      "revenue": 1570742.31,
+      "impressions": 20943.23,
+      "clicks": 523.58,
+      "conversions": 20.9432
+    },
+    {
+      "date": "2026-05-23",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 233823.29,
+      "revenue": 1312380.05,
+      "impressions": 15439.77,
+      "clicks": 385.99,
+      "conversions": 15.4398
+    },
+    {
+      "date": "2026-05-24",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 419965.42,
+      "revenue": 2272440.63,
+      "impressions": 28405.51,
+      "clicks": 710.14,
+      "conversions": 28.4055
+    },
+    {
+      "date": "2026-05-24",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 294740.62,
+      "revenue": 1562838.83,
+      "impressions": 20837.85,
+      "clicks": 520.95,
+      "conversions": 20.8379
+    },
+    {
+      "date": "2026-05-24",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 232200.1,
+      "revenue": 1316549.92,
+      "impressions": 15488.82,
+      "clicks": 387.22,
+      "conversions": 15.4888
+    },
+    {
+      "date": "2026-05-25",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 411273.4,
+      "revenue": 2231533.24,
+      "impressions": 27894.17,
+      "clicks": 697.35,
+      "conversions": 27.8942
+    },
+    {
+      "date": "2026-05-25",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 281569.22,
+      "revenue": 1517299.84,
+      "impressions": 20230.66,
+      "clicks": 505.77,
+      "conversions": 20.2307
+    },
+    {
+      "date": "2026-05-25",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 250543.08,
+      "revenue": 1355297.24,
+      "impressions": 15944.67,
+      "clicks": 398.62,
+      "conversions": 15.9447
+    },
+    {
+      "date": "2026-05-26",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 391553.03,
+      "revenue": 2200722.53,
+      "impressions": 27509.03,
+      "clicks": 687.73,
+      "conversions": 27.509
+    },
+    {
+      "date": "2026-05-26",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 277365.97,
+      "revenue": 1522448.02,
+      "impressions": 20299.31,
+      "clicks": 507.48,
+      "conversions": 20.2993
+    },
+    {
+      "date": "2026-05-26",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 267891.79,
+      "revenue": 1417431.64,
+      "impressions": 16675.67,
+      "clicks": 416.89,
+      "conversions": 16.6757
+    },
+    {
+      "date": "2026-05-27",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 373211.86,
+      "revenue": 2132592.07,
+      "impressions": 26657.4,
+      "clicks": 666.44,
+      "conversions": 26.6574
+    },
+    {
+      "date": "2026-05-27",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 298696.45,
+      "revenue": 1585508.79,
+      "impressions": 21140.12,
+      "clicks": 528.5,
+      "conversions": 21.1401
+    },
+    {
+      "date": "2026-05-27",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 278677.17,
+      "revenue": 1445342.81,
+      "impressions": 17004.03,
+      "clicks": 425.1,
+      "conversions": 17.004
+    },
+    {
+      "date": "2026-05-28",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 362370.43,
+      "revenue": 2102834.57,
+      "impressions": 26285.43,
+      "clicks": 657.14,
+      "conversions": 26.2854
+    },
+    {
+      "date": "2026-05-28",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 307400.38,
+      "revenue": 1602258.22,
+      "impressions": 21363.44,
+      "clicks": 534.09,
+      "conversions": 21.3634
+    },
+    {
+      "date": "2026-05-28",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 294973.87,
+      "revenue": 1487110.03,
+      "impressions": 17495.41,
+      "clicks": 437.39,
+      "conversions": 17.4954
+    },
+    {
+      "date": "2026-05-29",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 372032.28,
+      "revenue": 2114316.55,
+      "impressions": 26428.96,
+      "clicks": 660.72,
+      "conversions": 26.429
+    },
+    {
+      "date": "2026-05-29",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 334990.62,
+      "revenue": 1657345.68,
+      "impressions": 22097.94,
+      "clicks": 552.45,
+      "conversions": 22.0979
+    },
+    {
+      "date": "2026-05-29",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 312278.43,
+      "revenue": 1519650.67,
+      "impressions": 17878.24,
+      "clicks": 446.96,
+      "conversions": 17.8782
+    },
+    {
+      "date": "2026-05-30",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 371597.26,
+      "revenue": 2110597.3,
+      "impressions": 26382.47,
+      "clicks": 659.56,
+      "conversions": 26.3825
+    },
+    {
+      "date": "2026-05-30",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 355291.69,
+      "revenue": 1702605.26,
+      "impressions": 22701.4,
+      "clicks": 567.54,
+      "conversions": 22.7014
+    },
+    {
+      "date": "2026-05-30",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 318494.41,
+      "revenue": 1538892.39,
+      "impressions": 18104.62,
+      "clicks": 452.62,
+      "conversions": 18.1046
+    },
+    {
+      "date": "2026-05-31",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 389141.43,
+      "revenue": 2196643.81,
+      "impressions": 27458.05,
+      "clicks": 686.45,
+      "conversions": 27.458
+    },
+    {
+      "date": "2026-05-31",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 373148.4,
+      "revenue": 1744595.1,
+      "impressions": 23261.27,
+      "clicks": 581.53,
+      "conversions": 23.2613
+    },
+    {
+      "date": "2026-05-31",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 320456.72,
+      "revenue": 1547701.72,
+      "impressions": 18208.26,
+      "clicks": 455.21,
+      "conversions": 18.2083
+    },
+    {
+      "date": "2026-06-01",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 406943.22,
+      "revenue": 2237103.99,
+      "impressions": 27963.8,
+      "clicks": 699.09,
+      "conversions": 27.9638
+    },
+    {
+      "date": "2026-06-01",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 387418.19,
+      "revenue": 1790878.5,
+      "impressions": 23878.38,
+      "clicks": 596.96,
+      "conversions": 23.8784
+    },
+    {
+      "date": "2026-06-01",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 330867.09,
+      "revenue": 1560034.1,
+      "impressions": 18353.34,
+      "clicks": 458.83,
+      "conversions": 18.3533
+    },
+    {
+      "date": "2026-06-02",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 444614.77,
+      "revenue": 2332068.16,
+      "impressions": 29150.85,
+      "clicks": 728.77,
+      "conversions": 29.1509
+    },
+    {
+      "date": "2026-06-02",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 393666.95,
+      "revenue": 1783998.76,
+      "impressions": 23786.65,
+      "clicks": 594.67,
+      "conversions": 23.7867
+    },
+    {
+      "date": "2026-06-02",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 324214.48,
+      "revenue": 1535872.32,
+      "impressions": 18069.09,
+      "clicks": 451.73,
+      "conversions": 18.0691
+    },
+    {
+      "date": "2026-06-03",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 474778.41,
+      "revenue": 2382401.2,
+      "impressions": 29780.01,
+      "clicks": 744.5,
+      "conversions": 29.78
+    },
+    {
+      "date": "2026-06-03",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 410362.01,
+      "revenue": 1822738.76,
+      "impressions": 24303.18,
+      "clicks": 607.58,
+      "conversions": 24.3032
+    },
+    {
+      "date": "2026-06-03",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 312736.85,
+      "revenue": 1512176.76,
+      "impressions": 17790.31,
+      "clicks": 444.76,
+      "conversions": 17.7903
+    },
+    {
+      "date": "2026-06-04",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 503219.81,
+      "revenue": 2428245.47,
+      "impressions": 30353.07,
+      "clicks": 758.83,
+      "conversions": 30.3531
+    },
+    {
+      "date": "2026-06-04",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 405706.35,
+      "revenue": 1803100.19,
+      "impressions": 24041.34,
+      "clicks": 601.03,
+      "conversions": 24.0413
+    },
+    {
+      "date": "2026-06-04",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 286665.57,
+      "revenue": 1445499.91,
+      "impressions": 17005.88,
+      "clicks": 425.15,
+      "conversions": 17.0059
+    },
+    {
+      "date": "2026-06-05",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 519189.32,
+      "revenue": 2481426.51,
+      "impressions": 31017.83,
+      "clicks": 775.45,
+      "conversions": 31.0178
+    },
+    {
+      "date": "2026-06-05",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 397708.84,
+      "revenue": 1791572.99,
+      "impressions": 23887.64,
+      "clicks": 597.19,
+      "conversions": 23.8876
+    },
+    {
+      "date": "2026-06-05",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 270932.42,
+      "revenue": 1422659.08,
+      "impressions": 16737.17,
+      "clicks": 418.43,
+      "conversions": 16.7372
+    },
+    {
+      "date": "2026-06-06",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 543010.9,
+      "revenue": 2510291.73,
+      "impressions": 31378.65,
+      "clicks": 784.47,
+      "conversions": 31.3786
+    },
+    {
+      "date": "2026-06-06",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 385697.16,
+      "revenue": 1764029.65,
+      "impressions": 23520.4,
+      "clicks": 588.01,
+      "conversions": 23.5204
+    },
+    {
+      "date": "2026-06-06",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 244168.48,
+      "revenue": 1333479.9,
+      "impressions": 15688.0,
+      "clicks": 392.2,
+      "conversions": 15.688
+    },
+    {
+      "date": "2026-06-07",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 526597.75,
+      "revenue": 2457334.96,
+      "impressions": 30716.69,
+      "clicks": 767.92,
+      "conversions": 30.7167
+    },
+    {
+      "date": "2026-06-07",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 370454.31,
+      "revenue": 1738848.97,
+      "impressions": 23184.65,
+      "clicks": 579.62,
+      "conversions": 23.1847
+    },
+    {
+      "date": "2026-06-07",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 235056.81,
+      "revenue": 1314313.08,
+      "impressions": 15462.51,
+      "clicks": 386.56,
+      "conversions": 15.4625
+    },
+    {
+      "date": "2026-06-08",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 533545.85,
+      "revenue": 2474683.02,
+      "impressions": 30933.54,
+      "clicks": 773.34,
+      "conversions": 30.9335
+    },
+    {
+      "date": "2026-06-08",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 352196.09,
+      "revenue": 1706172.77,
+      "impressions": 22748.97,
+      "clicks": 568.72,
+      "conversions": 22.749
+    },
+    {
+      "date": "2026-06-08",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 213894.59,
+      "revenue": 1245378.5,
+      "impressions": 14651.51,
+      "clicks": 366.29,
+      "conversions": 14.6515
+    },
+    {
+      "date": "2026-06-09",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 512086.61,
+      "revenue": 2452824.22,
+      "impressions": 30660.3,
+      "clicks": 766.51,
+      "conversions": 30.6603
+    },
+    {
+      "date": "2026-06-09",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 311173.49,
+      "revenue": 1590646.4,
+      "impressions": 21208.62,
+      "clicks": 530.22,
+      "conversions": 21.2086
+    },
+    {
+      "date": "2026-06-09",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 199456.59,
+      "revenue": 1191695.53,
+      "impressions": 14019.95,
+      "clicks": 350.5,
+      "conversions": 14.0199
+    },
+    {
+      "date": "2026-06-10",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 496729.27,
+      "revenue": 2422341.79,
+      "impressions": 30279.27,
+      "clicks": 756.98,
+      "conversions": 30.2793
+    },
+    {
+      "date": "2026-06-10",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 281243.48,
+      "revenue": 1524197.25,
+      "impressions": 20322.63,
+      "clicks": 508.07,
+      "conversions": 20.3226
+    },
+    {
+      "date": "2026-06-10",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 174898.2,
+      "revenue": 1089134.73,
+      "impressions": 12813.35,
+      "clicks": 320.33,
+      "conversions": 12.8133
+    },
+    {
+      "date": "2026-06-11",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 459300.51,
+      "revenue": 2341819.56,
+      "impressions": 29272.74,
+      "clicks": 731.82,
+      "conversions": 29.2727
+    },
+    {
+      "date": "2026-06-11",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 273821.91,
+      "revenue": 1486254.69,
+      "impressions": 19816.73,
+      "clicks": 495.42,
+      "conversions": 19.8167
+    },
+    {
+      "date": "2026-06-11",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 182510.82,
+      "revenue": 1129945.39,
+      "impressions": 13293.48,
+      "clicks": 332.34,
+      "conversions": 13.2935
+    },
+    {
+      "date": "2026-06-12",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 430018.76,
+      "revenue": 2271973.7,
+      "impressions": 28399.67,
+      "clicks": 709.99,
+      "conversions": 28.3997
+    },
+    {
+      "date": "2026-06-12",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 243175.99,
+      "revenue": 1395933.45,
+      "impressions": 18612.45,
+      "clicks": 465.31,
+      "conversions": 18.6124
+    },
+    {
+      "date": "2026-06-12",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 180026.75,
+      "revenue": 1125691.69,
+      "impressions": 13243.43,
+      "clicks": 331.09,
+      "conversions": 13.2434
+    },
+    {
+      "date": "2026-06-13",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 398808.17,
+      "revenue": 2197473.86,
+      "impressions": 27468.42,
+      "clicks": 686.71,
+      "conversions": 27.4684
+    },
+    {
+      "date": "2026-06-13",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 229963.37,
+      "revenue": 1353219.04,
+      "impressions": 18042.92,
+      "clicks": 451.07,
+      "conversions": 18.0429
+    },
+    {
+      "date": "2026-06-13",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 193958.32,
+      "revenue": 1182273.8,
+      "impressions": 13909.1,
+      "clicks": 347.73,
+      "conversions": 13.9091
+    },
+    {
+      "date": "2026-06-14",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 344708.29,
+      "revenue": 2037322.44,
+      "impressions": 25466.53,
+      "clicks": 636.66,
+      "conversions": 25.4665
+    },
+    {
+      "date": "2026-06-14",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 223013.09,
+      "revenue": 1315442.98,
+      "impressions": 17539.24,
+      "clicks": 438.48,
+      "conversions": 17.5392
+    },
+    {
+      "date": "2026-06-14",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 199467.52,
+      "revenue": 1182133.99,
+      "impressions": 13907.46,
+      "clicks": 347.69,
+      "conversions": 13.9075
+    },
+    {
+      "date": "2026-06-15",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 309897.58,
+      "revenue": 1930266.05,
+      "impressions": 24128.33,
+      "clicks": 603.21,
+      "conversions": 24.1283
+    },
+    {
+      "date": "2026-06-15",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 222006.57,
+      "revenue": 1315230.25,
+      "impressions": 17536.4,
+      "clicks": 438.41,
+      "conversions": 17.5364
+    },
+    {
+      "date": "2026-06-15",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 219339.21,
+      "revenue": 1267251.56,
+      "impressions": 14908.84,
+      "clicks": 372.72,
+      "conversions": 14.9088
+    },
+    {
+      "date": "2026-06-16",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 305125.94,
+      "revenue": 1913298.1,
+      "impressions": 23916.23,
+      "clicks": 597.91,
+      "conversions": 23.9162
+    },
+    {
+      "date": "2026-06-16",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 232100.75,
+      "revenue": 1369547.68,
+      "impressions": 18260.64,
+      "clicks": 456.52,
+      "conversions": 18.2606
+    },
+    {
+      "date": "2026-06-16",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 249857.95,
+      "revenue": 1361012.73,
+      "impressions": 16011.91,
+      "clicks": 400.3,
+      "conversions": 16.0119
+    },
+    {
+      "date": "2026-06-17",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 290698.8,
+      "revenue": 1877754.93,
+      "impressions": 23471.94,
+      "clicks": 586.8,
+      "conversions": 23.4719
+    },
+    {
+      "date": "2026-06-17",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 242251.7,
+      "revenue": 1395344.15,
+      "impressions": 18604.59,
+      "clicks": 465.11,
+      "conversions": 18.6046
+    },
+    {
+      "date": "2026-06-17",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 269760.85,
+      "revenue": 1424723.97,
+      "impressions": 16761.46,
+      "clicks": 419.04,
+      "conversions": 16.7615
+    },
+    {
+      "date": "2026-06-18",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 291541.77,
+      "revenue": 1848818.05,
+      "impressions": 23110.23,
+      "clicks": 577.76,
+      "conversions": 23.1102
+    },
+    {
+      "date": "2026-06-18",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 258104.28,
+      "revenue": 1442115.11,
+      "impressions": 19228.2,
+      "clicks": 480.71,
+      "conversions": 19.2282
+    },
+    {
+      "date": "2026-06-18",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 292309.35,
+      "revenue": 1472381.37,
+      "impressions": 17322.13,
+      "clicks": 433.05,
+      "conversions": 17.3221
+    },
+    {
+      "date": "2026-06-19",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 284793.3,
+      "revenue": 1825161.17,
+      "impressions": 22814.51,
+      "clicks": 570.36,
+      "conversions": 22.8145
+    },
+    {
+      "date": "2026-06-19",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 293126.9,
+      "revenue": 1561309.69,
+      "impressions": 20817.46,
+      "clicks": 520.44,
+      "conversions": 20.8175
+    },
+    {
+      "date": "2026-06-19",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 313298.95,
+      "revenue": 1518557.63,
+      "impressions": 17865.38,
+      "clicks": 446.63,
+      "conversions": 17.8654
+    },
+    {
+      "date": "2026-06-20",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 306080.81,
+      "revenue": 1902408.02,
+      "impressions": 23780.1,
+      "clicks": 594.5,
+      "conversions": 23.7801
+    },
+    {
+      "date": "2026-06-20",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 306376.11,
+      "revenue": 1589941.37,
+      "impressions": 21199.22,
+      "clicks": 529.98,
+      "conversions": 21.1992
+    },
+    {
+      "date": "2026-06-20",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 316569.56,
+      "revenue": 1518030.86,
+      "impressions": 17859.19,
+      "clicks": 446.48,
+      "conversions": 17.8592
+    },
+    {
+      "date": "2026-06-21",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 319698.47,
+      "revenue": 1984667.35,
+      "impressions": 24808.34,
+      "clicks": 620.21,
+      "conversions": 24.8083
+    },
+    {
+      "date": "2026-06-21",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 347300.61,
+      "revenue": 1697752.57,
+      "impressions": 22636.7,
+      "clicks": 565.92,
+      "conversions": 22.6367
+    },
+    {
+      "date": "2026-06-21",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 334515.05,
+      "revenue": 1578419.6,
+      "impressions": 18569.64,
+      "clicks": 464.24,
+      "conversions": 18.5696
+    },
+    {
+      "date": "2026-06-22",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 363402.64,
+      "revenue": 2096897.02,
+      "impressions": 26211.21,
+      "clicks": 655.28,
+      "conversions": 26.2112
+    },
+    {
+      "date": "2026-06-22",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 353543.39,
+      "revenue": 1718313.77,
+      "impressions": 22910.85,
+      "clicks": 572.77,
+      "conversions": 22.9109
+    },
+    {
+      "date": "2026-06-22",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 328461.69,
+      "revenue": 1555306.98,
+      "impressions": 18297.73,
+      "clicks": 457.44,
+      "conversions": 18.2977
+    },
+    {
+      "date": "2026-06-23",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 401125.39,
+      "revenue": 2198077.52,
+      "impressions": 27475.97,
+      "clicks": 686.9,
+      "conversions": 27.476
+    },
+    {
+      "date": "2026-06-23",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 381279.2,
+      "revenue": 1774064.67,
+      "impressions": 23654.2,
+      "clicks": 591.35,
+      "conversions": 23.6542
+    },
+    {
+      "date": "2026-06-23",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 324599.96,
+      "revenue": 1530038.99,
+      "impressions": 18000.46,
+      "clicks": 450.01,
+      "conversions": 18.0005
+    },
+    {
+      "date": "2026-06-24",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 417929.95,
+      "revenue": 2247568.7,
+      "impressions": 28094.61,
+      "clicks": 702.37,
+      "conversions": 28.0946
+    },
+    {
+      "date": "2026-06-24",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 393468.88,
+      "revenue": 1806434.8,
+      "impressions": 24085.8,
+      "clicks": 602.14,
+      "conversions": 24.0858
+    },
+    {
+      "date": "2026-06-24",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 312513.56,
+      "revenue": 1522696.8,
+      "impressions": 17914.08,
+      "clicks": 447.85,
+      "conversions": 17.9141
+    },
+    {
+      "date": "2026-06-25",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 444212.5,
+      "revenue": 2338205.84,
+      "impressions": 29227.57,
+      "clicks": 730.69,
+      "conversions": 29.2276
+    },
+    {
+      "date": "2026-06-25",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 399652.09,
+      "revenue": 1807312.05,
+      "impressions": 24097.49,
+      "clicks": 602.44,
+      "conversions": 24.0975
+    },
+    {
+      "date": "2026-06-25",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 300995.03,
+      "revenue": 1485319.16,
+      "impressions": 17474.34,
+      "clicks": 436.86,
+      "conversions": 17.4743
+    },
+    {
+      "date": "2026-06-26",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 467047.56,
+      "revenue": 2389851.26,
+      "impressions": 29873.14,
+      "clicks": 746.83,
+      "conversions": 29.8731
+    },
+    {
+      "date": "2026-06-26",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 387694.62,
+      "revenue": 1782750.21,
+      "impressions": 23770.0,
+      "clicks": 594.25,
+      "conversions": 23.77
+    },
+    {
+      "date": "2026-06-26",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 293571.96,
+      "revenue": 1478023.11,
+      "impressions": 17388.51,
+      "clicks": 434.71,
+      "conversions": 17.3885
+    },
+    {
+      "date": "2026-06-27",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 486793.48,
+      "revenue": 2403694.35,
+      "impressions": 30046.18,
+      "clicks": 751.15,
+      "conversions": 30.0462
+    },
+    {
+      "date": "2026-06-27",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 373037.55,
+      "revenue": 1747359.29,
+      "impressions": 23298.12,
+      "clicks": 582.45,
+      "conversions": 23.2981
+    },
+    {
+      "date": "2026-06-27",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 273031.52,
+      "revenue": 1425406.56,
+      "impressions": 16769.49,
+      "clicks": 419.24,
+      "conversions": 16.7695
+    },
+    {
+      "date": "2026-06-28",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 497647.0,
+      "revenue": 2414510.86,
+      "impressions": 30181.39,
+      "clicks": 754.53,
+      "conversions": 30.1814
+    },
+    {
+      "date": "2026-06-28",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 364625.6,
+      "revenue": 1749023.37,
+      "impressions": 23320.31,
+      "clicks": 583.01,
+      "conversions": 23.3203
+    },
+    {
+      "date": "2026-06-28",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 252212.27,
+      "revenue": 1369864.98,
+      "impressions": 16116.06,
+      "clicks": 402.9,
+      "conversions": 16.1161
+    },
+    {
+      "date": "2026-06-29",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 477861.62,
+      "revenue": 2412593.92,
+      "impressions": 30157.42,
+      "clicks": 753.94,
+      "conversions": 30.1574
+    },
+    {
+      "date": "2026-06-29",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 346848.41,
+      "revenue": 1685316.85,
+      "impressions": 22470.89,
+      "clicks": 561.77,
+      "conversions": 22.4709
+    },
+    {
+      "date": "2026-06-29",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 234868.47,
+      "revenue": 1313657.87,
+      "impressions": 15454.8,
+      "clicks": 386.37,
+      "conversions": 15.4548
+    },
+    {
+      "date": "2026-06-30",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 476634.69,
+      "revenue": 2368053.67,
+      "impressions": 29600.67,
+      "clicks": 740.02,
+      "conversions": 29.6007
+    },
+    {
+      "date": "2026-06-30",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 334238.9,
+      "revenue": 1677786.16,
+      "impressions": 22370.48,
+      "clicks": 559.26,
+      "conversions": 22.3705
+    },
+    {
+      "date": "2026-06-30",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 231249.02,
+      "revenue": 1290963.35,
+      "impressions": 15187.8,
+      "clicks": 379.7,
+      "conversions": 15.1878
+    },
+    {
+      "date": "2026-07-01",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 464725.54,
+      "revenue": 2362596.52,
+      "impressions": 29532.46,
+      "clicks": 738.31,
+      "conversions": 29.5325
+    },
+    {
+      "date": "2026-07-01",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 309597.6,
+      "revenue": 1601106.73,
+      "impressions": 21348.09,
+      "clicks": 533.7,
+      "conversions": 21.3481
+    },
+    {
+      "date": "2026-07-01",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 224956.3,
+      "revenue": 1289204.62,
+      "impressions": 15167.11,
+      "clicks": 379.18,
+      "conversions": 15.1671
+    },
+    {
+      "date": "2026-07-02",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 444810.96,
+      "revenue": 2307045.08,
+      "impressions": 28838.06,
+      "clicks": 720.95,
+      "conversions": 28.8381
+    },
+    {
+      "date": "2026-07-02",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 290311.92,
+      "revenue": 1543386.98,
+      "impressions": 20578.49,
+      "clicks": 514.46,
+      "conversions": 20.5785
+    },
+    {
+      "date": "2026-07-02",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 237964.99,
+      "revenue": 1322152.7,
+      "impressions": 15554.74,
+      "clicks": 388.87,
+      "conversions": 15.5547
+    },
+    {
+      "date": "2026-07-03",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 416598.22,
+      "revenue": 2268166.8,
+      "impressions": 28352.09,
+      "clicks": 708.8,
+      "conversions": 28.3521
+    },
+    {
+      "date": "2026-07-03",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 273863.97,
+      "revenue": 1506500.75,
+      "impressions": 20086.68,
+      "clicks": 502.17,
+      "conversions": 20.0867
+    },
+    {
+      "date": "2026-07-03",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 237896.82,
+      "revenue": 1333203.82,
+      "impressions": 15684.75,
+      "clicks": 392.12,
+      "conversions": 15.6848
+    },
+    {
+      "date": "2026-07-04",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 382409.77,
+      "revenue": 2175312.0,
+      "impressions": 27191.4,
+      "clicks": 679.79,
+      "conversions": 27.1914
+    },
+    {
+      "date": "2026-07-04",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 269342.7,
+      "revenue": 1477763.8,
+      "impressions": 19703.52,
+      "clicks": 492.59,
+      "conversions": 19.7035
+    },
+    {
+      "date": "2026-07-04",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 253786.44,
+      "revenue": 1382646.02,
+      "impressions": 16266.42,
+      "clicks": 406.66,
+      "conversions": 16.2664
+    },
+    {
+      "date": "2026-07-05",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 360768.52,
+      "revenue": 2083979.07,
+      "impressions": 26049.74,
+      "clicks": 651.24,
+      "conversions": 26.0497
+    },
+    {
+      "date": "2026-07-05",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 276817.4,
+      "revenue": 1502206.43,
+      "impressions": 20029.42,
+      "clicks": 500.74,
+      "conversions": 20.0294
+    },
+    {
+      "date": "2026-07-05",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 270093.79,
+      "revenue": 1415296.45,
+      "impressions": 16650.55,
+      "clicks": 416.26,
+      "conversions": 16.6505
+    },
+    {
+      "date": "2026-07-06",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 344804.75,
+      "revenue": 2042166.0,
+      "impressions": 25527.08,
+      "clicks": 638.18,
+      "conversions": 25.5271
+    },
+    {
+      "date": "2026-07-06",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 279372.78,
+      "revenue": 1520613.73,
+      "impressions": 20274.85,
+      "clicks": 506.87,
+      "conversions": 20.2748
+    },
+    {
+      "date": "2026-07-06",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 289479.17,
+      "revenue": 1455689.89,
+      "impressions": 17125.76,
+      "clicks": 428.14,
+      "conversions": 17.1258
+    },
+    {
+      "date": "2026-07-07",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 345718.43,
+      "revenue": 2033629.76,
+      "impressions": 25420.37,
+      "clicks": 635.51,
+      "conversions": 25.4204
+    },
+    {
+      "date": "2026-07-07",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 306242.83,
+      "revenue": 1598276.17,
+      "impressions": 21310.35,
+      "clicks": 532.76,
+      "conversions": 21.3103
+    },
+    {
+      "date": "2026-07-07",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 312785.72,
+      "revenue": 1513961.47,
+      "impressions": 17811.31,
+      "clicks": 445.28,
+      "conversions": 17.8113
+    },
+    {
+      "date": "2026-07-08",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 344774.72,
+      "revenue": 2062522.75,
+      "impressions": 25781.53,
+      "clicks": 644.54,
+      "conversions": 25.7815
+    },
+    {
+      "date": "2026-07-08",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 331813.67,
+      "revenue": 1657928.75,
+      "impressions": 22105.72,
+      "clicks": 552.64,
+      "conversions": 22.1057
+    },
+    {
+      "date": "2026-07-08",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 318129.84,
+      "revenue": 1529070.24,
+      "impressions": 17989.06,
+      "clicks": 449.73,
+      "conversions": 17.9891
+    },
+    {
+      "date": "2026-07-09",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 354031.39,
+      "revenue": 2093626.92,
+      "impressions": 26170.34,
+      "clicks": 654.26,
+      "conversions": 26.1703
+    },
+    {
+      "date": "2026-07-09",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 353774.16,
+      "revenue": 1708033.9,
+      "impressions": 22773.79,
+      "clicks": 569.34,
+      "conversions": 22.7738
+    },
+    {
+      "date": "2026-07-09",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 340618.59,
+      "revenue": 1573410.91,
+      "impressions": 18510.72,
+      "clicks": 462.77,
+      "conversions": 18.5107
+    },
+    {
+      "date": "2026-07-10",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 377002.7,
+      "revenue": 2142340.25,
+      "impressions": 26779.25,
+      "clicks": 669.48,
+      "conversions": 26.7793
+    },
+    {
+      "date": "2026-07-10",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 374473.88,
+      "revenue": 1743087.53,
+      "impressions": 23241.17,
+      "clicks": 581.03,
+      "conversions": 23.2412
+    },
+    {
+      "date": "2026-07-10",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 349448.43,
+      "revenue": 1606431.21,
+      "impressions": 18899.19,
+      "clicks": 472.48,
+      "conversions": 18.8992
+    },
+    {
+      "date": "2026-07-11",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 393944.19,
+      "revenue": 2201535.8,
+      "impressions": 27519.2,
+      "clicks": 687.98,
+      "conversions": 27.5192
+    },
+    {
+      "date": "2026-07-11",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 398053.21,
+      "revenue": 1815133.56,
+      "impressions": 24201.78,
+      "clicks": 605.04,
+      "conversions": 24.2018
+    },
+    {
+      "date": "2026-07-11",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 359497.46,
+      "revenue": 1621305.05,
+      "impressions": 19074.18,
+      "clicks": 476.85,
+      "conversions": 19.0742
+    },
+    {
+      "date": "2026-07-12",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 426324.28,
+      "revenue": 2267297.1,
+      "impressions": 28341.21,
+      "clicks": 708.53,
+      "conversions": 28.3412
+    },
+    {
+      "date": "2026-07-12",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 419475.18,
+      "revenue": 1851358.76,
+      "impressions": 24684.78,
+      "clicks": 617.12,
+      "conversions": 24.6848
+    },
+    {
+      "date": "2026-07-12",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 357230.4,
+      "revenue": 1590789.66,
+      "impressions": 18715.17,
+      "clicks": 467.88,
+      "conversions": 18.7152
+    },
+    {
+      "date": "2026-07-13",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 451777.02,
+      "revenue": 2340686.93,
+      "impressions": 29258.59,
+      "clicks": 731.46,
+      "conversions": 29.2586
+    },
+    {
+      "date": "2026-07-13",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 437967.07,
+      "revenue": 1891895.84,
+      "impressions": 25225.28,
+      "clicks": 630.63,
+      "conversions": 25.2253
+    },
+    {
+      "date": "2026-07-13",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 346211.83,
+      "revenue": 1583348.55,
+      "impressions": 18627.63,
+      "clicks": 465.69,
+      "conversions": 18.6276
+    },
+    {
+      "date": "2026-07-14",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 484820.43,
+      "revenue": 2410395.46,
+      "impressions": 30129.94,
+      "clicks": 753.25,
+      "conversions": 30.1299
+    },
+    {
+      "date": "2026-07-14",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 444464.87,
+      "revenue": 1881670.46,
+      "impressions": 25088.94,
+      "clicks": 627.22,
+      "conversions": 25.0889
+    },
+    {
+      "date": "2026-07-14",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 330614.93,
+      "revenue": 1567531.66,
+      "impressions": 18441.55,
+      "clicks": 461.04,
+      "conversions": 18.4415
+    },
+    {
+      "date": "2026-07-15",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 511826.08,
+      "revenue": 2469817.51,
+      "impressions": 30872.72,
+      "clicks": 771.82,
+      "conversions": 30.8727
+    },
+    {
+      "date": "2026-07-15",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 432584.6,
+      "revenue": 1859666.56,
+      "impressions": 24795.55,
+      "clicks": 619.89,
+      "conversions": 24.7956
+    },
+    {
+      "date": "2026-07-15",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 302393.0,
+      "revenue": 1495006.1,
+      "impressions": 17588.31,
+      "clicks": 439.71,
+      "conversions": 17.5883
+    },
+    {
+      "date": "2026-07-16",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 546678.75,
+      "revenue": 2529735.1,
+      "impressions": 31621.69,
+      "clicks": 790.54,
+      "conversions": 31.6217
+    },
+    {
+      "date": "2026-07-16",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 421739.12,
+      "revenue": 1830233.21,
+      "impressions": 24403.11,
+      "clicks": 610.08,
+      "conversions": 24.4031
+    },
+    {
+      "date": "2026-07-16",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 291796.26,
+      "revenue": 1472626.82,
+      "impressions": 17325.02,
+      "clicks": 433.13,
+      "conversions": 17.325
+    },
+    {
+      "date": "2026-07-17",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 551613.44,
+      "revenue": 2543764.21,
+      "impressions": 31797.05,
+      "clicks": 794.93,
+      "conversions": 31.7971
+    },
+    {
+      "date": "2026-07-17",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 405415.49,
+      "revenue": 1814932.63,
+      "impressions": 24199.1,
+      "clicks": 604.98,
+      "conversions": 24.1991
+    },
+    {
+      "date": "2026-07-17",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 258310.92,
+      "revenue": 1375069.02,
+      "impressions": 16177.28,
+      "clicks": 404.43,
+      "conversions": 16.1773
+    },
+    {
+      "date": "2026-07-18",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 549005.99,
+      "revenue": 2534114.91,
+      "impressions": 31676.44,
+      "clicks": 791.91,
+      "conversions": 31.6764
+    },
+    {
+      "date": "2026-07-18",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 398517.25,
+      "revenue": 1809745.83,
+      "impressions": 24129.94,
+      "clicks": 603.25,
+      "conversions": 24.1299
+    },
+    {
+      "date": "2026-07-18",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 234083.37,
+      "revenue": 1308338.54,
+      "impressions": 15392.22,
+      "clicks": 384.81,
+      "conversions": 15.3922
+    },
+    {
+      "date": "2026-07-19",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 550409.0,
+      "revenue": 2525429.61,
+      "impressions": 31567.87,
+      "clicks": 789.2,
+      "conversions": 31.5679
+    },
+    {
+      "date": "2026-07-19",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 367125.16,
+      "revenue": 1736970.05,
+      "impressions": 23159.6,
+      "clicks": 578.99,
+      "conversions": 23.1596
+    },
+    {
+      "date": "2026-07-19",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 215609.6,
+      "revenue": 1258039.09,
+      "impressions": 14800.46,
+      "clicks": 370.01,
+      "conversions": 14.8005
+    },
+    {
+      "date": "2026-07-20",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 529896.49,
+      "revenue": 2481382.3,
+      "impressions": 31017.28,
+      "clicks": 775.43,
+      "conversions": 31.0173
+    },
+    {
+      "date": "2026-07-20",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 335761.95,
+      "revenue": 1658992.42,
+      "impressions": 22119.9,
+      "clicks": 553.0,
+      "conversions": 22.1199
+    },
+    {
+      "date": "2026-07-20",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 205194.7,
+      "revenue": 1214837.77,
+      "impressions": 14292.21,
+      "clicks": 357.31,
+      "conversions": 14.2922
+    },
+    {
+      "date": "2026-07-21",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 524727.08,
+      "revenue": 2468054.5,
+      "impressions": 30850.68,
+      "clicks": 771.27,
+      "conversions": 30.8507
+    },
+    {
+      "date": "2026-07-21",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 317585.64,
+      "revenue": 1627109.92,
+      "impressions": 21694.8,
+      "clicks": 542.37,
+      "conversions": 21.6948
+    },
+    {
+      "date": "2026-07-21",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 190311.15,
+      "revenue": 1159466.43,
+      "impressions": 13640.78,
+      "clicks": 341.02,
+      "conversions": 13.6408
+    },
+    {
+      "date": "2026-07-22",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 485650.48,
+      "revenue": 2417383.36,
+      "impressions": 30217.29,
+      "clicks": 755.43,
+      "conversions": 30.2173
+    },
+    {
+      "date": "2026-07-22",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 273872.88,
+      "revenue": 1501028.34,
+      "impressions": 20013.71,
+      "clicks": 500.34,
+      "conversions": 20.0137
+    },
+    {
+      "date": "2026-07-22",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 190117.71,
+      "revenue": 1166552.61,
+      "impressions": 13724.15,
+      "clicks": 343.1,
+      "conversions": 13.7241
+    },
+    {
+      "date": "2026-07-23",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 440766.78,
+      "revenue": 2323492.57,
+      "impressions": 29043.66,
+      "clicks": 726.09,
+      "conversions": 29.0437
+    },
+    {
+      "date": "2026-07-23",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 264334.31,
+      "revenue": 1463530.12,
+      "impressions": 19513.73,
+      "clicks": 487.84,
+      "conversions": 19.5137
+    },
+    {
+      "date": "2026-07-23",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 194987.54,
+      "revenue": 1178492.3,
+      "impressions": 13864.62,
+      "clicks": 346.62,
+      "conversions": 13.8646
+    },
+    {
+      "date": "2026-07-24",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 415348.55,
+      "revenue": 2258585.2,
+      "impressions": 28232.32,
+      "clicks": 705.81,
+      "conversions": 28.2323
+    },
+    {
+      "date": "2026-07-24",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 251138.4,
+      "revenue": 1434181.25,
+      "impressions": 19122.42,
+      "clicks": 478.06,
+      "conversions": 19.1224
+    },
+    {
+      "date": "2026-07-24",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 203389.88,
+      "revenue": 1216274.56,
+      "impressions": 14309.11,
+      "clicks": 357.73,
+      "conversions": 14.3091
+    },
+    {
+      "date": "2026-07-25",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 381808.19,
+      "revenue": 2151518.51,
+      "impressions": 26893.98,
+      "clicks": 672.35,
+      "conversions": 26.894
+    },
+    {
+      "date": "2026-07-25",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 239968.54,
+      "revenue": 1388317.54,
+      "impressions": 18510.9,
+      "clicks": 462.77,
+      "conversions": 18.5109
+    },
+    {
+      "date": "2026-07-25",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 218544.0,
+      "revenue": 1249032.23,
+      "impressions": 14694.5,
+      "clicks": 367.36,
+      "conversions": 14.6945
+    },
+    {
+      "date": "2026-07-26",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 345485.49,
+      "revenue": 2061780.44,
+      "impressions": 25772.26,
+      "clicks": 644.31,
+      "conversions": 25.7723
+    },
+    {
+      "date": "2026-07-26",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 235578.55,
+      "revenue": 1360467.08,
+      "impressions": 18139.56,
+      "clicks": 453.49,
+      "conversions": 18.1396
+    },
+    {
+      "date": "2026-07-26",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 232367.88,
+      "revenue": 1316763.39,
+      "impressions": 15491.33,
+      "clicks": 387.28,
+      "conversions": 15.4913
+    },
+    {
+      "date": "2026-07-27",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 331445.98,
+      "revenue": 2022779.09,
+      "impressions": 25284.74,
+      "clicks": 632.12,
+      "conversions": 25.2847
+    },
+    {
+      "date": "2026-07-27",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 256715.6,
+      "revenue": 1436106.56,
+      "impressions": 19148.09,
+      "clicks": 478.7,
+      "conversions": 19.1481
+    },
+    {
+      "date": "2026-07-27",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 255672.07,
+      "revenue": 1373872.57,
+      "impressions": 16163.21,
+      "clicks": 404.08,
+      "conversions": 16.1632
+    },
+    {
+      "date": "2026-07-28",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 327389.01,
+      "revenue": 2002483.75,
+      "impressions": 25031.05,
+      "clicks": 625.78,
+      "conversions": 25.031
+    },
+    {
+      "date": "2026-07-28",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 261385.87,
+      "revenue": 1447150.81,
+      "impressions": 19295.34,
+      "clicks": 482.38,
+      "conversions": 19.2953
+    },
+    {
+      "date": "2026-07-28",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 276444.34,
+      "revenue": 1420460.33,
+      "impressions": 16711.3,
+      "clicks": 417.78,
+      "conversions": 16.7113
+    },
+    {
+      "date": "2026-07-29",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 330017.59,
+      "revenue": 2015861.32,
+      "impressions": 25198.27,
+      "clicks": 629.96,
+      "conversions": 25.1983
+    },
+    {
+      "date": "2026-07-29",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 288015.27,
+      "revenue": 1555092.98,
+      "impressions": 20734.57,
+      "clicks": 518.36,
+      "conversions": 20.7346
+    },
+    {
+      "date": "2026-07-29",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 293065.48,
+      "revenue": 1481131.52,
+      "impressions": 17425.08,
+      "clicks": 435.63,
+      "conversions": 17.4251
+    },
+    {
+      "date": "2026-07-30",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 322781.27,
+      "revenue": 1988560.2,
+      "impressions": 24857.0,
+      "clicks": 621.43,
+      "conversions": 24.857
+    },
+    {
+      "date": "2026-07-30",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 295481.24,
+      "revenue": 1562954.69,
+      "impressions": 20839.4,
+      "clicks": 520.98,
+      "conversions": 20.8394
+    },
+    {
+      "date": "2026-07-30",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 297720.67,
+      "revenue": 1488341.96,
+      "impressions": 17509.91,
+      "clicks": 437.75,
+      "conversions": 17.5099
+    },
+    {
+      "date": "2026-07-31",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 346540.25,
+      "revenue": 2058429.52,
+      "impressions": 25730.37,
+      "clicks": 643.26,
+      "conversions": 25.7304
+    },
+    {
+      "date": "2026-07-31",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 333287.16,
+      "revenue": 1676344.06,
+      "impressions": 22351.25,
+      "clicks": 558.78,
+      "conversions": 22.3513
+    },
+    {
+      "date": "2026-07-31",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 300241.51,
+      "revenue": 1481175.5,
+      "impressions": 17425.59,
+      "clicks": 435.64,
+      "conversions": 17.4256
+    },
+    {
+      "date": "2026-08-01",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 352457.39,
+      "revenue": 2089344.99,
+      "impressions": 26116.81,
+      "clicks": 652.92,
+      "conversions": 26.1168
+    },
+    {
+      "date": "2026-08-01",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 347929.02,
+      "revenue": 1710754.02,
+      "impressions": 22810.05,
+      "clicks": 570.25,
+      "conversions": 22.8101
+    },
+    {
+      "date": "2026-08-01",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 304645.44,
+      "revenue": 1486131.48,
+      "impressions": 17483.9,
+      "clicks": 437.1,
+      "conversions": 17.4839
+    },
+    {
+      "date": "2026-08-02",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 398507.76,
+      "revenue": 2223321.46,
+      "impressions": 27791.52,
+      "clicks": 694.79,
+      "conversions": 27.7915
+    },
+    {
+      "date": "2026-08-02",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 358591.01,
+      "revenue": 1717747.74,
+      "impressions": 22903.3,
+      "clicks": 572.58,
+      "conversions": 22.9033
+    },
+    {
+      "date": "2026-08-02",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 300165.63,
+      "revenue": 1502215.6,
+      "impressions": 17673.12,
+      "clicks": 441.83,
+      "conversions": 17.6731
+    },
+    {
+      "date": "2026-08-03",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 412196.45,
+      "revenue": 2240382.8,
+      "impressions": 28004.79,
+      "clicks": 700.12,
+      "conversions": 28.0048
+    },
+    {
+      "date": "2026-08-03",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 364707.27,
+      "revenue": 1747800.76,
+      "impressions": 23304.01,
+      "clicks": 582.6,
+      "conversions": 23.304
+    },
+    {
+      "date": "2026-08-03",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 291619.11,
+      "revenue": 1467320.16,
+      "impressions": 17262.59,
+      "clicks": 431.56,
+      "conversions": 17.2626
+    },
+    {
+      "date": "2026-08-04",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 446183.45,
+      "revenue": 2333330.86,
+      "impressions": 29166.64,
+      "clicks": 729.17,
+      "conversions": 29.1666
+    },
+    {
+      "date": "2026-08-04",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 385043.47,
+      "revenue": 1774049.26,
+      "impressions": 23653.99,
+      "clicks": 591.35,
+      "conversions": 23.654
+    },
+    {
+      "date": "2026-08-04",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 288592.82,
+      "revenue": 1451225.51,
+      "impressions": 17073.24,
+      "clicks": 426.83,
+      "conversions": 17.0732
+    },
+    {
+      "date": "2026-08-05",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 459835.97,
+      "revenue": 2333337.03,
+      "impressions": 29166.71,
+      "clicks": 729.17,
+      "conversions": 29.1667
+    },
+    {
+      "date": "2026-08-05",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 372538.94,
+      "revenue": 1747933.51,
+      "impressions": 23305.78,
+      "clicks": 582.64,
+      "conversions": 23.3058
+    },
+    {
+      "date": "2026-08-05",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 276150.93,
+      "revenue": 1416616.16,
+      "impressions": 16666.07,
+      "clicks": 416.65,
+      "conversions": 16.6661
+    },
+    {
+      "date": "2026-08-06",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 471985.41,
+      "revenue": 2375218.59,
+      "impressions": 29690.23,
+      "clicks": 742.26,
+      "conversions": 29.6902
+    },
+    {
+      "date": "2026-08-06",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 371575.61,
+      "revenue": 1761548.71,
+      "impressions": 23487.32,
+      "clicks": 587.18,
+      "conversions": 23.4873
+    },
+    {
+      "date": "2026-08-06",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 245241.07,
+      "revenue": 1348984.81,
+      "impressions": 15870.41,
+      "clicks": 396.76,
+      "conversions": 15.8704
+    },
+    {
+      "date": "2026-08-07",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 481348.25,
+      "revenue": 2419934.43,
+      "impressions": 30249.18,
+      "clicks": 756.23,
+      "conversions": 30.2492
+    },
+    {
+      "date": "2026-08-07",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 344166.24,
+      "revenue": 1684429.38,
+      "impressions": 22459.06,
+      "clicks": 561.48,
+      "conversions": 22.4591
+    },
+    {
+      "date": "2026-08-07",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 230178.91,
+      "revenue": 1287702.52,
+      "impressions": 15149.44,
+      "clicks": 378.74,
+      "conversions": 15.1494
+    },
+    {
+      "date": "2026-08-08",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 485070.32,
+      "revenue": 2402283.61,
+      "impressions": 30028.55,
+      "clicks": 750.71,
+      "conversions": 30.0285
+    },
+    {
+      "date": "2026-08-08",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 330514.67,
+      "revenue": 1659558.56,
+      "impressions": 22127.45,
+      "clicks": 553.19,
+      "conversions": 22.1274
+    },
+    {
+      "date": "2026-08-08",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 222642.36,
+      "revenue": 1260838.77,
+      "impressions": 14833.4,
+      "clicks": 370.83,
+      "conversions": 14.8334
+    },
+    {
+      "date": "2026-08-09",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 470974.43,
+      "revenue": 2363626.62,
+      "impressions": 29545.33,
+      "clicks": 738.63,
+      "conversions": 29.5453
+    },
+    {
+      "date": "2026-08-09",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 298261.86,
+      "revenue": 1571692.27,
+      "impressions": 20955.9,
+      "clicks": 523.9,
+      "conversions": 20.9559
+    },
+    {
+      "date": "2026-08-09",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 203939.16,
+      "revenue": 1214927.65,
+      "impressions": 14293.27,
+      "clicks": 357.33,
+      "conversions": 14.2933
+    },
+    {
+      "date": "2026-08-10",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 436349.92,
+      "revenue": 2286385.42,
+      "impressions": 28579.82,
+      "clicks": 714.5,
+      "conversions": 28.5798
+    },
+    {
+      "date": "2026-08-10",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 291669.79,
+      "revenue": 1545593.42,
+      "impressions": 20607.91,
+      "clicks": 515.2,
+      "conversions": 20.6079
+    },
+    {
+      "date": "2026-08-10",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 200304.57,
+      "revenue": 1204909.47,
+      "impressions": 14175.41,
+      "clicks": 354.39,
+      "conversions": 14.1754
+    },
+    {
+      "date": "2026-08-11",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 405645.47,
+      "revenue": 2239892.28,
+      "impressions": 27998.65,
+      "clicks": 699.97,
+      "conversions": 27.9987
+    },
+    {
+      "date": "2026-08-11",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 258560.54,
+      "revenue": 1438455.67,
+      "impressions": 19179.41,
+      "clicks": 479.49,
+      "conversions": 19.1794
+    },
+    {
+      "date": "2026-08-11",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 203030.11,
+      "revenue": 1197395.28,
+      "impressions": 14087.0,
+      "clicks": 352.18,
+      "conversions": 14.087
+    },
+    {
+      "date": "2026-08-12",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 393649.57,
+      "revenue": 2171498.05,
+      "impressions": 27143.73,
+      "clicks": 678.59,
+      "conversions": 27.1437
+    },
+    {
+      "date": "2026-08-12",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 241846.29,
+      "revenue": 1400765.19,
+      "impressions": 18676.87,
+      "clicks": 466.92,
+      "conversions": 18.6769
+    },
+    {
+      "date": "2026-08-12",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 210022.72,
+      "revenue": 1225769.73,
+      "impressions": 14420.82,
+      "clicks": 360.52,
+      "conversions": 14.4208
+    },
+    {
+      "date": "2026-08-13",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 352624.26,
+      "revenue": 2055360.88,
+      "impressions": 25692.01,
+      "clicks": 642.3,
+      "conversions": 25.692
+    },
+    {
+      "date": "2026-08-13",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 248336.94,
+      "revenue": 1415796.04,
+      "impressions": 18877.28,
+      "clicks": 471.93,
+      "conversions": 18.8773
+    },
+    {
+      "date": "2026-08-13",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 231176.6,
+      "revenue": 1300068.17,
+      "impressions": 15294.92,
+      "clicks": 382.37,
+      "conversions": 15.2949
+    },
+    {
+      "date": "2026-08-14",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 341828.55,
+      "revenue": 2040534.57,
+      "impressions": 25506.68,
+      "clicks": 637.67,
+      "conversions": 25.5067
+    },
+    {
+      "date": "2026-08-14",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 235209.54,
+      "revenue": 1369335.02,
+      "impressions": 18257.8,
+      "clicks": 456.45,
+      "conversions": 18.2578
+    },
+    {
+      "date": "2026-08-14",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 252104.24,
+      "revenue": 1351684.43,
+      "impressions": 15902.17,
+      "clicks": 397.55,
+      "conversions": 15.9022
+    },
+    {
+      "date": "2026-08-15",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 321404.5,
+      "revenue": 1986837.37,
+      "impressions": 24835.47,
+      "clicks": 620.89,
+      "conversions": 24.8355
+    },
+    {
+      "date": "2026-08-15",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 250452.75,
+      "revenue": 1421036.53,
+      "impressions": 18947.15,
+      "clicks": 473.68,
+      "conversions": 18.9472
+    },
+    {
+      "date": "2026-08-15",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 273428.09,
+      "revenue": 1410383.7,
+      "impressions": 16592.75,
+      "clicks": 414.82,
+      "conversions": 16.5927
+    },
+    {
+      "date": "2026-08-16",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 300870.93,
+      "revenue": 1895823.3,
+      "impressions": 23697.79,
+      "clicks": 592.44,
+      "conversions": 23.6978
+    },
+    {
+      "date": "2026-08-16",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 268125.21,
+      "revenue": 1479622.39,
+      "impressions": 19728.3,
+      "clicks": 493.21,
+      "conversions": 19.7283
+    },
+    {
+      "date": "2026-08-16",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 295135.34,
+      "revenue": 1464506.31,
+      "impressions": 17229.49,
+      "clicks": 430.74,
+      "conversions": 17.2295
+    },
+    {
+      "date": "2026-08-17",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 287199.36,
+      "revenue": 1852254.86,
+      "impressions": 23153.19,
+      "clicks": 578.83,
+      "conversions": 23.1532
+    },
+    {
+      "date": "2026-08-17",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 276550.18,
+      "revenue": 1499281.64,
+      "impressions": 19990.42,
+      "clicks": 499.76,
+      "conversions": 19.9904
+    },
+    {
+      "date": "2026-08-17",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 312871.56,
+      "revenue": 1519074.78,
+      "impressions": 17871.47,
+      "clicks": 446.79,
+      "conversions": 17.8715
+    },
+    {
+      "date": "2026-08-18",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 299646.32,
+      "revenue": 1913806.77,
+      "impressions": 23922.58,
+      "clicks": 598.06,
+      "conversions": 23.9226
+    },
+    {
+      "date": "2026-08-18",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 311121.52,
+      "revenue": 1603423.07,
+      "impressions": 21378.97,
+      "clicks": 534.47,
+      "conversions": 21.379
+    },
+    {
+      "date": "2026-08-18",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 332348.35,
+      "revenue": 1545984.45,
+      "impressions": 18188.05,
+      "clicks": 454.7,
+      "conversions": 18.1881
+    },
+    {
+      "date": "2026-08-19",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 325128.89,
+      "revenue": 1999046.04,
+      "impressions": 24988.08,
+      "clicks": 624.7,
+      "conversions": 24.9881
+    },
+    {
+      "date": "2026-08-19",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 341439.55,
+      "revenue": 1690459.29,
+      "impressions": 22539.46,
+      "clicks": 563.49,
+      "conversions": 22.5395
+    },
+    {
+      "date": "2026-08-19",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 350118.71,
+      "revenue": 1583661.32,
+      "impressions": 18631.31,
+      "clicks": 465.78,
+      "conversions": 18.6313
+    },
+    {
+      "date": "2026-08-20",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 343396.32,
+      "revenue": 2033893.66,
+      "impressions": 25423.67,
+      "clicks": 635.59,
+      "conversions": 25.4237
+    },
+    {
+      "date": "2026-08-20",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 363418.86,
+      "revenue": 1729947.46,
+      "impressions": 23065.97,
+      "clicks": 576.65,
+      "conversions": 23.066
+    },
+    {
+      "date": "2026-08-20",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 355679.47,
+      "revenue": 1589923.41,
+      "impressions": 18704.98,
+      "clicks": 467.62,
+      "conversions": 18.705
+    },
+    {
+      "date": "2026-08-21",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 373999.83,
+      "revenue": 2144674.05,
+      "impressions": 26808.43,
+      "clicks": 670.21,
+      "conversions": 26.8084
+    },
+    {
+      "date": "2026-08-21",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 390112.66,
+      "revenue": 1774608.11,
+      "impressions": 23661.44,
+      "clicks": 591.54,
+      "conversions": 23.6614
+    },
+    {
+      "date": "2026-08-21",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 368096.45,
+      "revenue": 1610630.31,
+      "impressions": 18948.59,
+      "clicks": 473.71,
+      "conversions": 18.9486
+    },
+    {
+      "date": "2026-08-22",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 419538.42,
+      "revenue": 2240691.55,
+      "impressions": 28008.64,
+      "clicks": 700.22,
+      "conversions": 28.0086
+    },
+    {
+      "date": "2026-08-22",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 406242.8,
+      "revenue": 1826562.51,
+      "impressions": 24354.17,
+      "clicks": 608.85,
+      "conversions": 24.3542
+    },
+    {
+      "date": "2026-08-22",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 363874.79,
+      "revenue": 1619247.97,
+      "impressions": 19049.98,
+      "clicks": 476.25,
+      "conversions": 19.05
+    },
+    {
+      "date": "2026-08-23",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 449852.71,
+      "revenue": 2333151.06,
+      "impressions": 29164.39,
+      "clicks": 729.11,
+      "conversions": 29.1644
+    },
+    {
+      "date": "2026-08-23",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 426310.95,
+      "revenue": 1839687.73,
+      "impressions": 24529.17,
+      "clicks": 613.23,
+      "conversions": 24.5292
+    },
+    {
+      "date": "2026-08-23",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 347677.33,
+      "revenue": 1593446.44,
+      "impressions": 18746.43,
+      "clicks": 468.66,
+      "conversions": 18.7464
+    },
+    {
+      "date": "2026-08-24",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 488583.74,
+      "revenue": 2429147.44,
+      "impressions": 30364.34,
+      "clicks": 759.11,
+      "conversions": 30.3643
+    },
+    {
+      "date": "2026-08-24",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 442083.38,
+      "revenue": 1897574.05,
+      "impressions": 25300.99,
+      "clicks": 632.52,
+      "conversions": 25.301
+    },
+    {
+      "date": "2026-08-24",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 337384.15,
+      "revenue": 1563815.75,
+      "impressions": 18397.83,
+      "clicks": 459.95,
+      "conversions": 18.3978
+    },
+    {
+      "date": "2026-08-25",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 514060.71,
+      "revenue": 2445188.37,
+      "impressions": 30564.85,
+      "clicks": 764.12,
+      "conversions": 30.5649
+    },
+    {
+      "date": "2026-08-25",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 440820.33,
+      "revenue": 1867560.26,
+      "impressions": 24900.8,
+      "clicks": 622.52,
+      "conversions": 24.9008
+    },
+    {
+      "date": "2026-08-25",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 310931.55,
+      "revenue": 1523787.71,
+      "impressions": 17926.91,
+      "clicks": 448.17,
+      "conversions": 17.9269
+    },
+    {
+      "date": "2026-08-26",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 531345.55,
+      "revenue": 2502664.88,
+      "impressions": 31283.31,
+      "clicks": 782.08,
+      "conversions": 31.2833
+    },
+    {
+      "date": "2026-08-26",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 431327.49,
+      "revenue": 1873664.02,
+      "impressions": 24982.19,
+      "clicks": 624.55,
+      "conversions": 24.9822
+    },
+    {
+      "date": "2026-08-26",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 301896.26,
+      "revenue": 1507100.5,
+      "impressions": 17730.59,
+      "clicks": 443.26,
+      "conversions": 17.7306
+    },
+    {
+      "date": "2026-08-27",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 556269.54,
+      "revenue": 2536027.92,
+      "impressions": 31700.35,
+      "clicks": 792.51,
+      "conversions": 31.7003
+    },
+    {
+      "date": "2026-08-27",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 417815.95,
+      "revenue": 1821446.85,
+      "impressions": 24285.96,
+      "clicks": 607.15,
+      "conversions": 24.286
+    },
+    {
+      "date": "2026-08-27",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 281684.51,
+      "revenue": 1453654.7,
+      "impressions": 17101.82,
+      "clicks": 427.55,
+      "conversions": 17.1018
+    },
+    {
+      "date": "2026-08-28",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 545962.5,
+      "revenue": 2497794.18,
+      "impressions": 31222.43,
+      "clicks": 780.56,
+      "conversions": 31.2224
+    },
+    {
+      "date": "2026-08-28",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 398601.34,
+      "revenue": 1796610.65,
+      "impressions": 23954.81,
+      "clicks": 598.87,
+      "conversions": 23.9548
+    },
+    {
+      "date": "2026-08-28",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 251890.93,
+      "revenue": 1350057.16,
+      "impressions": 15883.03,
+      "clicks": 397.08,
+      "conversions": 15.883
+    },
+    {
+      "date": "2026-08-29",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 554689.57,
+      "revenue": 2531153.07,
+      "impressions": 31639.41,
+      "clicks": 790.99,
+      "conversions": 31.6394
+    },
+    {
+      "date": "2026-08-29",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 368652.49,
+      "revenue": 1730402.38,
+      "impressions": 23072.03,
+      "clicks": 576.8,
+      "conversions": 23.072
+    },
+    {
+      "date": "2026-08-29",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 239484.84,
+      "revenue": 1314150.39,
+      "impressions": 15460.59,
+      "clicks": 386.51,
+      "conversions": 15.4606
+    },
+    {
+      "date": "2026-08-30",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 535952.52,
+      "revenue": 2483139.21,
+      "impressions": 31039.24,
+      "clicks": 775.98,
+      "conversions": 31.0392
+    },
+    {
+      "date": "2026-08-30",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 343751.28,
+      "revenue": 1681522.35,
+      "impressions": 22420.3,
+      "clicks": 560.51,
+      "conversions": 22.4203
+    },
+    {
+      "date": "2026-08-30",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 222596.98,
+      "revenue": 1278516.59,
+      "impressions": 15041.37,
+      "clicks": 376.03,
+      "conversions": 15.0414
+    },
+    {
+      "date": "2026-08-31",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 513636.84,
+      "revenue": 2461876.87,
+      "impressions": 30773.46,
+      "clicks": 769.34,
+      "conversions": 30.7735
+    },
+    {
+      "date": "2026-08-31",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 312877.27,
+      "revenue": 1595184.48,
+      "impressions": 21269.13,
+      "clicks": 531.73,
+      "conversions": 21.2691
+    },
+    {
+      "date": "2026-08-31",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 212047.49,
+      "revenue": 1240074.23,
+      "impressions": 14589.11,
+      "clicks": 364.73,
+      "conversions": 14.5891
+    },
+    {
+      "date": "2026-09-01",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 482838.39,
+      "revenue": 2389074.9,
+      "impressions": 29863.44,
+      "clicks": 746.59,
+      "conversions": 29.8634
+    },
+    {
+      "date": "2026-09-01",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 303294.4,
+      "revenue": 1583211.19,
+      "impressions": 21109.48,
+      "clicks": 527.74,
+      "conversions": 21.1095
+    },
+    {
+      "date": "2026-09-01",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 215515.62,
+      "revenue": 1243423.14,
+      "impressions": 14628.51,
+      "clicks": 365.71,
+      "conversions": 14.6285
+    },
+    {
+      "date": "2026-09-02",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 454346.26,
+      "revenue": 2322162.25,
+      "impressions": 29027.03,
+      "clicks": 725.68,
+      "conversions": 29.027
+    },
+    {
+      "date": "2026-09-02",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 282782.24,
+      "revenue": 1518252.14,
+      "impressions": 20243.36,
+      "clicks": 506.08,
+      "conversions": 20.2434
+    },
+    {
+      "date": "2026-09-02",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 224021.17,
+      "revenue": 1277225.64,
+      "impressions": 15026.18,
+      "clicks": 375.65,
+      "conversions": 15.0262
+    },
+    {
+      "date": "2026-09-03",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 422231.06,
+      "revenue": 2245091.55,
+      "impressions": 28063.64,
+      "clicks": 701.59,
+      "conversions": 28.0636
+    },
+    {
+      "date": "2026-09-03",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 272596.9,
+      "revenue": 1496862.0,
+      "impressions": 19958.16,
+      "clicks": 498.95,
+      "conversions": 19.9582
+    },
+    {
+      "date": "2026-09-03",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 222937.27,
+      "revenue": 1268939.3,
+      "impressions": 14928.7,
+      "clicks": 373.22,
+      "conversions": 14.9287
+    },
+    {
+      "date": "2026-09-04",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 384311.51,
+      "revenue": 2151033.3,
+      "impressions": 26887.92,
+      "clicks": 672.2,
+      "conversions": 26.8879
+    },
+    {
+      "date": "2026-09-04",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 267432.75,
+      "revenue": 1472643.59,
+      "impressions": 19635.25,
+      "clicks": 490.88,
+      "conversions": 19.6352
+    },
+    {
+      "date": "2026-09-04",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 236624.07,
+      "revenue": 1324299.59,
+      "impressions": 15580.0,
+      "clicks": 389.5,
+      "conversions": 15.58
+    },
+    {
+      "date": "2026-09-05",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 362911.29,
+      "revenue": 2100099.98,
+      "impressions": 26251.25,
+      "clicks": 656.28,
+      "conversions": 26.2512
+    },
+    {
+      "date": "2026-09-05",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 280986.32,
+      "revenue": 1519497.78,
+      "impressions": 20259.97,
+      "clicks": 506.5,
+      "conversions": 20.26
+    },
+    {
+      "date": "2026-09-05",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 266008.47,
+      "revenue": 1411678.49,
+      "impressions": 16607.98,
+      "clicks": 415.2,
+      "conversions": 16.608
+    },
+    {
+      "date": "2026-09-06",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 347557.26,
+      "revenue": 2073043.83,
+      "impressions": 25913.05,
+      "clicks": 647.83,
+      "conversions": 25.913
+    },
+    {
+      "date": "2026-09-06",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 278922.83,
+      "revenue": 1498705.17,
+      "impressions": 19982.74,
+      "clicks": 499.57,
+      "conversions": 19.9827
+    },
+    {
+      "date": "2026-09-06",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 283963.73,
+      "revenue": 1460368.24,
+      "impressions": 17180.8,
+      "clicks": 429.52,
+      "conversions": 17.1808
+    },
+    {
+      "date": "2026-09-07",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 356312.37,
+      "revenue": 2088303.0,
+      "impressions": 26103.79,
+      "clicks": 652.59,
+      "conversions": 26.1038
+    },
+    {
+      "date": "2026-09-07",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 308163.14,
+      "revenue": 1594325.75,
+      "impressions": 21257.68,
+      "clicks": 531.44,
+      "conversions": 21.2577
+    },
+    {
+      "date": "2026-09-07",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 286119.64,
+      "revenue": 1441287.43,
+      "impressions": 16956.32,
+      "clicks": 423.91,
+      "conversions": 16.9563
+    },
+    {
+      "date": "2026-09-08",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 355009.25,
+      "revenue": 2093802.38,
+      "impressions": 26172.53,
+      "clicks": 654.31,
+      "conversions": 26.1725
+    },
+    {
+      "date": "2026-09-08",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 325535.41,
+      "revenue": 1653300.9,
+      "impressions": 22044.01,
+      "clicks": 551.1,
+      "conversions": 22.044
+    },
+    {
+      "date": "2026-09-08",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 311340.48,
+      "revenue": 1501764.77,
+      "impressions": 17667.82,
+      "clicks": 441.7,
+      "conversions": 17.6678
+    },
+    {
+      "date": "2026-09-09",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 381342.2,
+      "revenue": 2147384.75,
+      "impressions": 26842.31,
+      "clicks": 671.06,
+      "conversions": 26.8423
+    },
+    {
+      "date": "2026-09-09",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 345130.96,
+      "revenue": 1690945.0,
+      "impressions": 22545.93,
+      "clicks": 563.65,
+      "conversions": 22.5459
+    },
+    {
+      "date": "2026-09-09",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 310608.39,
+      "revenue": 1506879.37,
+      "impressions": 17727.99,
+      "clicks": 443.2,
+      "conversions": 17.728
+    },
+    {
+      "date": "2026-09-10",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 388497.69,
+      "revenue": 2171027.56,
+      "impressions": 27137.84,
+      "clicks": 678.45,
+      "conversions": 27.1378
+    },
+    {
+      "date": "2026-09-10",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 355709.55,
+      "revenue": 1714809.95,
+      "impressions": 22864.13,
+      "clicks": 571.6,
+      "conversions": 22.8641
+    },
+    {
+      "date": "2026-09-10",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 308409.75,
+      "revenue": 1508023.89,
+      "impressions": 17741.46,
+      "clicks": 443.54,
+      "conversions": 17.7415
+    },
+    {
+      "date": "2026-09-11",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 427057.62,
+      "revenue": 2270549.17,
+      "impressions": 28381.86,
+      "clicks": 709.55,
+      "conversions": 28.3819
+    },
+    {
+      "date": "2026-09-11",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 382287.9,
+      "revenue": 1782649.53,
+      "impressions": 23768.66,
+      "clicks": 594.22,
+      "conversions": 23.7687
+    },
+    {
+      "date": "2026-09-11",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 316315.74,
+      "revenue": 1517055.97,
+      "impressions": 17847.72,
+      "clicks": 446.19,
+      "conversions": 17.8477
+    },
+    {
+      "date": "2026-09-12",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 433921.61,
+      "revenue": 2279867.31,
+      "impressions": 28498.34,
+      "clicks": 712.46,
+      "conversions": 28.4983
+    },
+    {
+      "date": "2026-09-12",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 390106.26,
+      "revenue": 1796310.49,
+      "impressions": 23950.81,
+      "clicks": 598.77,
+      "conversions": 23.9508
+    },
+    {
+      "date": "2026-09-12",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 304621.14,
+      "revenue": 1489492.62,
+      "impressions": 17523.44,
+      "clicks": 438.09,
+      "conversions": 17.5234
+    },
+    {
+      "date": "2026-09-13",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 474549.59,
+      "revenue": 2382925.27,
+      "impressions": 29786.57,
+      "clicks": 744.66,
+      "conversions": 29.7866
+    },
+    {
+      "date": "2026-09-13",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 396897.09,
+      "revenue": 1809592.23,
+      "impressions": 24127.9,
+      "clicks": 603.2,
+      "conversions": 24.1279
+    },
+    {
+      "date": "2026-09-13",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 287228.84,
+      "revenue": 1470340.57,
+      "impressions": 17298.12,
+      "clicks": 432.45,
+      "conversions": 17.2981
+    },
+    {
+      "date": "2026-09-14",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 490198.13,
+      "revenue": 2421087.78,
+      "impressions": 30263.6,
+      "clicks": 756.59,
+      "conversions": 30.2636
+    },
+    {
+      "date": "2026-09-14",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 390929.19,
+      "revenue": 1801661.5,
+      "impressions": 24022.15,
+      "clicks": 600.55,
+      "conversions": 24.0222
+    },
+    {
+      "date": "2026-09-14",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 272364.07,
+      "revenue": 1410170.21,
+      "impressions": 16590.24,
+      "clicks": 414.76,
+      "conversions": 16.5902
+    },
+    {
+      "date": "2026-09-15",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 492231.95,
+      "revenue": 2415714.22,
+      "impressions": 30196.43,
+      "clicks": 754.91,
+      "conversions": 30.1964
+    },
+    {
+      "date": "2026-09-15",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 374031.02,
+      "revenue": 1746386.5,
+      "impressions": 23285.15,
+      "clicks": 582.13,
+      "conversions": 23.2852
+    },
+    {
+      "date": "2026-09-15",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 243265.56,
+      "revenue": 1338272.89,
+      "impressions": 15744.39,
+      "clicks": 393.61,
+      "conversions": 15.7444
+    },
+    {
+      "date": "2026-09-16",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 504696.67,
+      "revenue": 2439826.29,
+      "impressions": 30497.83,
+      "clicks": 762.45,
+      "conversions": 30.4978
+    },
+    {
+      "date": "2026-09-16",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 352249.01,
+      "revenue": 1717926.36,
+      "impressions": 22905.68,
+      "clicks": 572.64,
+      "conversions": 22.9057
+    },
+    {
+      "date": "2026-09-16",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 223505.35,
+      "revenue": 1285166.08,
+      "impressions": 15119.6,
+      "clicks": 377.99,
+      "conversions": 15.1196
+    },
+    {
+      "date": "2026-09-17",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 515585.7,
+      "revenue": 2467722.31,
+      "impressions": 30846.53,
+      "clicks": 771.16,
+      "conversions": 30.8465
+    },
+    {
+      "date": "2026-09-17",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 339254.02,
+      "revenue": 1674942.8,
+      "impressions": 22332.57,
+      "clicks": 558.31,
+      "conversions": 22.3326
+    },
+    {
+      "date": "2026-09-17",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 212810.76,
+      "revenue": 1247036.48,
+      "impressions": 14671.02,
+      "clicks": 366.78,
+      "conversions": 14.671
+    },
+    {
+      "date": "2026-09-18",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 504419.49,
+      "revenue": 2439204.69,
+      "impressions": 30490.06,
+      "clicks": 762.25,
+      "conversions": 30.4901
+    },
+    {
+      "date": "2026-09-18",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 320242.87,
+      "revenue": 1633817.69,
+      "impressions": 21784.24,
+      "clicks": 544.61,
+      "conversions": 21.7842
+    },
+    {
+      "date": "2026-09-18",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 194054.67,
+      "revenue": 1171575.53,
+      "impressions": 13783.24,
+      "clicks": 344.58,
+      "conversions": 13.7832
+    },
+    {
+      "date": "2026-09-19",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 464877.36,
+      "revenue": 2342289.9,
+      "impressions": 29278.62,
+      "clicks": 731.97,
+      "conversions": 29.2786
+    },
+    {
+      "date": "2026-09-19",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 280386.98,
+      "revenue": 1529803.55,
+      "impressions": 20397.38,
+      "clicks": 509.93,
+      "conversions": 20.3974
+    },
+    {
+      "date": "2026-09-19",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 184362.77,
+      "revenue": 1139725.65,
+      "impressions": 13408.54,
+      "clicks": 335.21,
+      "conversions": 13.4085
+    },
+    {
+      "date": "2026-09-20",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 446054.53,
+      "revenue": 2306543.12,
+      "impressions": 28831.79,
+      "clicks": 720.79,
+      "conversions": 28.8318
+    },
+    {
+      "date": "2026-09-20",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 258861.16,
+      "revenue": 1448357.81,
+      "impressions": 19311.44,
+      "clicks": 482.79,
+      "conversions": 19.3114
+    },
+    {
+      "date": "2026-09-20",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 181863.81,
+      "revenue": 1125490.02,
+      "impressions": 13241.06,
+      "clicks": 331.03,
+      "conversions": 13.2411
+    },
+    {
+      "date": "2026-09-21",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 404942.86,
+      "revenue": 2216480.27,
+      "impressions": 27706.0,
+      "clicks": 692.65,
+      "conversions": 27.706
+    },
+    {
+      "date": "2026-09-21",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 238918.89,
+      "revenue": 1379892.29,
+      "impressions": 18398.56,
+      "clicks": 459.96,
+      "conversions": 18.3986
+    },
+    {
+      "date": "2026-09-21",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 182681.91,
+      "revenue": 1130434.8,
+      "impressions": 13299.23,
+      "clicks": 332.48,
+      "conversions": 13.2992
+    },
+    {
+      "date": "2026-09-22",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 386559.54,
+      "revenue": 2179376.11,
+      "impressions": 27242.2,
+      "clicks": 681.06,
+      "conversions": 27.2422
+    },
+    {
+      "date": "2026-09-22",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 219668.83,
+      "revenue": 1301260.26,
+      "impressions": 17350.14,
+      "clicks": 433.75,
+      "conversions": 17.3501
+    },
+    {
+      "date": "2026-09-22",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 197080.37,
+      "revenue": 1178345.48,
+      "impressions": 13862.89,
+      "clicks": 346.57,
+      "conversions": 13.8629
+    },
+    {
+      "date": "2026-09-23",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 351772.04,
+      "revenue": 2077778.06,
+      "impressions": 25972.23,
+      "clicks": 649.31,
+      "conversions": 25.9722
+    },
+    {
+      "date": "2026-09-23",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 228482.56,
+      "revenue": 1354873.83,
+      "impressions": 18064.98,
+      "clicks": 451.62,
+      "conversions": 18.065
+    },
+    {
+      "date": "2026-09-23",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 206156.61,
+      "revenue": 1218469.18,
+      "impressions": 14334.93,
+      "clicks": 358.37,
+      "conversions": 14.3349
+    },
+    {
+      "date": "2026-09-24",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 308041.85,
+      "revenue": 1919769.44,
+      "impressions": 23997.12,
+      "clicks": 599.93,
+      "conversions": 23.9971
+    },
+    {
+      "date": "2026-09-24",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 229804.2,
+      "revenue": 1355034.52,
+      "impressions": 18067.13,
+      "clicks": 451.68,
+      "conversions": 18.0671
+    },
+    {
+      "date": "2026-09-24",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 226360.75,
+      "revenue": 1287652.13,
+      "impressions": 15148.85,
+      "clicks": 378.72,
+      "conversions": 15.1488
+    },
+    {
+      "date": "2026-09-25",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 305747.9,
+      "revenue": 1910003.94,
+      "impressions": 23875.05,
+      "clicks": 596.88,
+      "conversions": 23.875
+    },
+    {
+      "date": "2026-09-25",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 226235.15,
+      "revenue": 1344338.05,
+      "impressions": 17924.51,
+      "clicks": 448.11,
+      "conversions": 17.9245
+    },
+    {
+      "date": "2026-09-25",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 255426.39,
+      "revenue": 1378346.18,
+      "impressions": 16215.84,
+      "clicks": 405.4,
+      "conversions": 16.2158
+    },
+    {
+      "date": "2026-09-26",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 289343.47,
+      "revenue": 1865319.39,
+      "impressions": 23316.49,
+      "clicks": 582.91,
+      "conversions": 23.3165
+    },
+    {
+      "date": "2026-09-26",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 247875.56,
+      "revenue": 1414232.17,
+      "impressions": 18856.43,
+      "clicks": 471.41,
+      "conversions": 18.8564
+    },
+    {
+      "date": "2026-09-26",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 276076.8,
+      "revenue": 1427597.91,
+      "impressions": 16795.27,
+      "clicks": 419.88,
+      "conversions": 16.7953
+    },
+    {
+      "date": "2026-09-27",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 273873.02,
+      "revenue": 1791001.04,
+      "impressions": 22387.51,
+      "clicks": 559.69,
+      "conversions": 22.3875
+    },
+    {
+      "date": "2026-09-27",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 259496.79,
+      "revenue": 1443936.89,
+      "impressions": 19252.49,
+      "clicks": 481.31,
+      "conversions": 19.2525
+    },
+    {
+      "date": "2026-09-27",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 303474.51,
+      "revenue": 1496144.88,
+      "impressions": 17601.7,
+      "clicks": 440.04,
+      "conversions": 17.6017
+    },
+    {
+      "date": "2026-09-28",
+      "platform": "naver",
+      "channel": "Naver",
+      "spend": 277075.77,
+      "revenue": 1795611.49,
+      "impressions": 22445.14,
+      "clicks": 561.13,
+      "conversions": 22.4451
+    },
+    {
+      "date": "2026-09-28",
+      "platform": "meta",
+      "channel": "Meta",
+      "spend": 283329.92,
+      "revenue": 1537008.95,
+      "impressions": 20493.45,
+      "clicks": 512.34,
+      "conversions": 20.4935
+    },
+    {
+      "date": "2026-09-28",
+      "platform": "google",
+      "channel": "Google",
+      "spend": 309549.72,
+      "revenue": 1518449.88,
+      "impressions": 17864.12,
+      "clicks": 446.6,
+      "conversions": 17.8641
+    }
+  ]
+}
