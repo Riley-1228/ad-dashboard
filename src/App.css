@@ -9430,3 +9430,348 @@ small {
   font-size: 10px;
   text-align: center;
 }
+
+/* ADSCOPE_DASHBOARD_LAYOUT_AND_FILTER_FIX */
+.performance-filter-row {
+  grid-template-columns:
+    minmax(105px, 1fr)
+    minmax(95px, 0.8fr)
+    minmax(120px, 1.05fr)
+    minmax(95px, 0.8fr)
+    minmax(150px, 1.6fr)
+    minmax(105px, 0.9fr)
+    minmax(105px, 0.8fr) !important;
+  gap: 8px !important;
+}
+
+.compact-reset-button {
+  width: 100% !important;
+  min-width: 105px !important;
+  height: 38px !important;
+  box-sizing: border-box !important;
+  padding: 0 8px !important;
+  white-space: nowrap !important;
+  overflow: visible !important;
+}
+
+@media (max-width: 900px) {
+  .performance-filter-row {
+    grid-template-columns:
+      repeat(4, minmax(120px, 1fr)) !important;
+  }
+
+  .compact-reset-button {
+    width: 100% !important;
+  }
+}
+
+
+/* =========================================
+   Client auth language selector
+   - Compact top-right control on client login
+   ========================================= */
+.client-auth-topbar {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.client-auth-topbar .client-login-brand {
+  margin-bottom: 0;
+  min-width: 0;
+}
+
+.client-auth-language-switcher {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  flex: 0 0 auto;
+  padding-top: 3px;
+  color: #c0c6d0;
+  font-size: 10px;
+  line-height: 1;
+}
+
+.client-auth-language-switcher button {
+  appearance: none;
+  min-width: 0;
+  min-height: 0;
+  padding: 2px 3px;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: #94a3b8;
+  font: inherit;
+  font-weight: 600;
+  line-height: 1.2;
+  cursor: pointer;
+}
+
+.client-auth-language-switcher > span {
+  color: #d1d5db;
+  font-size: 9px;
+}
+
+.client-auth-language-switcher button:hover {
+  color: #475569;
+  background: #f1f5f9;
+}
+
+.client-auth-language-switcher button.active {
+  color: #111827;
+  background: transparent;
+  font-weight: 800;
+}
+
+@media (max-width: 420px) {
+  .client-auth-topbar {
+    gap: 10px;
+  }
+
+  .client-auth-language-switcher {
+    padding-top: 2px;
+  }
+}
+
+
+
+/* ADSCOPE_CLIENT_MESSAGES_COMPACT_CHAT_UI */
+
+/*
+  Client Messages:
+  - Keep the page itself compact.
+  - Scroll inside the conversation area.
+  - Keep the composer directly below the conversation, like the operator hub.
+*/
+
+.client-message-list {
+  height: clamp(320px, calc(100vh - 360px), 520px) !important;
+  min-height: 320px !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+
+  margin-top: 16px !important;
+  padding: 18px 20px !important;
+  gap: 14px !important;
+
+  border-radius: 14px 14px 0 0 !important;
+  scrollbar-gutter: stable;
+  scroll-behavior: smooth;
+}
+
+/* Keep messages readable but avoid very wide bubbles. */
+.client-chat-content {
+  max-width: min(68%, 620px) !important;
+}
+
+.client-chat-bubble {
+  padding: 10px 13px !important;
+  line-height: 1.5 !important;
+}
+
+/*
+  Composer is visually attached to the message panel.
+  It stays visible because the message history scrolls independently.
+*/
+.client-message-compose {
+  position: relative;
+  z-index: 2;
+
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    "title title"
+    "textarea actions";
+  align-items: end;
+  gap: 8px 10px;
+
+  margin-top: -1px !important;
+  padding: 12px 14px !important;
+
+  border-radius: 0 0 14px 14px !important;
+  background: #ffffff !important;
+}
+
+.client-message-compose h3 {
+  grid-area: title;
+  margin: 0 0 2px !important;
+}
+
+.client-message-compose textarea {
+  grid-area: textarea;
+
+  min-height: 52px !important;
+  max-height: 120px !important;
+  height: 52px;
+
+  padding: 10px 12px !important;
+
+  resize: vertical !important;
+}
+
+.client-message-compose-actions {
+  grid-area: actions;
+
+  margin-top: 0 !important;
+  align-self: stretch;
+  display: flex !important;
+  align-items: stretch;
+}
+
+.client-message-compose-actions button {
+  min-width: 104px;
+  height: 52px;
+  padding: 0 14px !important;
+
+  white-space: nowrap;
+}
+
+/* Slightly denser metadata, matching the operator communication hub. */
+.client-chat-sender {
+  margin-bottom: 4px !important;
+}
+
+.client-chat-time {
+  margin-top: 4px !important;
+}
+
+/* Smaller screens: keep the same internal-scroll behavior, stack composer controls. */
+@media (max-width: 720px) {
+  .client-message-list {
+    height: clamp(300px, calc(100vh - 390px), 460px) !important;
+    padding: 14px !important;
+  }
+
+  .client-chat-content {
+    max-width: 82% !important;
+  }
+
+  .client-message-compose {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "title"
+      "textarea"
+      "actions";
+  }
+
+  .client-message-compose-actions button {
+    width: 100%;
+    height: 42px;
+  }
+}
+
+
+
+/* ADSCOPE_CLIENT_MESSAGES_OPERATOR_STYLE */
+
+/* Reuse the operator Client Communication Hub layout on the client portal. */
+.client-message-client-overlay {
+  z-index: 1200;
+}
+
+.client-message-client-modal {
+  width: min(1120px, 94vw);
+  height: min(720px, 88vh);
+}
+
+.client-message-modal-close {
+  width: 30px;
+  height: 30px;
+  padding: 0;
+
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+
+  cursor: pointer;
+}
+
+.client-message-client-modal .client-hub-layout {
+  grid-template-columns:
+    210px minmax(0, 1fr) 220px;
+}
+
+/* On the client side, the client's own messages sit on the right. */
+.client-hub-message.client-message-self {
+  align-self: flex-end;
+  background: #eef2ff;
+  border-color: #c7d2fe;
+}
+
+.client-hub-message.client-message-manager {
+  align-self: flex-start;
+  background: #ffffff;
+}
+
+.client-message-client-modal .client-hub-conversation {
+  scrollbar-gutter: stable;
+}
+
+.client-message-client-composer textarea {
+  min-height: 54px;
+  max-height: 110px;
+  padding: 9px 10px;
+}
+
+.client-message-client-composer
+.client-hub-composer-footer button {
+  min-width: 104px;
+  margin-top: 0;
+}
+
+.client-message-view-proposal-button {
+  width: 100%;
+  min-height: 34px;
+
+  margin-top: 8px;
+
+  border: 1px solid #c7d2fe;
+  border-radius: 8px;
+
+  background: #eef2ff;
+  color: #3730a3;
+
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.client-message-view-proposal-button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.client-message-no-proposal {
+  margin: auto 16px;
+}
+
+@media (max-width: 900px) {
+  .client-message-client-modal {
+    width: 96vw;
+    height: 92vh;
+  }
+
+  .client-message-client-modal
+  .client-hub-layout {
+    grid-template-columns:
+      170px minmax(0, 1fr);
+  }
+
+  .client-message-client-modal
+  .client-hub-actions {
+    display: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .client-message-client-modal
+  .client-hub-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .client-message-client-modal
+  .client-hub-sidebar {
+    display: none;
+  }
+}
+

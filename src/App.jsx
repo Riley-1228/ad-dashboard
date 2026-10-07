@@ -161,7 +161,8 @@ async function clientFetch(
 }
 
 function formatAlertDateTime(
-  value
+  value,
+  language = 'ko'
 ) {
   if (!value) {
     return '-'
@@ -179,7 +180,9 @@ function formatAlertDateTime(
   }
 
   return new Intl.DateTimeFormat(
-    'ko-KR',
+    language === 'en'
+      ? 'en-US'
+      : 'ko-KR',
     {
       year: 'numeric',
       month: '2-digit',
@@ -187,14 +190,15 @@ function formatAlertDateTime(
       hour: '2-digit',
       minute: '2-digit',
       second: '2-digit',
-      hour12: false,
+      hour12: language === 'en',
     }
   ).format(date)
 }
 
 
 function getAnomalyGuidance(
-  alert
+  alert,
+  t
 ) {
   const metric =
     String(
@@ -211,207 +215,130 @@ function getAnomalyGuidance(
       alert?.direction || ''
     )
 
+  let guidanceKey = 'default'
 
   if (
     reasonCode ===
     'TRACKING_CONVERSION_ZERO'
   ) {
-    return {
-      possibleCauses: [
-        '전환 태그 또는 Conversion API가 정상적으로 수집되지 않고 있을 수 있습니다.',
-        '랜딩페이지 또는 완료 페이지 변경으로 전환 이벤트가 누락됐을 수 있습니다.',
-        '광고 플랫폼과 실제 주문·문의 데이터 사이에 집계 차이가 발생했을 수 있습니다.',
-      ],
-
-      actions: [
-        '광고 플랫폼의 전환 추적 상태와 최근 태그 변경 이력을 확인합니다.',
-        '실제 주문·문의 데이터와 광고 플랫폼 전환 데이터를 비교합니다.',
-        '완료 페이지 또는 Conversion API 이벤트가 정상 발생하는지 테스트합니다.',
-        '추적 상태가 확인될 때까지 해당 캠페인의 급격한 예산 증액은 보류합니다.',
-      ],
-    }
+    guidanceKey =
+      'trackingConversionZero'
+  } else if (
+    reasonCode ===
+    'TRACKING_REVENUE_ZERO'
+  ) {
+    guidanceKey =
+      'trackingRevenueZero'
+  } else if (
+    metric === 'cpa' &&
+    direction === 'increase'
+  ) {
+    guidanceKey = 'cpaIncrease'
+  } else if (
+    metric === 'roas' &&
+    direction === 'decrease'
+  ) {
+    guidanceKey = 'roasDecrease'
+  } else if (
+    metric === 'cvr' &&
+    direction === 'decrease'
+  ) {
+    guidanceKey = 'cvrDecrease'
+  } else if (
+    metric === 'ctr' &&
+    direction === 'decrease'
+  ) {
+    guidanceKey = 'ctrDecrease'
+  } else if (
+    metric === 'cpc' &&
+    direction === 'increase'
+  ) {
+    guidanceKey = 'cpcIncrease'
+  } else if (
+    metric === 'revenue' &&
+    direction === 'decrease'
+  ) {
+    guidanceKey = 'revenueDecrease'
+  } else if (
+    metric === 'conversions' &&
+    direction === 'decrease'
+  ) {
+    guidanceKey =
+      'conversionsDecrease'
   }
 
+  return {
+    possibleCauses: t(
+      `operator.alerts.guidance.${guidanceKey}.possibleCauses`,
+      { returnObjects: true }
+    ),
+    actions: t(
+      `operator.alerts.guidance.${guidanceKey}.actions`,
+      { returnObjects: true }
+    ),
+  }
+}
+
+
+function getAnomalyDisplayMessage(
+  alert,
+  t,
+  language,
+  metricLabel
+) {
+  if (
+    language !== 'en' &&
+    alert?.message
+  ) {
+    return alert.message
+  }
+
+  const reasonCode =
+    String(
+      alert?.reasonCode || ''
+    )
+
+  if (
+    reasonCode ===
+    'TRACKING_CONVERSION_ZERO'
+  ) {
+    return t(
+      'operator.alerts.messages.trackingConversionZero'
+    )
+  }
 
   if (
     reasonCode ===
     'TRACKING_REVENUE_ZERO'
   ) {
-    return {
-      possibleCauses: [
-        '전환은 발생하지만 매출 value 값이 전달되지 않고 있을 수 있습니다.',
-        '결제 완료 이벤트의 revenue 또는 currency parameter가 누락됐을 수 있습니다.',
-        '광고 플랫폼과 주문 시스템 사이의 매출 연동에 문제가 있을 수 있습니다.',
-      ],
-
-      actions: [
-        '전환 건수가 존재하는데 매출만 0인지 먼저 확인합니다.',
-        '결제 완료 이벤트의 value 및 currency parameter를 확인합니다.',
-        '광고 플랫폼 매출과 실제 주문 매출을 비교합니다.',
-        '매출 추적이 복구될 때까지 ROAS 기준의 예산 판단은 보류합니다.',
-      ],
-    }
+    return t(
+      'operator.alerts.messages.trackingRevenueZero'
+    )
   }
 
+  const changePct =
+    Number(
+      alert?.changePct ?? 0
+    ).toFixed(1)
 
-  if (
-    metric === 'cpa' &&
-    direction === 'increase'
-  ) {
-    return {
-      possibleCauses: [
-        '전환 수가 감소했거나 동일한 전환을 얻는 데 더 많은 광고비가 사용됐을 수 있습니다.',
-        'CPC 상승으로 전환당 광고비가 증가했을 수 있습니다.',
-        'CVR 하락으로 클릭 대비 전환 효율이 악화됐을 수 있습니다.',
-        '전환 추적 누락으로 CPA가 실제보다 높게 계산됐을 가능성도 있습니다.',
-      ],
-
-      actions: [
-        'CPA와 함께 CPC, CVR, 전환 수를 비교해 상승 원인을 분해합니다.',
-        '최근 소재, 검색어, 타겟팅 또는 입찰 변경 여부를 확인합니다.',
-        '전환 추적 상태가 정상인지 확인합니다.',
-        '실제 성과 악화가 지속되면 캠페인 예산 축소 또는 재배분을 검토합니다.',
-      ],
-    }
+  if (alert?.direction === 'increase') {
+    return t(
+      'operator.alerts.messages.increase',
+      { metric: metricLabel, changePct }
+    )
   }
 
-
-  if (
-    metric === 'roas' &&
-    direction === 'decrease'
-  ) {
-    return {
-      possibleCauses: [
-        '광고비 증가 대비 매출 증가폭이 부족했을 수 있습니다.',
-        '매출 자체가 감소했을 수 있습니다.',
-        'CPA 상승 또는 CVR 하락이 동시에 발생했을 수 있습니다.',
-        'Revenue Tracking 이상으로 매출이 과소 집계됐을 가능성도 있습니다.',
-      ],
-
-      actions: [
-        '광고비 증가와 매출 감소 중 어느 요인의 영향이 큰지 확인합니다.',
-        'CPA, CVR, CPC, 전환 수를 함께 비교합니다.',
-        'Revenue Tracking 상태를 확인합니다.',
-        '이상이 지속되면 해당 캠페인의 예산 동결 또는 축소를 검토합니다.',
-      ],
-    }
+  if (alert?.direction === 'decrease') {
+    return t(
+      'operator.alerts.messages.decrease',
+      { metric: metricLabel, changePct }
+    )
   }
 
-
-  if (
-    metric === 'cvr' &&
-    direction === 'decrease'
-  ) {
-    return {
-      possibleCauses: [
-        '광고 클릭 이후 랜딩페이지 전환 효율이 낮아졌을 수 있습니다.',
-        '유입 타겟 또는 검색어 품질이 변화했을 수 있습니다.',
-        '페이지 오류나 결제·문의 과정의 문제가 발생했을 수 있습니다.',
-      ],
-
-      actions: [
-        '랜딩페이지 및 전환 경로가 정상 작동하는지 확인합니다.',
-        '최근 검색어와 타겟 유입 품질 변화를 확인합니다.',
-        '기기별·캠페인별 CVR 변화를 비교합니다.',
-        '성과 저하가 지속되는 소재나 타겟의 조정을 검토합니다.',
-      ],
-    }
-  }
-
-
-  if (
-    metric === 'ctr' &&
-    direction === 'decrease'
-  ) {
-    return {
-      possibleCauses: [
-        '광고 소재의 반응도가 떨어졌을 수 있습니다.',
-        '타겟 또는 노출 위치가 달라졌을 수 있습니다.',
-        '광고 피로도가 증가했을 수 있습니다.',
-      ],
-
-      actions: [
-        '최근 소재별 CTR을 비교합니다.',
-        '노출량 증가와 CTR 하락이 동시에 발생했는지 확인합니다.',
-        '성과가 낮은 소재 교체 또는 신규 소재 테스트를 검토합니다.',
-      ],
-    }
-  }
-
-
-  if (
-    metric === 'cpc' &&
-    direction === 'increase'
-  ) {
-    return {
-      possibleCauses: [
-        '경쟁 심화로 클릭 단가가 상승했을 수 있습니다.',
-        '입찰가 또는 자동 입찰 전략이 변경됐을 수 있습니다.',
-        'CTR 저하로 광고 효율이 떨어졌을 수 있습니다.',
-      ],
-
-      actions: [
-        '최근 입찰 설정 변경 여부를 확인합니다.',
-        'CPC와 CTR 변화를 함께 비교합니다.',
-        '검색어·타겟·게재 위치별 CPC 상승 구간을 확인합니다.',
-        '고비용 저효율 구간의 입찰 또는 예산 조정을 검토합니다.',
-      ],
-    }
-  }
-
-
-  if (
-    metric === 'revenue' &&
-    direction === 'decrease'
-  ) {
-    return {
-      possibleCauses: [
-        '전환 수 또는 객단가가 감소했을 수 있습니다.',
-        '광고 유입 품질이 악화됐을 수 있습니다.',
-        '매출 추적 데이터가 일부 누락됐을 수 있습니다.',
-      ],
-
-      actions: [
-        '전환 수와 CPA, ROAS를 함께 확인합니다.',
-        '실제 주문 매출과 광고 플랫폼 매출을 비교합니다.',
-        '특정 캠페인이나 상품에서 감소가 집중됐는지 확인합니다.',
-      ],
-    }
-  }
-
-
-  if (
-    metric === 'conversions' &&
-    direction === 'decrease'
-  ) {
-    return {
-      possibleCauses: [
-        '클릭 수가 감소했거나 CVR이 하락했을 수 있습니다.',
-        '전환 추적 문제가 발생했을 수 있습니다.',
-        '광고 유입 또는 랜딩페이지 성과가 악화됐을 수 있습니다.',
-      ],
-
-      actions: [
-        '클릭 수와 CVR을 함께 비교합니다.',
-        '전환 추적 상태를 확인합니다.',
-        '랜딩페이지 및 주요 전환 경로를 점검합니다.',
-      ],
-    }
-  }
-
-
-  return {
-    possibleCauses: [
-      '최근 광고 성과가 기존 기준 범위를 벗어났습니다.',
-      '광고 설정 변경, 시장 변동 또는 데이터 집계 문제가 영향을 줬을 수 있습니다.',
-    ],
-
-    actions: [
-      '동일 기간의 관련 지표를 함께 비교합니다.',
-      '최근 캠페인 설정 변경 여부를 확인합니다.',
-      '이상이 지속되는지 추가 데이터를 확인합니다.',
-    ],
-  }
+  return t(
+    'operator.alerts.messages.changed',
+    { metric: metricLabel, changePct }
+  )
 }
 
 function calculateRoas(
@@ -770,7 +697,7 @@ function calculateChangeRate(
 }
 
 function ClientLoginPage() {
-  const { t } =
+  const { t, i18n } =
     useTranslation()
 
   const [email, setEmail] = useState('')
@@ -813,8 +740,10 @@ function ClientLoginPage() {
         'authenticated'
       ) {
         alert(
-          result.message ||
-          '로그인에 실패했습니다.'
+          i18n.language === 'en'
+            ? t('client.login.failed')
+            : result.message ||
+              t('client.login.failed')
         )
 
         return
@@ -861,7 +790,7 @@ function ClientLoginPage() {
       )
 
       alert(
-        '로그인 중 오류가 발생했습니다.'
+        t('client.login.error')
       )
     }
   }
@@ -870,9 +799,46 @@ function ClientLoginPage() {
     <div className="client-login-page">
       <div className="client-login-card">
 
-        <div className="client-login-brand">
-          <h1>AdScope</h1>
-          <span>Client Portal</span>
+        <div className="client-auth-topbar">
+          <div className="client-login-brand">
+            <h1>AdScope</h1>
+            <span>Client Portal</span>
+          </div>
+
+          <div
+            className="client-auth-language-switcher"
+            aria-label={t('client.login.language')}
+          >
+            <button
+              type="button"
+              className={
+                i18n.language === 'ko'
+                  ? 'active'
+                  : ''
+              }
+              onClick={() =>
+                i18n.changeLanguage('ko')
+              }
+            >
+              KO
+            </button>
+
+            <span>/</span>
+
+            <button
+              type="button"
+              className={
+                i18n.language === 'en'
+                  ? 'active'
+                  : ''
+              }
+              onClick={() =>
+                i18n.changeLanguage('en')
+              }
+            >
+              EN
+            </button>
+          </div>
         </div>
 
         <div className="client-login-heading">
@@ -1140,7 +1106,7 @@ function ClientPortalHeader({
               i18n.changeLanguage('ko')
             }}
           >
-            한국어
+            KO
           </button>
 
           <button
@@ -1154,7 +1120,7 @@ function ClientPortalHeader({
               i18n.changeLanguage('en')
             }}
           >
-            English
+            EN
           </button>
         </div>
 
@@ -1170,6 +1136,8 @@ function ClientPortalHeader({
 }
 
 function ClientDashboardPage() {
+  const { t, i18n } =
+    useTranslation()
 
   const clientId =
     localStorage.getItem(
@@ -1289,27 +1257,31 @@ function ClientDashboardPage() {
           <div>
             <h2>
               {clientBrand
-                ? `${clientBrand} 광고 성과 대시보드`
-                : '광고 성과 대시보드'}
+                ? t('client.dashboard.brandTitle', {
+                  brand: clientBrand,
+                })
+                : t('client.dashboard.title')}
             </h2>
 
             <p>
               {clientName
-                ? `${clientName}님, 현재 광고 성과와 최근 제안 내용을 확인할 수 있습니다.`
-                : '현재 광고 성과와 최근 제안 내용을 확인할 수 있습니다.'}
+                ? t('client.dashboard.welcomeName', {
+                  name: clientName,
+                })
+                : t('client.dashboard.welcome')}
             </p>
           </div>
         </section>
 
         <section className="client-dashboard-metrics">
           <div>
-            <span>총 광고비</span>
-            <strong>311,111,111원</strong>
+            <span>{t('client.dashboard.totalSpend')}</span>
+            <strong>311,111,111{t('client.common.currency')}</strong>
           </div>
 
           <div>
-            <span>매출</span>
-            <strong>1,634,238,991원</strong>
+            <span>{t('client.dashboard.revenue')}</span>
+            <strong>1,634,238,991{t('client.common.currency')}</strong>
           </div>
 
           <div>
@@ -1319,14 +1291,14 @@ function ClientDashboardPage() {
 
           <div>
             <span>CPA</span>
-            <strong>2,923원</strong>
+            <strong>2,923{t('client.common.currency')}</strong>
           </div>
         </section>
 
         <section className="client-dashboard-grid">
           <div className="client-dashboard-card">
             <div className="client-dashboard-card-header">
-              <h3>최근 제안</h3>
+              <h3>{t('client.dashboard.recentProposal')}</h3>
               <button
                 type="button"
                 onClick={() => {
@@ -1334,14 +1306,14 @@ function ClientDashboardPage() {
                     '/client/proposals'
                 }}
               >
-                전체 보기
+                {t('common.viewAll')}
               </button>
             </div>
 
             {clientProposalsLoading ? (
               <div className="client-dashboard-item">
                 <span>
-                  제안 정보를 불러오는 중입니다.
+                  {t('client.dashboard.proposalLoading')}
                 </span>
               </div>
             ) : latestProposal ? (
@@ -1349,17 +1321,17 @@ function ClientDashboardPage() {
                 <div>
                   <strong>
                     {latestProposal.scenarioName ||
-                      '광고 예산 최적화 제안'}
+                      t('client.common.defaultProposalTitle')}
                   </strong>
 
                   <span>
                     {latestProposal.status === 'reviewing'
-                      ? '검토가 필요한 제안입니다.'
+                      ? t('client.dashboard.statusDescription.reviewing')
                       : latestProposal.status === 'revision_requested'
-                        ? '수정 요청이 전달된 제안입니다.'
+                        ? t('client.dashboard.statusDescription.revisionRequested')
                         : latestProposal.status === 'approved'
-                          ? '승인 완료된 제안입니다.'
-                          : '제안 상태를 확인해주세요.'}
+                          ? t('client.dashboard.statusDescription.approved')
+                          : t('client.dashboard.statusDescription.other')}
                   </span>
                 </div>
 
@@ -1372,13 +1344,13 @@ function ClientDashboardPage() {
                     }
                   }}
                 >
-                  제안 보기
+                  {t('client.dashboard.viewProposal')}
                 </button>
               </div>
             ) : (
               <div className="client-dashboard-item">
                 <span>
-                  아직 공유된 제안이 없습니다.
+                  {t('client.dashboard.noProposal')}
                 </span>
               </div>
             )}
@@ -1386,25 +1358,37 @@ function ClientDashboardPage() {
 
           <div className="client-dashboard-card">
             <div className="client-dashboard-card-header">
-              <h3>최근 메시지</h3>
-              <button type="button">
-                전체 보기
+              <h3>{t('client.dashboard.recentMessage')}</h3>
+              <button
+                type="button"
+                onClick={() => {
+                  window.location.href =
+                    '/client/messages'
+                }}
+              >
+                {t('common.viewAll')}
               </button>
             </div>
 
             <div className="client-dashboard-item">
               <div>
                 <strong>
-                  운영 담당자
+                  {t('client.dashboard.accountManager')}
                 </strong>
 
                 <span>
-                  새로운 광고 예산 최적화 제안이 공유되었습니다.
+                  {t('client.dashboard.newProposalMessage')}
                 </span>
               </div>
 
-              <button type="button">
-                메시지 보기
+              <button
+                type="button"
+                onClick={() => {
+                  window.location.href =
+                    '/client/messages'
+                }}
+              >
+                {t('client.dashboard.viewMessage')}
               </button>
             </div>
           </div>
@@ -1415,6 +1399,7 @@ function ClientDashboardPage() {
 }
 
 function ClientProposalsPage() {
+  const { t, i18n } = useTranslation()
 
   const clientId =
     localStorage.getItem(
@@ -1430,6 +1415,25 @@ function ClientProposalsPage() {
     loading,
     setLoading,
   ] = useState(true)
+
+  const clientLocale =
+    i18n.language === 'en'
+      ? 'en-US'
+      : 'ko-KR'
+
+  const formatClientMoney = (value) =>
+    `${Math.round(
+      Number(value) || 0
+    ).toLocaleString(clientLocale)}${t(
+      'client.common.currency'
+    )}`
+
+  const formatClientDateTime = (value) =>
+    value
+      ? new Date(value).toLocaleString(
+        clientLocale
+      )
+      : '-'
 
   useEffect(() => {
     if (!clientId) {
@@ -1524,23 +1528,22 @@ function ClientProposalsPage() {
         <section className="client-portal-welcome">
           <div>
             <h2>
-              제안 및 승인
+              {t('client.proposals.title')}
             </h2>
 
             <p>
-              전달받은 광고 예산 최적화 제안을
-              확인하고 검토할 수 있습니다.
+              {t('client.proposals.description')}
             </p>
           </div>
         </section>
 
         {loading ? (
           <div className="client-proposal-empty">
-            제안 정보를 불러오는 중입니다.
+            {t('client.proposals.loading')}
           </div>
         ) : clientProposals.length === 0 ? (
           <div className="client-proposal-empty">
-            아직 전달받은 제안이 없습니다.
+            {t('client.proposals.empty')}
           </div>
         ) : (
           <div className="client-proposal-list">
@@ -1554,53 +1557,55 @@ function ClientProposalsPage() {
                     <div>
                       <strong>
                         {proposal.scenarioName ||
-                          '광고 예산 최적화 제안'}
+                          t('client.common.defaultProposalTitle')}
                       </strong>
 
                       <span>
-                        {proposal.updatedAt
-                          ? new Date(
-                            proposal.updatedAt
-                          ).toLocaleString()
-                          : '-'}
+                        {formatClientDateTime(
+                          proposal.updatedAt
+                        )}
                       </span>
                     </div>
 
                     <span className="client-proposal-status">
-                      {proposal.status === 'reviewing'
-                        ? '검토 필요'
-                        : proposal.status === 'revision_requested'
-                          ? '수정 요청'
-                          : proposal.status === 'approved'
-                            ? '승인 완료'
-                            : '제안 준비'}
+                      {t(
+                        `proposalStatus.${proposal.status}`,
+                        {
+                          defaultValue:
+                            t('proposalStatus.preparing'),
+                        }
+                      )}
                     </span>
                   </div>
 
                   <div className="client-proposal-list-metrics">
                     <div>
-                      <span>총예산</span>
+                      <span>
+                        {t('client.proposals.totalBudget')}
+                      </span>
                       <strong>
-                        {Math.round(
+                        {formatClientMoney(
                           proposal.totalBudget || 0
-                        ).toLocaleString()}
-                        원
+                        )}
                       </strong>
                     </div>
 
                     <div>
-                      <span>예상 매출</span>
+                      <span>
+                        {t('client.proposals.projectedRevenue')}
+                      </span>
                       <strong>
-                        {Math.round(
+                        {formatClientMoney(
                           proposal.summary
                             ?.projectedRevenue || 0
-                        ).toLocaleString()}
-                        원
+                        )}
                       </strong>
                     </div>
 
                     <div>
-                      <span>예상 ROAS</span>
+                      <span>
+                        {t('client.proposals.projectedRoas')}
+                      </span>
                       <strong>
                         {Number(
                           proposal.summary
@@ -1611,14 +1616,15 @@ function ClientProposalsPage() {
                     </div>
 
                     <div>
-                      <span>예상 CPA</span>
+                      <span>
+                        {t('client.proposals.projectedCpa')}
+                      </span>
                       <strong>
                         {proposal.summary
                           ?.projectedCpa != null
-                          ? `${Math.round(
-                            proposal.summary
-                              .projectedCpa
-                          ).toLocaleString()}원`
+                          ? formatClientMoney(
+                            proposal.summary.projectedCpa
+                          )
                           : '-'}
                       </strong>
                     </div>
@@ -1637,7 +1643,7 @@ function ClientProposalsPage() {
                         }
                       }}
                     >
-                      제안 보기
+                      {t('client.proposals.viewProposal')}
                     </button>
                   </div>
                 </div>
@@ -1651,8 +1657,227 @@ function ClientProposalsPage() {
 }
 
 function InternalApp() {
+  const { t, i18n } =
+    useTranslation()
+
+  const getTranslatedFieldLabel = (key) =>
+    t(`fields.${key}`, {
+      defaultValue: getLabel(key),
+    })
+
+  const formatLocalizedDisplayValue = (
+    value,
+    format = 'auto',
+    metric = null
+  ) => {
+    if (i18n.language !== 'en') {
+      return formatDisplayValue(
+        value,
+        format,
+        metric
+      )
+    }
+
+    const number = Number(value) || 0
+
+    if (format === 'full') {
+      return number.toLocaleString('en-US')
+    }
+
+    if (format === 'compact') {
+      return new Intl.NumberFormat(
+        'en-US',
+        {
+          notation: 'compact',
+          maximumFractionDigits: 1,
+        }
+      ).format(number)
+    }
+
+    if (format === 'currency') {
+      return `${Math.round(number).toLocaleString('en-US')} KRW`
+    }
+
+    if (format === 'percent') {
+      return `${number.toFixed(2)}%`
+    }
+
+    if (metric === 'ctr' || metric === 'cvr') {
+      return `${number.toFixed(2)}%`
+    }
+
+    if (metric === 'roas') {
+      return number.toFixed(2)
+    }
+
+    if (
+      metric === 'spend' ||
+      metric === 'revenue' ||
+      metric === 'cpc' ||
+      metric === 'cpa'
+    ) {
+      return `${Math.round(number).toLocaleString('en-US')} KRW`
+    }
+
+    return number.toLocaleString('en-US')
+  }
+
+  const getChartTypeLabel = (type) =>
+    t(`operator.dashboard.chartTypes.${type}`, {
+      defaultValue: type,
+    })
+
+  const getBudgetRecommendationLabel = (value) => {
+    if (value === '증액') return t('operator.budget.dynamic.recommendationIncrease')
+    if (value === '감액') return t('operator.budget.dynamic.recommendationDecrease')
+    if (value === '유지') return t('operator.budget.dynamic.recommendationHold')
+    return value
+  }
+
+  const getBudgetRiskLevelLabel = (value) => {
+    if (value === 'low') return t('operator.budget.risk.low')
+    if (value === 'high') return t('operator.budget.risk.high')
+    return t('operator.budget.risk.medium')
+  }
+
+  const getBudgetScalingLabel = (value) => {
+    if (value === '분석 대기') return t('operator.budget.common.analysisWaiting')
+    if (value === '현재 수준') return t('operator.budget.scaling.currentLevel')
+    if (value === '범위 내 미감지') return t('operator.budget.scaling.notDetectedWithinRange')
+    return value
+  }
+
+  const getTaskStatusLabel = (value) => {
+    const statusKeyMap = {
+      waiting: 'waiting',
+      in_progress: 'inProgress',
+      reviewing: 'reviewing',
+      done: 'done',
+    }
+
+    return t(
+      `operator.tasks.status.${statusKeyMap[value] || 'waiting'}`
+    )
+  }
+
+  const getTaskPriorityLabel = (value) => {
+    const priorityKeyMap = {
+      low: 'low',
+      normal: 'normal',
+      high: 'high',
+      urgent: 'urgent',
+    }
+
+    return t(
+      `operator.tasks.priority.${priorityKeyMap[value] || 'normal'}`
+    )
+  }
+
+  const buildAutoChartTitle = (dimensionKey, metricKeys = []) => {
+    if (!dimensionKey) {
+      return metricKeys.length > 0
+        ? getTranslatedFieldLabel(metricKeys[0])
+        : t('operator.dashboard.preview.emptyTitle')
+    }
+
+    return t('operator.dashboard.preview.autoTitle', {
+      dimension: getTranslatedFieldLabel(dimensionKey),
+      metrics: metricKeys
+        .map(getTranslatedFieldLabel)
+        .join(', '),
+    })
+  }
 
 
+  const getPerformanceDiagnosisStatus = (status) => {
+    const keyMap = {
+      '효율 우수': 'excellent',
+      '양호': 'normal',
+      '점검 필요': 'needsReview',
+    }
+
+    const key = keyMap[status]
+
+    return key
+      ? t(`operator.performance.diagnosis.status.${key}`)
+      : status
+  }
+
+  const getPerformanceDiagnosisReason = (reason) => {
+    const keyMap = {
+      '전반적으로 평균 수준의 성과입니다.': 'average',
+      'ROAS가 높고 CPA가 낮으며, 매출 기여도가 광고비 비중 이상입니다.': 'efficient',
+      'ROAS가 낮고 CPA가 높으며, 매출 기여도가 광고비 비중보다 낮습니다.': 'needsReview',
+      'ROAS가 전체 매체 평균보다 낮습니다.': 'roasBelowChannelAverage',
+      'CPA가 전체 매체 평균보다 높습니다.': 'cpaAboveChannelAverage',
+      'ROAS가 캠페인 평균보다 낮습니다.': 'roasBelowCampaignAverage',
+      'CPA가 캠페인 평균보다 높습니다.': 'cpaAboveCampaignAverage',
+      'ROAS가 제품 평균보다 낮습니다.': 'roasBelowProductAverage',
+      'CPA가 제품 평균보다 높습니다.': 'cpaAboveProductAverage',
+      'ROAS가 콘텐츠 평균보다 낮습니다.': 'roasBelowContentAverage',
+      'CPA가 콘텐츠 평균보다 높습니다.': 'cpaAboveContentAverage',
+      '매출 기여도가 광고비 비중보다 낮습니다.': 'revenueShareBelowSpendShare',
+    }
+
+    const key = keyMap[reason]
+
+    return key
+      ? t(`operator.performance.diagnosis.reason.${key}`)
+      : reason
+  }
+
+  const getPerformanceAlertMessage = (alert) => {
+    const change = Math.abs(
+      Number(alert?.change || 0)
+    ).toFixed(1)
+
+    const values = {
+      name: alert?.name || alert?.channel || '-',
+      change,
+    }
+
+    if (
+      alert?.metric === 'ROAS' &&
+      alert?.type === 'warning'
+    ) {
+      return t(
+        'operator.performance.alerts.roasDown',
+        values
+      )
+    }
+
+    if (
+      alert?.metric === 'CPA' &&
+      alert?.type === 'warning'
+    ) {
+      return t(
+        'operator.performance.alerts.cpaUp',
+        values
+      )
+    }
+
+    if (
+      alert?.metric === 'ROAS' &&
+      alert?.type === 'positive'
+    ) {
+      return t(
+        'operator.performance.alerts.roasUp',
+        values
+      )
+    }
+
+    if (
+      alert?.metric === '전환' &&
+      alert?.type === 'positive'
+    ) {
+      return t(
+        'operator.performance.alerts.conversionsUp',
+        values
+      )
+    }
+
+    return alert?.message || ''
+  }
 
   const [selectedChannel, setSelectedChannel] =
     useState('전체')
@@ -1997,7 +2222,7 @@ function InternalApp() {
         !alertsResponse.ok
       ) {
         throw new Error(
-          '이상 알림 데이터를 불러오지 못했습니다.'
+          t('operator.alerts.errors.loadFailed')
         )
       }
 
@@ -2055,7 +2280,7 @@ function InternalApp() {
 
       setAnomalyAlertsError(
         error.message ||
-        '이상 알림 조회 중 오류가 발생했습니다.'
+        t('operator.alerts.errors.loadError')
       )
 
     } finally {
@@ -2091,7 +2316,7 @@ function InternalApp() {
 
       if (!response.ok) {
         throw new Error(
-          `Alert 상태 변경 실패: ${response.status}`
+          t('operator.alerts.errors.statusUpdateFailed', { status: response.status })
         )
       }
 
@@ -2105,7 +2330,7 @@ function InternalApp() {
 
       setAnomalyAlertsError(
         error.message ||
-        'Alert 상태 변경 중 오류가 발생했습니다.'
+        t('operator.alerts.errors.statusUpdateError')
       )
     }
   }
@@ -3417,22 +3642,22 @@ function InternalApp() {
       roasDifference > 0
     ) {
       summary =
-        '두 번째 시나리오는 첫 번째 시나리오보다 예상 매출과 ROAS가 모두 높습니다.'
+        t('operator.scenario.insight.bothHigher')
     } else if (
       revenueDifference > 0 &&
       roasDifference <= 0
     ) {
       summary =
-        '두 번째 시나리오는 예상 매출은 높지만 ROAS는 낮아, 성장성과 효율성 사이의 트레이드오프가 있습니다.'
+        t('operator.scenario.insight.revenueHigherRoasLower')
     } else if (
       revenueDifference <= 0 &&
       roasDifference > 0
     ) {
       summary =
-        '두 번째 시나리오는 예상 매출은 낮지만 ROAS가 높아, 효율 중심 운영에 더 적합합니다.'
+        t('operator.scenario.insight.revenueLowerRoasHigher')
     } else {
       summary =
-        '첫 번째 시나리오가 예상 매출과 ROAS 기준에서 상대적으로 우수합니다.'
+        t('operator.scenario.insight.firstBetter')
     }
 
     return {
@@ -3444,6 +3669,8 @@ function InternalApp() {
     }
   }, [
     selectedScenarios,
+    i18n.language,
+    t,
   ])
 
   function getOptimizationObjectiveLabel(
@@ -3451,19 +3678,19 @@ function InternalApp() {
   ) {
     switch (objective) {
       case 'revenue':
-        return '예상 매출 최대화'
+        return t('operator.budget.channel.maximizeRevenue')
 
       case 'conversions':
-        return '예상 전환 최대화'
+        return t('operator.budget.channel.maximizeConversions')
 
       case 'revenueWithRoas':
-        return '목표 ROAS 이상에서 매출 최대화'
+        return t('operator.budget.channel.maximizeRevenueWithRoas')
 
       case 'conversionsWithCpa':
-        return '목표 CPA 이하에서 전환 최대화'
+        return t('operator.budget.channel.maximizeConversionsWithCpa')
 
       case 'riskAdjustedRevenue':
-        return '리스크를 고려한 매출 최대화'
+        return t('operator.budget.channel.riskAdjustedRevenue')
 
       default:
         return objective || '-'
@@ -3725,7 +3952,7 @@ function InternalApp() {
       ) {
         throw new Error(
           result.message ||
-          '매체 연결 정보를 불러오지 못했습니다.'
+          t('operator.mediaConnections.messages.loadFailed')
         )
       }
 
@@ -3883,8 +4110,10 @@ function InternalApp() {
 
       if (result.status !== 'ok') {
         throw new Error(
-          result.message ||
-          '광고주 목록 조회에 실패했습니다.'
+          i18n.language === 'en'
+            ? t('operator.advertiserManager.messages.loadFailed')
+            : result.message ||
+              t('operator.advertiserManager.messages.loadFailed')
         )
       }
 
@@ -3947,7 +4176,7 @@ function InternalApp() {
       )
 
       alert(
-        '광고주 목록을 새로고침하지 못했습니다.'
+        t('operator.advertiserManager.messages.reloadFailed')
       )
     } finally {
       setAdvertisersLoading(false)
@@ -3959,7 +4188,7 @@ function InternalApp() {
       advertiserForm.name.trim()
 
     if (!advertiserName) {
-      alert('광고주명을 입력해주세요.')
+      alert(t('operator.advertiserManager.messages.nameRequired'))
       return
     }
 
@@ -4007,8 +4236,10 @@ function InternalApp() {
         !result.advertiser?.id
       ) {
         alert(
-          result.message ||
-          '광고주 추가에 실패했습니다.'
+          i18n.language === 'en'
+            ? t('operator.advertiserManager.messages.createFailed')
+            : result.message ||
+              t('operator.advertiserManager.messages.createFailed')
         )
         return
       }
@@ -4033,13 +4264,13 @@ function InternalApp() {
         error
       )
 
-      alert('광고주 추가에 실패했습니다.')
+      alert(t('operator.advertiserManager.messages.createFailed'))
     }
   }
 
   async function updateAdvertiser() {
     if (!editingAdvertiserId) {
-      alert('수정할 광고주가 선택되지 않았습니다.')
+      alert(t('operator.advertiserManager.messages.noSelection'))
       return
     }
 
@@ -4047,7 +4278,7 @@ function InternalApp() {
       advertiserForm.name.trim()
 
     if (!advertiserName) {
-      alert('광고주명을 입력해주세요.')
+      alert(t('operator.advertiserManager.messages.nameRequired'))
       return
     }
 
@@ -4093,8 +4324,10 @@ function InternalApp() {
 
       if (result.status !== 'ok') {
         alert(
-          result.message ||
-          '광고주 수정에 실패했습니다.'
+          i18n.language === 'en'
+            ? t('operator.advertiserManager.messages.updateFailed')
+            : result.message ||
+              t('operator.advertiserManager.messages.updateFailed')
         )
         return
       }
@@ -4109,7 +4342,7 @@ function InternalApp() {
         error
       )
 
-      alert('광고주 수정에 실패했습니다.')
+      alert(t('operator.advertiserManager.messages.updateFailed'))
     }
   }
 
@@ -4131,13 +4364,15 @@ function InternalApp() {
       )
 
     if (!targetAdvertiser) {
-      alert('광고주를 찾을 수 없습니다.')
+      alert(t('operator.advertiserManager.messages.notFound'))
       return
     }
 
     if (nextStatus === 'archived') {
       const confirmed = window.confirm(
-        `${targetAdvertiser.name} 광고주를 비활성화하시겠습니까?`
+        t('operator.advertiserManager.confirm.deactivate', {
+          name: targetAdvertiser.name,
+        })
       )
 
       if (!confirmed) {
@@ -4178,8 +4413,10 @@ function InternalApp() {
 
       if (result.status !== 'ok') {
         alert(
-          result.message ||
-          '광고주 상태 변경에 실패했습니다.'
+          i18n.language === 'en'
+            ? t('operator.advertiserManager.messages.statusChangeFailed')
+            : result.message ||
+              t('operator.advertiserManager.messages.statusChangeFailed')
         )
         return
       }
@@ -4199,7 +4436,7 @@ function InternalApp() {
       )
 
       alert(
-        '광고주 상태를 변경하지 못했습니다.'
+        t('operator.advertiserManager.messages.statusChangeError')
       )
     }
   }
@@ -4223,7 +4460,9 @@ function InternalApp() {
 
     const confirmed =
       window.confirm(
-        `'${targetAdvertiser.name}' 광고주를 영구 삭제하시겠습니까?\n\n삭제된 광고주는 복원할 수 없습니다.`
+        t('operator.advertiserManager.confirm.deletePermanently', {
+          name: targetAdvertiser.name,
+        })
       )
 
     if (!confirmed) {
@@ -4256,16 +4495,20 @@ function InternalApp() {
 
       if (result.status === 'in_use') {
         alert(
-          result.message ||
-          '연결된 데이터가 있어 삭제할 수 없습니다.'
+          i18n.language === 'en'
+            ? t('operator.advertiserManager.messages.deleteBlocked')
+            : result.message ||
+              t('operator.advertiserManager.messages.deleteBlocked')
         )
         return
       }
 
       if (result.status !== 'deleted') {
         alert(
-          result.message ||
-          '광고주 삭제에 실패했습니다.'
+          i18n.language === 'en'
+            ? t('operator.advertiserManager.messages.deleteFailed')
+            : result.message ||
+              t('operator.advertiserManager.messages.deleteFailed')
         )
         return
       }
@@ -4279,7 +4522,7 @@ function InternalApp() {
       )
 
       alert(
-        '광고주 삭제에 실패했습니다.'
+        t('operator.advertiserManager.messages.deleteFailed')
       )
     }
   }
@@ -4322,8 +4565,10 @@ function InternalApp() {
 
       if (result.status !== 'ok') {
         throw new Error(
-          result.message ||
-          'Naver 최신 데이터 동기화에 실패했습니다.'
+          i18n.language === 'en'
+            ? t('operator.sync.messages.latestSyncFailed')
+            : result.message ||
+              t('operator.sync.messages.latestSyncFailed')
         )
       }
 
@@ -4412,7 +4657,7 @@ function InternalApp() {
 
       setNaverBackfillError(
         error.message ||
-        'Backfill 상태를 확인할 수 없습니다.'
+        t('operator.sync.messages.backfillStatusFailed')
       )
 
       return null
@@ -4490,8 +4735,10 @@ function InternalApp() {
 
       if (result.status !== 'ok') {
         throw new Error(
-          result.message ||
-          'Historical Backfill Job 생성에 실패했습니다.'
+          i18n.language === 'en'
+            ? t('operator.sync.messages.backfillStartFailed')
+            : result.message ||
+              t('operator.sync.messages.backfillStartFailed')
         )
       }
 
@@ -4506,7 +4753,7 @@ function InternalApp() {
 
       setNaverBackfillError(
         error.message ||
-        '과거 데이터 수집을 시작할 수 없습니다.'
+        t('operator.sync.messages.backfillUnavailable')
       )
 
       return null
@@ -4591,7 +4838,7 @@ function InternalApp() {
           ) {
             throw new Error(
               retryResult.message ||
-              'Backfill 재시도에 실패했습니다.'
+              t('operator.sync.messages.backfillRetryFailed')
             )
           }
 
@@ -4643,7 +4890,7 @@ function InternalApp() {
         ) {
           throw new Error(
             processResult.message ||
-            'Naver Historical Backfill 처리에 실패했습니다.'
+            t('operator.sync.messages.backfillProcessFailed')
           )
         }
 
@@ -4672,7 +4919,7 @@ function InternalApp() {
 
       setNaverBackfillError(
         error.message ||
-        '과거 데이터 수집 중 오류가 발생했습니다.'
+        t('operator.sync.messages.backfillError')
       )
     } finally {
       naverBackfillRunnerRef.current = false
@@ -4685,14 +4932,14 @@ function InternalApp() {
 
     if (!startDate || !endDate) {
       alert(
-        '동기화할 시작일과 종료일을 선택해주세요.'
+        t('operator.sync.messages.selectDateRange')
       )
       return
     }
 
     if (startDate > endDate) {
       alert(
-        '시작일은 종료일보다 늦을 수 없습니다.'
+        t('operator.sync.messages.invalidDateRange')
       )
       return
     }
@@ -4738,20 +4985,23 @@ function InternalApp() {
       if (data.status !== 'ok') {
         throw new Error(
           data.message ||
-          'Naver 데이터 동기화에 실패했습니다.'
+          t('operator.sync.messages.syncFailed')
         )
       }
 
       await loadRealDailyAdPerformance()
 
       alert(
-        [
-          'Naver 데이터 동기화가 완료되었습니다.',
-          `기간: ${startDate} ~ ${endDate}`,
-          `성공: ${data.successfulDays ?? 0}일`,
-          `실패: ${data.failedDays ?? 0}일`,
-          `저장: ${data.totalSaved ?? 0}건`,
-        ].join('\n')
+        t('operator.sync.messages.syncComplete', {
+          startDate,
+          endDate,
+          successfulDays:
+            data.successfulDays ?? 0,
+          failedDays:
+            data.failedDays ?? 0,
+          totalSaved:
+            data.totalSaved ?? 0,
+        })
       )
     } catch (error) {
       console.error(
@@ -4760,9 +5010,11 @@ function InternalApp() {
       )
 
       alert(
-        `Naver 데이터 동기화 실패: ${error.message ||
-        '알 수 없는 오류'
-        }`
+        t('operator.sync.messages.syncError', {
+          message:
+            error.message ||
+            t('operator.sync.messages.unknownError'),
+        })
       )
     } finally {
       setIsNaverSyncing(false)
@@ -5051,7 +5303,7 @@ function InternalApp() {
 
     if (!updatedProposal) {
       alert(
-        '수정 작업 시작 중 오류가 발생했습니다.'
+        t('operator.tasks.messages.revisionStartError')
       )
       return
     }
@@ -5087,9 +5339,13 @@ function InternalApp() {
 
     const confirmed =
       window.confirm(
-        `"${scenario.name || getOptimizationObjectiveLabel(
-          scenario.objective
-        )}" 시나리오를 수정안으로 적용하시겠습니까?`
+        t('operator.tasks.confirm.applyScenario', {
+          name:
+            scenario.name ||
+            getOptimizationObjectiveLabel(
+              scenario.objective
+            ),
+        })
       )
 
     if (!confirmed) {
@@ -5121,7 +5377,7 @@ function InternalApp() {
 
     if (!updatedProposal) {
       alert(
-        '수정안 적용 중 오류가 발생했습니다.'
+        t('operator.tasks.messages.applyScenarioError')
       )
       return
     }
@@ -5159,7 +5415,7 @@ function InternalApp() {
   ) {
     if (!manualRevisionProjection) {
       alert(
-        '수정안 성과를 계산할 수 없습니다.'
+        t('operator.tasks.messages.projectionUnavailable')
       )
       return
     }
@@ -5172,14 +5428,14 @@ function InternalApp() {
 
     if (!currentProposal) {
       alert(
-        '현재 제안 정보를 찾을 수 없습니다.'
+        t('operator.tasks.messages.proposalNotFound')
       )
       return
     }
 
     const confirmed =
       window.confirm(
-        '직접 수정한 예산과 예상 성과를 수정안으로 적용하시겠습니까?'
+        t('operator.tasks.confirm.applyManualRevision')
       )
 
     if (!confirmed) {
@@ -5231,7 +5487,7 @@ function InternalApp() {
 
     if (!updatedProposal) {
       alert(
-        '직접 수정안 적용 중 오류가 발생했습니다.'
+        t('operator.tasks.messages.manualRevisionError')
       )
       return
     }
@@ -5267,7 +5523,7 @@ function InternalApp() {
   ) {
     const confirmed =
       window.confirm(
-        '완료된 업무를 휴지통으로 이동하시겠습니까?'
+        t('operator.tasks.confirm.moveToTrash')
       )
 
     if (!confirmed) {
@@ -5289,7 +5545,7 @@ function InternalApp() {
 
     if (!updatedProposal) {
       alert(
-        '휴지통 이동 중 오류가 발생했습니다.'
+        t('operator.tasks.messages.moveToTrashError')
       )
       return
     }
@@ -5320,7 +5576,7 @@ function InternalApp() {
   ) {
     const confirmed =
       window.confirm(
-        '이 업무를 복원하시겠습니까?'
+        t('operator.tasks.confirm.restoreTask')
       )
 
     if (!confirmed) {
@@ -5342,7 +5598,7 @@ function InternalApp() {
 
     if (!updatedProposal) {
       alert(
-        '업무 복원 중 오류가 발생했습니다.'
+        t('operator.tasks.messages.restoreError')
       )
       return
     }
@@ -5366,7 +5622,7 @@ function InternalApp() {
   ) {
     const confirmed =
       window.confirm(
-        '이 업무를 영구 삭제하시겠습니까?\n\n영구 삭제 후에는 복원할 수 없습니다.'
+        t('operator.tasks.confirm.permanentDelete')
       )
 
     if (!confirmed) {
@@ -5399,8 +5655,10 @@ function InternalApp() {
         result.status !== 'deleted'
       ) {
         throw new Error(
-          result.message ||
-          '영구 삭제에 실패했습니다.'
+          i18n.language === 'en'
+            ? t('operator.tasks.messages.permanentDeleteFailed')
+            : result.message ||
+              t('operator.tasks.messages.permanentDeleteFailed')
         )
       }
 
@@ -5432,7 +5690,7 @@ function InternalApp() {
       )
 
       alert(
-        '영구 삭제 중 오류가 발생했습니다.'
+        t('operator.tasks.messages.permanentDeleteError')
       )
     }
   }
@@ -5444,7 +5702,9 @@ function InternalApp() {
 
     const confirmed =
       window.confirm(
-        `휴지통의 ${trashedClientTasks.length}개 업무를 모두 영구 삭제하시겠습니까?\n\n삭제 후에는 복원할 수 없습니다.`
+        t('operator.tasks.confirm.emptyTrash', {
+          count: trashedClientTasks.length,
+        })
       )
 
     if (!confirmed) {
@@ -5481,8 +5741,10 @@ function InternalApp() {
                 result.status !== 'deleted'
               ) {
                 throw new Error(
-                  result.message ||
-                  '영구 삭제에 실패했습니다.'
+                  i18n.language === 'en'
+                    ? t('operator.tasks.messages.permanentDeleteFailed')
+                    : result.message ||
+                      t('operator.tasks.messages.permanentDeleteFailed')
                 )
               }
 
@@ -5522,7 +5784,7 @@ function InternalApp() {
       )
 
       alert(
-        '휴지통 비우기 중 오류가 발생했습니다.'
+        t('operator.tasks.messages.emptyTrashError')
       )
     }
   }
@@ -5683,7 +5945,7 @@ function InternalApp() {
       ) {
         throw new Error(
           result.message ||
-          '공유된 제안을 불러올 수 없습니다.'
+          t('client.proposals.shared.loadUnavailable')
         )
       }
 
@@ -5718,7 +5980,7 @@ function InternalApp() {
       )
 
       setSharedProposalError(
-        '공유된 제안을 불러오지 못했습니다.'
+        t('client.proposals.shared.loadFailed')
       )
     } finally {
       setSharedProposalLoading(false)
@@ -5741,7 +6003,7 @@ function InternalApp() {
       !sharedRevisionReason.trim()
     ) {
       window.alert(
-        '수정 요청 사유를 입력해주세요.'
+        t('client.proposals.shared.enterRevisionReason')
       )
 
       return
@@ -5750,8 +6012,8 @@ function InternalApp() {
     const confirmed =
       window.confirm(
         action === 'approved'
-          ? '이 제안을 승인하시겠습니까?'
-          : '수정 요청을 전달하시겠습니까?'
+          ? t('client.proposals.shared.confirmApprove')
+          : t('client.proposals.shared.confirmRevision')
       )
 
     if (!confirmed) {
@@ -5799,7 +6061,7 @@ function InternalApp() {
       if (result.status !== 'ok') {
         throw new Error(
           result.message ||
-          '광고주 응답 처리에 실패했습니다.'
+          t('client.proposals.shared.actionFailed')
         )
       }
 
@@ -5825,7 +6087,7 @@ function InternalApp() {
       )
 
       window.alert(
-        '요청 처리 중 오류가 발생했습니다.'
+        t('client.proposals.shared.actionError')
       )
     } finally {
       setSharedProposalSubmitting(false)
@@ -6438,7 +6700,7 @@ function InternalApp() {
 
     if (!updatedProposal) {
       alert(
-        '제안 취소 중 오류가 발생했습니다.'
+        t('operator.clientPage.messages.cancelError')
       )
       return
     }
@@ -6687,7 +6949,7 @@ function InternalApp() {
 
     if (!shareResult) {
       alert(
-        '광고주 재공유 링크 생성에 실패했습니다.'
+        t('operator.clientPage.messages.reshareLinkError')
       )
       return
     }
@@ -6708,7 +6970,7 @@ function InternalApp() {
 
     if (!updatedProposal) {
       alert(
-        '재공유 상태 저장에 실패했습니다.'
+        t('operator.clientPage.messages.reshareSaveError')
       )
       return
     }
@@ -6755,7 +7017,7 @@ function InternalApp() {
   ) {
     const confirmed =
       window.confirm(
-        '이 제안을 광고주에게 공유하시겠습니까?'
+        t('operator.clientPage.confirm.share')
       )
 
     if (!confirmed) {
@@ -6881,7 +7143,7 @@ function InternalApp() {
       'revision_requested' &&
       taskStatus === 'waiting'
     ) {
-      return '수정 작업 시작 필요'
+      return t('operator.clientHub.nextActions.startRevision')
     }
 
     if (
@@ -6889,7 +7151,7 @@ function InternalApp() {
       'revision_requested' &&
       taskStatus === 'in_progress'
     ) {
-      return '수정안 작성 진행 중'
+      return t('operator.clientHub.nextActions.revisionInProgress')
     }
 
     if (
@@ -6897,33 +7159,33 @@ function InternalApp() {
       'revision_requested' &&
       taskStatus === 'reviewing'
     ) {
-      return '수정안 내부 검토 필요'
+      return t('operator.clientHub.nextActions.internalReview')
     }
 
     if (
       proposalStatus === 'sent'
     ) {
-      return '광고주 검토 요청'
+      return t('operator.clientHub.nextActions.requestClientReview')
     }
 
     if (
       proposalStatus === 'reviewing'
     ) {
-      return '광고주 피드백 대기'
+      return t('operator.clientHub.nextActions.waitingClientFeedback')
     }
 
     if (
       proposalStatus === 'approved' &&
       taskStatus !== 'done'
     ) {
-      return '승인 완료 · 집행 준비 필요'
+      return t('operator.clientHub.nextActions.prepareExecution')
     }
 
     if (
       proposalStatus === 'approved' &&
       taskStatus === 'done'
     ) {
-      return '집행 준비 가능'
+      return t('operator.clientHub.nextActions.readyForExecution')
     }
 
     if (
@@ -6931,17 +7193,17 @@ function InternalApp() {
       'review_completed' &&
       taskStatus === 'done'
     ) {
-      return '업무 완료'
+      return t('operator.clientHub.nextActions.complete')
     }
 
     if (
       proposalStatus ===
       'preparing'
     ) {
-      return '제안 내용 정리 필요'
+      return t('operator.clientHub.nextActions.prepareProposal')
     }
 
-    return '상태 확인 필요'
+    return t('operator.clientHub.nextActions.checkStatus')
   }
 
   function getClientProposalAttention(
@@ -7013,9 +7275,8 @@ function InternalApp() {
     ) {
       return {
         level: 'warning',
-        label: '미열람',
-        message:
-          '공유 후 3일 이상 열람되지 않았습니다. 광고주에게 리마인드가 필요합니다.',
+        label: t('operator.clientHub.attention.unviewed.label'),
+        message: t('operator.clientHub.attention.unviewed.message'),
       }
     }
 
@@ -7027,9 +7288,8 @@ function InternalApp() {
     ) {
       return {
         level: 'warning',
-        label: '검토 지연',
-        message:
-          '광고주 검토가 5일 이상 진행 중입니다. 후속 연락을 권장합니다.',
+        label: t('operator.clientHub.attention.reviewDelay.label'),
+        message: t('operator.clientHub.attention.reviewDelay.message'),
       }
     }
 
@@ -7039,12 +7299,12 @@ function InternalApp() {
     ) {
       return {
         level: 'urgent',
-        label: '수정 요청',
+        label: t('operator.clientHub.attention.revision.label'),
         message:
           proposal.taskStatus ===
             'waiting'
-            ? '광고주 수정 요청이 접수되었습니다. 수정 작업을 시작해야 합니다.'
-            : '광고주 수정 요청 건이 진행 중입니다.',
+            ? t('operator.clientHub.attention.revision.waiting')
+            : t('operator.clientHub.attention.revision.inProgress'),
       }
     }
 
@@ -7056,9 +7316,8 @@ function InternalApp() {
     ) {
       return {
         level: 'success',
-        label: '승인 완료',
-        message:
-          '광고주 승인이 완료되었습니다. 집행 준비 업무를 진행하세요.',
+        label: t('operator.clientHub.attention.approved.label'),
+        message: t('operator.clientHub.attention.approved.message'),
       }
     }
 
@@ -7070,9 +7329,8 @@ function InternalApp() {
     ) {
       return {
         level: 'complete',
-        label: '완료',
-        message:
-          '광고주 검토와 내부 후속 업무가 모두 완료되었습니다.',
+        label: t('operator.clientHub.attention.complete.label'),
+        message: t('operator.clientHub.attention.complete.message'),
       }
     }
 
@@ -7084,9 +7342,8 @@ function InternalApp() {
     ) {
       return {
         level: 'warning',
-        label: '장기 미처리',
-        message:
-          '최근 7일간 업데이트가 없습니다. 업무 상태를 확인해주세요.',
+        label: t('operator.clientHub.attention.stale.label'),
+        message: t('operator.clientHub.attention.stale.message'),
       }
     }
 
@@ -7249,28 +7506,86 @@ function InternalApp() {
   function getClientProposalStatusLabel(
     status
   ) {
-    switch (status) {
-      case 'preparing':
-        return '제안 준비'
-
-      case 'sent':
-        return '제안 완료'
-
-      case 'reviewing':
-        return '광고주 검토 중'
-
-      case 'revision_requested':
-        return '수정 요청'
-
-      case 'approved':
-        return '승인'
-
-      case 'review_completed':
-        return '검토 완료'
-
-      default:
-        return '제안 준비'
+    const statusKeyMap = {
+      preparing: 'preparing',
+      sent: 'sent',
+      reviewing: 'reviewing',
+      revision_requested: 'revisionRequested',
+      approved: 'approved',
+      review_completed: 'reviewCompleted',
     }
+
+    return t(
+      `operator.clientHub.status.${
+        statusKeyMap[status] || 'preparing'
+      }`
+    )
+  }
+
+  function translateClientHubSenderName(
+    name
+  ) {
+    if (name === '광고주') {
+      return t('operator.clientHub.conversation.advertiser')
+    }
+
+    if (name === '운영 담당자') {
+      return t('operator.clientHub.conversation.operator')
+    }
+
+    return name
+  }
+
+  function translateClientHubActionLabel(
+    label
+  ) {
+    if (label === '제안 확인하기') {
+      return t('operator.clientHub.conversation.viewProposal')
+    }
+
+    if (label === '수정된 제안 확인하기') {
+      return t('operator.clientHub.conversation.viewUpdatedProposal')
+    }
+
+    return label
+  }
+
+  function translateClientHubSystemMessage(
+    message
+  ) {
+    const messageKeyMap = {
+      '광고주가 제안을 열람했습니다.':
+        'viewedProposal',
+      '광고주가 제안을 최초 열람했습니다.':
+        'viewedProposalFirst',
+      '광고주가 제안을 다시 열람했습니다.':
+        'viewedProposalAgain',
+      '광고주가 제안을 재열람했습니다.':
+        'viewedProposalAgain',
+      '광고주 제안 준비가 완료되었습니다.':
+        'proposalReady',
+      '광고주에게 제안이 공유되었습니다.':
+        'proposalShared',
+      '광고주가 제안을 승인했습니다.':
+        'proposalApproved',
+      '광고주가 수정 요청을 등록했습니다.':
+        'revisionRequested',
+      '수정안을 광고주에게 재공유했습니다.':
+        'revisionReshared',
+      '광고주 제안이 취소되었습니다.':
+        'proposalCancelled',
+      '새로운 광고 예산 최적화 제안이 공유되었습니다. 아래 버튼에서 제안을 확인해주세요.':
+        'newProposalShared',
+      '수정된 광고 예산 최적화 제안이 다시 공유되었습니다. 광고주 요청사항을 반영하여 예산 배분 및 예상 성과를 업데이트했습니다.':
+        'updatedProposalShared',
+    }
+
+    const key =
+      messageKeyMap[message]
+
+    return key
+      ? t(`operator.clientHub.systemMessages.${key}`)
+      : message
   }
 
 
@@ -7554,7 +7869,7 @@ function InternalApp() {
       const deltaY =
         e.clientY - dragInfo.startMouseY
 
-      const gridSize = 24
+      const gridSize = 4
 
       const newX = Math.max(
         0,
@@ -7622,7 +7937,7 @@ function InternalApp() {
         let finalY = newY
 
         if (overlapsAt(finalX, finalY)) {
-          const gridSize = 24
+          const gridSize = 4
           const searchRadius = 20
 
           let foundPosition = false
@@ -10347,12 +10662,8 @@ function InternalApp() {
             reason =
               marginalRevenue >=
                 averageMarginalRevenue
-                ? `한계 매출효율이 전체 매체 평균보다 ${Math.abs(
-                  marginalRevenueDifference
-                ).toFixed(
-                  1
-                )}% 높아 추가 예산의 매출 기여도가 큰 채널로 평가되었습니다.`
-                : `전체 예산 제약과 매체 간 한계효율을 함께 고려한 결과 추가 배분이 총매출 최대화에 유리했습니다.`
+                ? t('operator.budget.dynamic.revenueIncreaseHigh', { difference: Math.abs(marginalRevenueDifference).toFixed(1) })
+                : t('operator.budget.dynamic.revenueIncreasePortfolio')
           }
 
           else if (
@@ -10361,17 +10672,13 @@ function InternalApp() {
             reason =
               marginalRevenue <
                 averageMarginalRevenue
-                ? `한계 매출효율이 전체 매체 평균보다 ${Math.abs(
-                  marginalRevenueDifference
-                ).toFixed(
-                  1
-                )}% 낮아 일부 예산을 더 높은 효율의 채널로 이동하는 것이 유리했습니다.`
-                : `전체 예산 제약에서 다른 채널의 추가 매출 기여도가 더 높아 상대적으로 감액되었습니다.`
+                ? t('operator.budget.dynamic.revenueDecreaseLow', { difference: Math.abs(marginalRevenueDifference).toFixed(1) })
+                : t('operator.budget.dynamic.revenueDecreasePortfolio')
           }
 
           else {
             reason =
-              `현재 예산 수준에서의 한계 매출효율과 다른 채널의 기회비용을 고려할 때 현 수준 유지가 최적이었습니다.`
+              t('operator.budget.dynamic.revenueHold')
           }
         }
 
@@ -10381,29 +10688,19 @@ function InternalApp() {
         ) {
           if (recommendation === '증액') {
             reason =
-              `목표 ROAS 제약을 만족하는 범위에서 한계 매출효율이 전체 매체 평균 대비 ${marginalRevenueDifference >= 0
-                ? '+'
-                : ''
-              }${marginalRevenueDifference.toFixed(
-                1
-              )}%로 평가되어 추가 배분이 선택되었습니다.`
+              t('operator.budget.dynamic.roasIncrease', { difference: `${marginalRevenueDifference >= 0 ? '+' : ''}${marginalRevenueDifference.toFixed(1)}` })
           }
 
           else if (
             recommendation === '감액'
           ) {
             reason =
-              `목표 ROAS를 유지하면서 한계 매출효율이 전체 매체 평균 대비 ${marginalRevenueDifference >= 0
-                ? '+'
-                : ''
-              }${marginalRevenueDifference.toFixed(
-                1
-              )}%인 예산 구간이 상대적으로 축소되었습니다.`
+              t('operator.budget.dynamic.roasDecrease', { difference: `${marginalRevenueDifference >= 0 ? '+' : ''}${marginalRevenueDifference.toFixed(1)}` })
           }
 
           else {
             reason =
-              `목표 ROAS 제약과 한계 매출효율을 함께 고려했을 때 현재 예산 수준이 최적 균형점으로 계산되었습니다.`
+              t('operator.budget.dynamic.roasHold')
           }
         }
 
@@ -10419,12 +10716,8 @@ function InternalApp() {
             reason =
               marginalConversions >=
                 averageMarginalConversions
-                ? `한계 전환효율이 전체 매체 평균보다 ${Math.abs(
-                  marginalConversionsDifference
-                ).toFixed(
-                  1
-                )}% 높아 추가 예산이 더 많은 전환을 만드는 채널로 평가되었습니다.`
-                : `전체 예산 제약과 매체 간 전환효율을 함께 고려한 결과 추가 배분이 총전환 최대화에 유리했습니다.`
+                ? t('operator.budget.dynamic.conversionIncreaseHigh', { difference: Math.abs(marginalConversionsDifference).toFixed(1) })
+                : t('operator.budget.dynamic.conversionIncreasePortfolio')
           }
 
           else if (
@@ -10433,17 +10726,13 @@ function InternalApp() {
             reason =
               marginalConversions <
                 averageMarginalConversions
-                ? `한계 전환효율이 전체 매체 평균보다 ${Math.abs(
-                  marginalConversionsDifference
-                ).toFixed(
-                  1
-                )}% 낮아 더 높은 전환효율의 채널로 예산을 이동하는 것이 유리했습니다.`
-                : `전체 전환 최대화를 위해 다른 채널의 추가 전환 기여도가 더 높아 상대적으로 감액되었습니다.`
+                ? t('operator.budget.dynamic.conversionDecreaseLow', { difference: Math.abs(marginalConversionsDifference).toFixed(1) })
+                : t('operator.budget.dynamic.conversionDecreasePortfolio')
           }
 
           else {
             reason =
-              `한계 전환효율이 전체 포트폴리오 기준과 유사해 현재 예산 수준을 유지하는 것이 최적이었습니다.`
+              t('operator.budget.dynamic.conversionHold')
           }
         }
 
@@ -10459,8 +10748,8 @@ function InternalApp() {
             reason =
               marginalConversions >=
                 averageMarginalConversions
-                ? `한계 전환효율이 평균보다 높아 추가 예산이 더 많은 전환을 만드는 채널로 평가되었습니다.`
-                : `전체 예산 제약을 고려했을 때 추가 배분이 총 전환 증가에 유리했습니다.`
+                ? t('operator.budget.dynamic.conversionSimpleIncreaseHigh')
+                : t('operator.budget.dynamic.conversionSimpleIncreasePortfolio')
           }
 
           else if (
@@ -10469,13 +10758,13 @@ function InternalApp() {
             reason =
               marginalConversions <
                 averageMarginalConversions
-                ? `한계 전환효율이 다른 매체보다 낮아 더 효율적인 전환 채널로 예산이 이동했습니다.`
-                : `전체 전환 최대화를 위해 상대적으로 우선순위가 낮은 예산 구간이 축소되었습니다.`
+                ? t('operator.budget.dynamic.conversionSimpleDecreaseLow')
+                : t('operator.budget.dynamic.conversionSimpleDecreasePortfolio')
           }
 
           else {
             reason =
-              `현재 예산 수준에서의 한계 전환효율이 포트폴리오 전체 기준과 유사해 유지가 선택되었습니다.`
+              t('operator.budget.dynamic.conversionSimpleHold')
           }
         }
 
@@ -10489,33 +10778,19 @@ function InternalApp() {
         ) {
           if (recommendation === '증액') {
             reason =
-              `목표 CPA 제약을 만족하는 범위에서 한계 전환효율이 전체 매체 평균보다 ${Math.abs(
-                marginalConversionsDifference
-              ).toFixed(
-                1
-              )}% ${marginalConversionsDifference >= 0
-                ? '높아'
-                : '낮지만'
-              } 추가 배분이 총전환 증가에 유리한 것으로 계산되었습니다.`
+              t('operator.budget.dynamic.cpaIncrease', { difference: Math.abs(marginalConversionsDifference).toFixed(1), position: marginalConversionsDifference >= 0 ? (i18n.language === 'en' ? 'above' : '높아') : (i18n.language === 'en' ? 'below' : '낮지만') })
           }
 
           else if (
             recommendation === '감액'
           ) {
             reason =
-              `목표 CPA를 유지하면서 한계 전환효율이 전체 매체 평균보다 ${Math.abs(
-                marginalConversionsDifference
-              ).toFixed(
-                1
-              )}% ${marginalConversionsDifference < 0
-                ? '낮아'
-                : '높지만'
-              } 포트폴리오 전체 기준에서 상대적으로 감액되었습니다.`
+              t('operator.budget.dynamic.cpaDecrease', { difference: Math.abs(marginalConversionsDifference).toFixed(1), position: marginalConversionsDifference < 0 ? (i18n.language === 'en' ? 'below' : '낮아') : (i18n.language === 'en' ? 'above' : '높지만') })
           }
 
           else {
             reason =
-              `목표 CPA 제약과 현재 한계 전환효율을 함께 고려했을 때 현재 예산 수준이 적정한 것으로 계산되었습니다.`
+              t('operator.budget.dynamic.cpaHold')
           }
         }
 
@@ -10537,43 +10812,33 @@ function InternalApp() {
           if (recommendation === '증액') {
             if (riskPosition === 'high') {
               reason =
-                `한계 매출효율이 전체 매체 평균보다 ${Math.abs(
-                  marginalRevenueDifference
-                ).toFixed(
-                  1
-                )}% ${marginalRevenueDifference >= 0
-                  ? '높지만'
-                  : '낮고'
-                }, Risk Weight도 평균보다 ${Math.abs(
-                  riskWeightDifference
-                ).toFixed(
-                  1
-                )}% 높습니다. 현재 선택한 리스크 한도 안에서 위험 대비 매출 기여도가 인정되어 제한적으로 증액되었습니다.`
+                t('operator.budget.dynamic.riskIncreaseHigh', {
+                  revenueDifference: Math.abs(marginalRevenueDifference).toFixed(1),
+                  revenuePosition: marginalRevenueDifference >= 0
+                    ? (i18n.language === 'en' ? 'above' : '높지만')
+                    : (i18n.language === 'en' ? 'below' : '낮고'),
+                  riskDifference: Math.abs(riskWeightDifference).toFixed(1),
+                })
             }
 
             else if (
               riskPosition === 'low'
             ) {
               reason =
-                `한계 매출효율이 전체 매체 평균보다 ${Math.abs(
-                  marginalRevenueDifference
-                ).toFixed(
-                  1
-                )}% ${marginalRevenueDifference >= 0
-                  ? '높고'
-                  : '낮지만'
-                }, Risk Weight는 평균보다 ${Math.abs(
-                  riskWeightDifference
-                ).toFixed(
-                  1
-                )}% 낮아 위험 대비 매출 기여도가 우수한 채널로 평가되었습니다.`
+                t('operator.budget.dynamic.riskIncreaseLow', {
+                  revenueDifference: Math.abs(marginalRevenueDifference).toFixed(1),
+                  revenuePosition: marginalRevenueDifference >= 0
+                    ? (i18n.language === 'en' ? 'above' : '높고')
+                    : (i18n.language === 'en' ? 'below' : '낮지만'),
+                  riskDifference: Math.abs(riskWeightDifference).toFixed(1),
+                })
             }
 
             else {
               reason =
-                `한계 매출효율은 전체 매체 평균 대비 ${marginalRevenueDifference >= 0 ? '+' : ''}${marginalRevenueDifference.toFixed(
-                  1
-                )}%이고 Risk Weight도 평균 수준입니다. 위험 대비 기대 매출 기여도가 양호해 증액되었습니다.`
+                t('operator.budget.dynamic.riskIncreaseMedium', {
+                  revenueDifference: `${marginalRevenueDifference >= 0 ? '+' : ''}${marginalRevenueDifference.toFixed(1)}`,
+                })
             }
           }
 
@@ -10582,30 +10847,26 @@ function InternalApp() {
           ) {
             if (riskPosition === 'high') {
               reason =
-                `Risk Weight가 전체 매체 평균보다 ${Math.abs(
-                  riskWeightDifference
-                ).toFixed(
-                  1
-                )}% 높고, 한계 매출효율은 평균 대비 ${marginalRevenueDifference >= 0 ? '+' : ''}${marginalRevenueDifference.toFixed(
-                  1
-                )}%입니다. 위험 대비 효율을 고려해 예산이 축소되었습니다.`
+                t('operator.budget.dynamic.riskDecreaseHigh', {
+                  riskDifference: Math.abs(riskWeightDifference).toFixed(1),
+                  revenueDifference: `${marginalRevenueDifference >= 0 ? '+' : ''}${marginalRevenueDifference.toFixed(1)}`,
+                })
             }
 
             else {
               reason =
-                `Risk Weight는 평균 대비 ${riskWeightDifference >= 0 ? '+' : ''}${riskWeightDifference.toFixed(
-                  1
-                )}% 수준이지만, 다른 채널의 위험 대비 한계 매출효율이 더 높아 상대적으로 감액되었습니다.`
+                t('operator.budget.dynamic.riskDecreaseOther', {
+                  riskDifference: `${riskWeightDifference >= 0 ? '+' : ''}${riskWeightDifference.toFixed(1)}`,
+                })
             }
           }
 
           else {
             reason =
-              `한계 매출효율은 평균 대비 ${marginalRevenueDifference >= 0 ? '+' : ''}${marginalRevenueDifference.toFixed(
-                1
-              )}%이고 Risk Weight는 평균 대비 ${riskWeightDifference >= 0 ? '+' : ''}${riskWeightDifference.toFixed(
-                1
-              )}%로, 현재 예산 수준이 위험과 기대수익의 균형점에 가까웠습니다.`
+              t('operator.budget.dynamic.riskHold', {
+                revenueDifference: `${marginalRevenueDifference >= 0 ? '+' : ''}${marginalRevenueDifference.toFixed(1)}`,
+                riskDifference: `${riskWeightDifference >= 0 ? '+' : ''}${riskWeightDifference.toFixed(1)}`,
+              })
           }
         }
 
@@ -10615,7 +10876,7 @@ function InternalApp() {
 
         else {
           reason =
-            `현재 목적함수와 예산 제약을 종합한 Gurobi 최적해 기준으로 ${recommendation}이 선택되었습니다.`
+            t('operator.budget.dynamic.fallback', { recommendation: getBudgetRecommendationLabel(recommendation) })
         }
 
         result[item.channel] = {
@@ -10633,6 +10894,7 @@ function InternalApp() {
   }, [
     gurobiPerformanceProjection,
     optimizationObjective,
+    i18n.language,
   ])
 
   const gurobiScenarioSummary = useMemo(() => {
@@ -10904,54 +11166,47 @@ function InternalApp() {
 
     const riskLevelText =
       riskDiagnosticsSummary.riskLevel === 'low'
-        ? '낮은'
+        ? t('operator.budget.riskExplanation.levelLow')
         : riskDiagnosticsSummary.riskLevel === 'high'
-          ? '높은'
-          : '중간'
+          ? t('operator.budget.riskExplanation.levelHigh')
+          : t('operator.budget.riskExplanation.levelMedium')
 
     let opportunityText = ''
 
     if (riskGap > 0.2) {
       opportunityText =
-        `현재는 최대매출 기준 리스크보다 ` +
-        `${riskGap.toFixed(2)}%p 낮게 운용되고 있어, ` +
-        `리스크를 더 허용하면 추가 매출 여지가 있을 수 있습니다.`
+        t('operator.budget.riskExplanation.opportunity', { gap: riskGap.toFixed(2) })
     } else {
       opportunityText =
-        '현재 리스크 수준은 최대매출을 달성하는 데 필요한 수준에 가깝습니다.'
+        t('operator.budget.riskExplanation.nearOptimal')
     }
 
     return {
-      title:
-        `${riskLevelText} 리스크 수준에서 예산을 최적화했습니다.`,
-
-      summary:
-        `전체 실제 리스크는 ` +
-        `${riskDiagnosticsSummary.realizedRiskPercent.toFixed(2)}%이며, ` +
-        `선택된 허용 리스크 ` +
-        `${riskDiagnosticsSummary.dynamicRiskLimitPercent.toFixed(2)}% 이내입니다.`,
-
-      highestRisk:
-        `${highestRiskChannel.channel}이 전체 리스크에 가장 크게 기여하고 있습니다. ` +
-        `예산 변화율은 ` +
-        `${(highestRiskChannel.relativeChange * 100).toFixed(1)}%, ` +
-        `성과 변동성은 ` +
-        `${(highestRiskChannel.volatility * 100).toFixed(2)}%입니다.`,
-
-      mostChanged:
-        `${mostChangedChannel.channel}의 예산 변화폭이 가장 큽니다. ` +
-        `현재 예산 대비 ` +
-        `${(mostChangedChannel.relativeChange * 100).toFixed(1)}% 조정되었습니다.`,
-
-      stableChannel:
-        `${lowestRiskChannel.channel}은 현재 배분에서 상대적으로 낮은 리스크 기여도를 보이고 있습니다.`,
-
-      opportunity:
-        opportunityText,
+      title: t('operator.budget.riskExplanation.title', {
+        level: riskLevelText,
+      }),
+      summary: t('operator.budget.riskExplanation.summary', {
+        realized: riskDiagnosticsSummary.realizedRiskPercent.toFixed(2),
+        allowed: riskDiagnosticsSummary.dynamicRiskLimitPercent.toFixed(2),
+      }),
+      highestRisk: t('operator.budget.riskExplanation.highestRisk', {
+        channel: highestRiskChannel.channel,
+        change: (highestRiskChannel.relativeChange * 100).toFixed(1),
+        volatility: (highestRiskChannel.volatility * 100).toFixed(2),
+      }),
+      mostChanged: t('operator.budget.riskExplanation.mostChanged', {
+        channel: mostChangedChannel.channel,
+        change: (mostChangedChannel.relativeChange * 100).toFixed(1),
+      }),
+      stableChannel: t('operator.budget.riskExplanation.stableChannel', {
+        channel: lowestRiskChannel.channel,
+      }),
+      opportunity: opportunityText,
     }
   }, [
     riskDiagnosticsSummary,
     channelRiskContribution,
+    i18n.language,
   ])
 
   const riskRecommendations = useMemo(() => {
@@ -11011,15 +11266,10 @@ function InternalApp() {
         type: 'warning',
 
         title:
-          `${highestVolatilityChannel.channel} 성과 변동성 주의`,
+          t('operator.budget.riskRecommendations.volatilityTitle', { channel: highestVolatilityChannel.channel }),
 
         description:
-          `${highestVolatilityChannel.channel}의 성과 변동성이 ` +
-          `${(
-            highestVolatilityChannel.volatility *
-            100
-          ).toFixed(2)}%로 상대적으로 높습니다. ` +
-          `추가 증액 시 단계적인 예산 조정을 권장합니다.`,
+          t('operator.budget.riskRecommendations.volatilityDescription', { channel: highestVolatilityChannel.channel, volatility: (highestVolatilityChannel.volatility * 100).toFixed(2) }),
       })
     }
 
@@ -11031,15 +11281,10 @@ function InternalApp() {
         type: 'change',
 
         title:
-          `${mostChangedChannel.channel} 예산 변화폭 확인`,
+          t('operator.budget.riskRecommendations.changeTitle', { channel: mostChangedChannel.channel }),
 
         description:
-          `${mostChangedChannel.channel}의 최적 예산은 현재 대비 ` +
-          `${(
-            mostChangedChannel.relativeChange *
-            100
-          ).toFixed(1)}% 변동합니다. ` +
-          `실제 집행 시 한 번에 변경하기보다 단계적 적용을 고려하세요.`,
+          t('operator.budget.riskRecommendations.changeDescription', { channel: mostChangedChannel.channel, change: (mostChangedChannel.relativeChange * 100).toFixed(1) }),
       })
     }
 
@@ -11051,12 +11296,10 @@ function InternalApp() {
         type: 'risk',
 
         title:
-          `${highestRiskChannel.channel} 리스크 기여도 관리`,
+          t('operator.budget.riskRecommendations.riskTitle', { channel: highestRiskChannel.channel }),
 
         description:
-          `${highestRiskChannel.channel}이 현재 최적화 결과에서 ` +
-          `가장 큰 리스크 기여도를 보이고 있습니다. ` +
-          `성과 추이를 우선 모니터링하는 것이 좋습니다.`,
+          t('operator.budget.riskRecommendations.riskDescription', { channel: highestRiskChannel.channel }),
       })
     }
 
@@ -11065,12 +11308,10 @@ function InternalApp() {
         type: 'opportunity',
 
         title:
-          '추가 매출 탐색 가능',
+          t('operator.budget.riskRecommendations.opportunityTitle'),
 
         description:
-          `현재 실제 리스크는 최대매출 기준보다 ` +
-          `${riskGap.toFixed(2)}%p 낮습니다. ` +
-          `리스크 수준을 한 단계 높여 추가 매출 효과를 비교할 수 있습니다.`,
+          t('operator.budget.riskRecommendations.opportunityDescription', { gap: riskGap.toFixed(2) }),
       })
     }
 
@@ -11082,11 +11323,10 @@ function InternalApp() {
         type: 'stable',
 
         title:
-          '보수적 배분 상태',
+          t('operator.budget.riskRecommendations.stableTitle'),
 
         description:
-          '현재 배분은 목표 예산을 달성하기 위한 최소 리스크 수준에 매우 가깝습니다. ' +
-          '안정성을 우선하는 경우 적합한 시나리오입니다.',
+          t('operator.budget.riskRecommendations.stableDescription'),
       })
     }
 
@@ -11094,6 +11334,7 @@ function InternalApp() {
   }, [
     riskDiagnosticsSummary,
     channelRiskContribution,
+    i18n.language,
   ])
 
   const calculateScenarioPerformance = (
@@ -11193,15 +11434,15 @@ function InternalApp() {
       const levels = [
         {
           key: 'low',
-          label: '낮음',
+          label: t('operator.budget.risk.low'),
         },
         {
           key: 'medium',
-          label: '보통',
+          label: t('operator.budget.risk.medium'),
         },
         {
           key: 'high',
-          label: '높음',
+          label: t('operator.budget.risk.high'),
         },
       ]
 
@@ -11684,7 +11925,7 @@ function InternalApp() {
         bestRevenue
       ) {
         reasons.push(
-          '세 시나리오 중 예상 매출이 가장 높습니다.'
+          t('operator.budget.riskScenarioExplanation.bestRevenue')
         )
       }
 
@@ -11693,7 +11934,7 @@ function InternalApp() {
         bestRoas
       ) {
         reasons.push(
-          '예상 ROAS가 가장 높습니다.'
+          t('operator.budget.riskScenarioExplanation.bestRoas')
         )
       }
 
@@ -11702,7 +11943,7 @@ function InternalApp() {
         bestCpa
       ) {
         reasons.push(
-          '예상 CPA가 가장 낮습니다.'
+          t('operator.budget.riskScenarioExplanation.bestCpa')
         )
       }
 
@@ -11711,7 +11952,7 @@ function InternalApp() {
         lowestRisk
       ) {
         reasons.push(
-          '세 시나리오 중 실제 리스크가 가장 낮습니다.'
+          t('operator.budget.riskScenarioExplanation.lowestRisk')
         )
       }
 
@@ -11736,10 +11977,7 @@ function InternalApp() {
           lowestRiskScenario.realizedRisk
 
         cautions.push(
-          `가장 보수적인 시나리오보다 실제 리스크가 ` +
-          `${(
-            additionalRisk * 100
-          ).toFixed(2)}%p 높습니다.`
+          t('operator.budget.riskScenarioExplanation.additionalRisk', { risk: (additionalRisk * 100).toFixed(2) })
         )
       }
 
@@ -11768,10 +12006,7 @@ function InternalApp() {
         revenueGainRate > 0
       ) {
         reasons.push(
-          `가장 보수적인 시나리오 대비 예상 매출이 ` +
-          `${(
-            revenueGainRate * 100
-          ).toFixed(2)}% 증가합니다.`
+          t('operator.budget.riskScenarioExplanation.revenueGain', { gain: (revenueGainRate * 100).toFixed(2) })
         )
       }
 
@@ -11787,15 +12022,15 @@ function InternalApp() {
 
       if (recommended.key === 'high') {
         conclusion =
-          '성과 개선 효과가 추가 리스크에 대한 패널티보다 크게 평가되어 높은 리스크 시나리오가 추천되었습니다.'
+          t('operator.budget.riskScenarioExplanation.highConclusion')
       } else if (
         recommended.key === 'medium'
       ) {
         conclusion =
-          '성과 개선과 리스크 관리의 균형이 가장 높게 평가되어 보통 리스크 시나리오가 추천되었습니다.'
+          t('operator.budget.riskScenarioExplanation.mediumConclusion')
       } else {
         conclusion =
-          '추가 리스크 대비 성과 개선 효과가 제한적이어서 낮은 리스크 시나리오가 추천되었습니다.'
+          t('operator.budget.riskScenarioExplanation.lowConclusion')
       }
 
       return {
@@ -11811,6 +12046,7 @@ function InternalApp() {
     }, [
       recommendedRiskScenario,
       riskScenarioScoreRows,
+      i18n.language,
     ])
 
   const observedBudgetBounds = useMemo(() => {
@@ -12546,13 +12782,13 @@ function InternalApp() {
 
     if (variables.length === 0) {
       errors.push(
-        '최적화 변수가 없습니다.'
+        t('operator.budget.validation.noVariables')
       )
     }
 
     if (constraints.length === 0) {
       errors.push(
-        '최적화 제약조건이 없습니다.'
+        t('operator.budget.validation.noConstraints')
       )
     }
 
@@ -12572,7 +12808,7 @@ function InternalApp() {
 
     if (invalidVariables.length > 0) {
       errors.push(
-        '유효하지 않은 LP 변수가 있습니다.'
+        t('operator.budget.validation.invalidVariables')
       )
     }
 
@@ -12585,7 +12821,7 @@ function InternalApp() {
 
     if (invalidBounds.length > 0) {
       errors.push(
-        '하한이 상한보다 큰 변수가 있습니다.'
+        t('operator.budget.validation.invalidBounds')
       )
     }
 
@@ -12611,7 +12847,7 @@ function InternalApp() {
       segmentCapacityTolerance
     ) {
       errors.push(
-        '반응곡선의 전체 예산 구간 용량이 입력 예산보다 작습니다.'
+        t('operator.budget.validation.capacityTooLow')
       )
     }
 
@@ -12619,7 +12855,7 @@ function InternalApp() {
       requiredBudget <= 0
     ) {
       warnings.push(
-        '최적화 총예산이 입력되지 않았습니다.'
+        t('operator.budget.validation.noTotalBudget')
       )
     }
 
@@ -12655,7 +12891,7 @@ function InternalApp() {
     channelChecks.forEach((check) => {
       if (!check.valid) {
         errors.push(
-          `${check.channel}의 반응곡선 범위가 최소 예산 제약을 충족하지 못합니다.`
+          t('operator.budget.validation.channelMinCapacity', { channel: check.channel })
         )
       }
 
@@ -12664,7 +12900,7 @@ function InternalApp() {
         check.maxBudget
       ) {
         warnings.push(
-          `${check.channel}은 관측된 예산 범위 때문에 최대 허용 예산까지 사용할 수 없습니다.`
+          t('operator.budget.validation.channelMaxObserved', { channel: check.channel })
         )
       }
     })
@@ -12689,6 +12925,7 @@ function InternalApp() {
   }, [
     lpModelDefinition,
     effectiveBudgetBounds,
+    i18n.language,
   ])
 
   const solverModelPayload = useMemo(() => {
@@ -12815,7 +13052,7 @@ function InternalApp() {
   async function runNaverOptimizationPreview() {
     if (!selectedAdvertiserId) {
       setNaverPreviewError(
-        '광고주를 먼저 선택해 주세요.'
+        t('operator.budget.errors.selectAdvertiser')
       )
 
       return
@@ -12850,7 +13087,7 @@ function InternalApp() {
 
         if (!mockInput) {
           setNaverPreviewError(
-            '현재 필터 조건에 해당하는 Mock 데이터가 없습니다.'
+            t('operator.budget.errors.noMockData')
           )
 
           return
@@ -12983,7 +13220,7 @@ function InternalApp() {
 
         if (!scenario) {
           throw new Error(
-            'Mock 현재 예산 시나리오 결과가 없습니다.'
+            t('operator.budget.errors.noMockScenario')
           )
         }
 
@@ -12993,7 +13230,7 @@ function InternalApp() {
         ) {
           throw new Error(
             scenario.message ||
-            'Mock 최적화 Preview 실행에 실패했습니다.'
+            t('operator.budget.errors.mockPreviewFailed')
           )
         }
 
@@ -13086,7 +13323,7 @@ function InternalApp() {
           throw new Error(
             previewResult.message ||
             previewResult.blockCode ||
-            'Mock 최적화 Preview 요청에 실패했습니다.'
+            t('operator.budget.errors.mockPreviewRequestFailed')
           )
         }
 
@@ -13220,9 +13457,11 @@ function InternalApp() {
         'ok'
       ) {
         throw new Error(
-          result.message ||
-          result.blockCode ||
-          '최적화 Preview 요청에 실패했습니다.'
+          i18n.language === 'en'
+            ? t('operator.budget.errors.previewRequestFailed')
+            : result.message ||
+              result.blockCode ||
+              t('operator.budget.errors.previewRequestFailed')
         )
       }
 
@@ -13257,7 +13496,7 @@ function InternalApp() {
 
       setNaverPreviewError(
         error.message ||
-        '최적화 Preview 요청 중 오류가 발생했습니다.'
+        t('operator.budget.errors.previewError')
       )
 
     } finally {
@@ -13313,7 +13552,7 @@ function InternalApp() {
         )
 
         throw new Error(
-          `Campaign Budget Policy API 오류: ${response.status}`
+          t('operator.budget.errors.policyApiError', { status: response.status })
         )
       }
 
@@ -13322,8 +13561,10 @@ function InternalApp() {
 
       if (result.status !== 'ok') {
         throw new Error(
-          result.message ||
-          '캠페인 예산 정책을 불러오지 못했습니다.'
+          i18n.language === 'en'
+            ? t('operator.budget.errors.policyLoadFailed')
+            : result.message ||
+              t('operator.budget.errors.policyLoadFailed')
         )
       }
 
@@ -13403,7 +13644,7 @@ function InternalApp() {
 
       setCampaignBudgetPolicyError(
         error.message ||
-        '캠페인 예산 정책 조회 중 오류가 발생했습니다.'
+        t('operator.budget.errors.policyLoadError')
       )
 
     } finally {
@@ -13488,7 +13729,7 @@ function InternalApp() {
       !Number.isFinite(maxPct)
     ) {
       setCampaignBudgetPolicyError(
-        '최소·최대 예산 비율을 모두 입력해주세요.'
+        t('operator.budget.errors.bulkBothRequired')
       )
 
       return
@@ -13499,7 +13740,7 @@ function InternalApp() {
       minPct > 100
     ) {
       setCampaignBudgetPolicyError(
-        '최소 예산 비율은 0% 이상 100% 이하여야 합니다.'
+        t('operator.budget.errors.bulkMinRange')
       )
 
       return
@@ -13509,7 +13750,7 @@ function InternalApp() {
       maxPct < 100
     ) {
       setCampaignBudgetPolicyError(
-        '최대 예산 비율은 100% 이상이어야 합니다.'
+        t('operator.budget.errors.bulkMaxRange')
       )
 
       return
@@ -13572,7 +13813,7 @@ function InternalApp() {
   async function saveCampaignBudgetPolicies() {
     if (!selectedAdvertiserId) {
       setCampaignBudgetPolicyError(
-        '광고주를 먼저 선택해주세요.'
+        t('operator.budget.errors.selectAdvertiser')
       )
 
       return
@@ -13626,9 +13867,7 @@ function InternalApp() {
         maxEmpty
       ) {
         setCampaignBudgetPolicyError(
-          `${policy.campaignName ||
-          policy.campaignId
-          }: 최소 예산과 최대 예산을 모두 입력해주세요.`
+          t('operator.budget.errors.campaignBothRequired', { campaign: policy.campaignName || policy.campaignId })
         )
 
         return
@@ -13654,9 +13893,7 @@ function InternalApp() {
         )
       ) {
         setCampaignBudgetPolicyError(
-          `${policy.campaignName ||
-          policy.campaignId
-          }: 예산은 숫자로 입력해주세요.`
+          t('operator.budget.errors.campaignNumeric', { campaign: policy.campaignName || policy.campaignId })
         )
 
         return
@@ -13666,9 +13903,7 @@ function InternalApp() {
         minDailyBudget < 0
       ) {
         setCampaignBudgetPolicyError(
-          `${policy.campaignName ||
-          policy.campaignId
-          }: 최소 예산은 0원 이상이어야 합니다.`
+          t('operator.budget.errors.campaignMinNonnegative', { campaign: policy.campaignName || policy.campaignId })
         )
 
         return
@@ -13679,9 +13914,7 @@ function InternalApp() {
         minDailyBudget
       ) {
         setCampaignBudgetPolicyError(
-          `${policy.campaignName ||
-          policy.campaignId
-          }: 최대 예산은 최소 예산보다 작을 수 없습니다.`
+          t('operator.budget.errors.campaignMaxAtLeastMin', { campaign: policy.campaignName || policy.campaignId })
         )
 
         return
@@ -13699,9 +13932,7 @@ function InternalApp() {
         )
       ) {
         setCampaignBudgetPolicyError(
-          `${policy.campaignName ||
-          policy.campaignId
-          }: 현재 예산이 최소·최대 예산 범위 안에 있어야 합니다.`
+          t('operator.budget.errors.campaignCurrentWithinRange', { campaign: policy.campaignName || policy.campaignId })
         )
 
         return
@@ -13720,7 +13951,7 @@ function InternalApp() {
       policiesToSave.length === 0
     ) {
       setCampaignBudgetPolicyError(
-        '저장할 Budget Policy를 입력해주세요.'
+        t('operator.budget.errors.noPoliciesToSave')
       )
 
       return
@@ -13770,7 +14001,7 @@ function InternalApp() {
         )
 
         throw new Error(
-          `Campaign Budget Policy 저장 오류: ${response.status}`
+          t('operator.budget.errors.policySaveApiError', { status: response.status })
         )
       }
 
@@ -13781,8 +14012,10 @@ function InternalApp() {
         result.status !== 'ok'
       ) {
         throw new Error(
-          result.message ||
-          'Budget Policy 저장에 실패했습니다.'
+          i18n.language === 'en'
+            ? t('operator.budget.errors.policySaveFailed')
+            : result.message ||
+              t('operator.budget.errors.policySaveFailed')
         )
       }
 
@@ -13803,7 +14036,7 @@ function InternalApp() {
 
       setCampaignBudgetPolicyError(
         error.message ||
-        'Campaign Budget Policy 저장 중 오류가 발생했습니다.'
+        t('operator.budget.errors.policySaveError')
       )
 
     } finally {
@@ -13816,7 +14049,7 @@ function InternalApp() {
   async function runBudgetScalingAnalysis() {
     if (!selectedAdvertiserId) {
       setBudgetScalingError(
-        '광고주를 먼저 선택해주세요.'
+        t('operator.budget.errors.selectAdvertiser')
       )
 
       return
@@ -13829,7 +14062,7 @@ function InternalApp() {
       ) > 0
     ) {
       setBudgetScalingError(
-        '예산 확장 분석 전에 최적화 대상 캠페인의 Budget Policy를 모두 설정해주세요.'
+        t('operator.budget.errors.configurePoliciesBeforeScaling')
       )
 
       return
@@ -14104,7 +14337,7 @@ function InternalApp() {
         )
 
         throw new Error(
-          `예산 확장 분석 API 오류: ${response.status}`
+          t('operator.budget.errors.scalingApiError', { status: response.status })
         )
       }
 
@@ -14125,8 +14358,10 @@ function InternalApp() {
         'blocked'
       ) {
         setBudgetScalingError(
-          result.message ||
-          '현재 조건에서는 예산 확장 분석을 실행할 수 없습니다.'
+          i18n.language === 'en'
+            ? t('operator.budget.errors.scalingUnavailable')
+            : result.message ||
+              t('operator.budget.errors.scalingUnavailable')
         )
       }
 
@@ -14138,7 +14373,7 @@ function InternalApp() {
 
       setBudgetScalingError(
         error.message ||
-        '예산 확장 분석 중 오류가 발생했습니다.'
+        t('operator.budget.errors.scalingError')
       )
 
     } finally {
@@ -14377,9 +14612,9 @@ function InternalApp() {
         return {
           status: 'waiting',
           title:
-            '분석 대기 중',
+            t('operator.budget.scaling.insightWaitingTitle'),
           message:
-            '유효한 학습 데이터가 충분해지면 예산 증액 구간별 효율 변화를 분석합니다.',
+            t('operator.budget.scaling.insightWaitingMessage'),
           slowdownRow: null,
         }
       }
@@ -14397,9 +14632,9 @@ function InternalApp() {
         return {
           status: 'waiting',
           title:
-            '현재 예산 기준점 없음',
+            t('operator.budget.scaling.noBaselineTitle'),
           message:
-            '현재 예산 시나리오를 기준으로 효율 변화를 계산할 수 없습니다.',
+            t('operator.budget.scaling.noBaselineMessage'),
           slowdownRow: null,
         }
       }
@@ -14419,9 +14654,9 @@ function InternalApp() {
         return {
           status: 'waiting',
           title:
-            '증액 시나리오 부족',
+            t('operator.budget.scaling.noExpansionTitle'),
           message:
-            '현재 예산보다 높은 시나리오의 분석 결과가 필요합니다.',
+            t('operator.budget.scaling.noExpansionMessage'),
           slowdownRow: null,
         }
       }
@@ -14474,16 +14709,15 @@ function InternalApp() {
         return {
           status: 'slowdown',
           title:
-            '효율 둔화 구간 감지',
+            t('operator.budget.scaling.slowdownDetectedTitle'),
 
           message:
             safeRow.multiplier > 1
-              ? `현재 대비 약 +${safePct.toFixed(
-                0
-              )}% 구간까지는 추가 예산 효율이 비교적 유지되며, +${slowdownPct.toFixed(
-                0
-              )}% 구간부터 한계 ROAS가 빠르게 낮아집니다.`
-              : `현재 예산보다 증액할 경우 초기 구간부터 한계 효율 저하가 관찰됩니다.`,
+              ? t('operator.budget.scaling.slowdownMessage', {
+                safe: safePct.toFixed(0),
+                slowdown: slowdownPct.toFixed(0),
+              })
+              : t('operator.budget.scaling.earlySlowdownMessage'),
 
           slowdownRow,
           bestExpansionRow:
@@ -14502,18 +14736,12 @@ function InternalApp() {
           'expansion_available',
 
         title:
-          '추가 예산 확장 여지',
+          t('operator.budget.scaling.expansionAvailableTitle'),
 
         message:
-          `분석 범위 내에서는 +${(
-            (
-              highestRow
-                .multiplier -
-              1
-            ) * 100
-          ).toFixed(
-            0
-          )}%까지 뚜렷한 한계효율 급락이 감지되지 않았습니다.`,
+          t('operator.budget.scaling.expansionAvailableMessage', {
+            change: (((highestRow.multiplier - 1) * 100)).toFixed(0),
+          }),
 
         slowdownRow: null,
 
@@ -14522,6 +14750,7 @@ function InternalApp() {
       }
     }, [
       budgetScalingAnalysisRows,
+      i18n.language,
     ])
 
   const budgetScalingEfficiencyThreshold =
@@ -14641,7 +14870,7 @@ function InternalApp() {
   async function runOptimization() {
     if (!selectedAdvertiserId) {
       setOptimizationApiError(
-        '광고주를 먼저 선택해주세요.'
+        t('operator.budget.errors.selectAdvertiser')
       )
       return
     }
@@ -14751,7 +14980,7 @@ function InternalApp() {
         )
 
         throw new Error(
-          `매체 최적화 API 오류: ${response.status}`
+          t('operator.budget.errors.channelApiError', { status: response.status })
         )
       }
 
@@ -14772,7 +15001,7 @@ function InternalApp() {
 
       setOptimizationApiError(
         error.message ||
-        '매체별 추천 예산 계산 중 오류가 발생했습니다.'
+        t('operator.budget.errors.channelCalculationError')
       )
 
     } finally {
@@ -14805,9 +15034,9 @@ function InternalApp() {
 
       name:
         scenarioName.trim() ||
-        `${getOptimizationObjectiveLabel(
-          optimizationObjective
-        )} 시나리오`,
+        t('operator.budget.channel.defaultScenarioName', {
+          objective: getOptimizationObjectiveLabel(optimizationObjective),
+        }),
 
       objective:
         optimizationObjective,
@@ -14952,7 +15181,7 @@ function InternalApp() {
 
         if (!response.ok) {
           throw new Error(
-            `리스크 ${level} 시나리오 계산 실패`
+            t('operator.budget.errors.riskScenarioFailed', { level: getBudgetRiskLevelLabel(level) })
           )
         }
 
@@ -14974,7 +15203,7 @@ function InternalApp() {
 
       setOptimizationApiError(
         error.message ||
-        '리스크 시나리오 비교 중 오류가 발생했습니다.'
+        t('operator.budget.errors.riskCompareError')
       )
     } finally {
       setRiskScenarioLoading(false)
@@ -17014,7 +17243,7 @@ function InternalApp() {
   }
 
   function autoArrangeCharts() {
-    const gap = 28
+    const gap = 0
     const columns =
       Number(dashboardColumns)
 
@@ -17067,8 +17296,8 @@ function InternalApp() {
   }
 
   function normalizeDashboardLayout(charts) {
-    const gridSize = 24
-    const gap = 24
+    const gridSize = 4
+    const gap = 0
 
     const sorted = [...charts].sort((a, b) => {
       const ay = a.y ?? 0
@@ -17143,7 +17372,7 @@ function InternalApp() {
 
       if (!isDimension) {
         alert(
-          'X축에는 차원 필드를 추가해 주세요.'
+          t('operator.dashboard.validation.xDimensionOnly')
         )
         return
       }
@@ -17162,7 +17391,7 @@ function InternalApp() {
 
       if (!isMeasure) {
         alert(
-          'Y축에는 숫자 지표를 추가해 주세요.'
+          t('operator.dashboard.validation.yMetricOnly')
         )
         return
       }
@@ -17195,7 +17424,7 @@ function InternalApp() {
 
       if (!isDimension) {
         alert(
-          '그룹에는 차원 필드를 추가해 주세요.'
+          t('operator.dashboard.validation.groupDimensionOnly')
         )
         return
       }
@@ -17215,7 +17444,7 @@ function InternalApp() {
 
       if (!isDimension) {
         alert(
-          '필터에는 차원 필드를 추가해 주세요.'
+          t('operator.dashboard.validation.filterDimensionOnly')
         )
         return
       }
@@ -17260,7 +17489,7 @@ function InternalApp() {
   }
 
   function getNewChartPosition() {
-    const gap = 24
+    const gap = 0
     const defaultWidth = 480
     const columns = 2
 
@@ -17277,12 +17506,12 @@ function InternalApp() {
 
   function addChartToDashboard() {
     if (chartType !== 'kpi' && !xField) {
-      alert('X축을 먼저 설정해 주세요.')
+      alert(t('operator.dashboard.validation.setXAxisFirst'))
       return
     }
 
     if (yFields.length === 0) {
-      alert('Y축에 지표를 추가해 주세요.')
+      alert(t('operator.dashboard.validation.addYMetric'))
       return
     }
 
@@ -17311,10 +17540,8 @@ function InternalApp() {
                 chartTitle.trim() ||
                 (
                   chartType === 'kpi'
-                    ? getLabel(yFields[0])
-                    : `${getLabel(xField)}별 ${yFields
-                      .map(getLabel)
-                      .join(', ')}`
+                    ? getTranslatedFieldLabel(yFields[0])
+                    : buildAutoChartTitle(xField, yFields)
                 ),
 
               description:
@@ -17326,7 +17553,7 @@ function InternalApp() {
 
       setEditingChartId(null)
 
-      alert('차트가 수정되었습니다.')
+      alert(t('operator.dashboard.validation.chartUpdated'))
 
       return
     }
@@ -17358,10 +17585,11 @@ function InternalApp() {
         chartTitle.trim() ||
         (
           chartType === 'kpi'
-            ? getLabel(yFields[0])
-            : `${getLabel(xField)}별 ${yFields
-              .map(getLabel)
-              .join(', ')}`
+            ? getTranslatedFieldLabel(yFields[0])
+            : buildAutoChartTitle(
+              xField,
+              yFields
+            )
         ),
 
       description:
@@ -17378,7 +17606,7 @@ function InternalApp() {
     const duplicatedChart = {
       ...chart,
       id: Date.now(),
-      title: `${chart.title} 복사본`,
+      title: t('operator.dashboard.saved.duplicateTitle', { title: chart.title }),
       yFields: [...chart.yFields],
 
       width: chart.width || 560,
@@ -17409,7 +17637,7 @@ function InternalApp() {
     width,
     height
   ) {
-    const gridSize = 24
+    const gridSize = 4
 
     const minWidth = 288
     const minHeight = 240
@@ -17484,12 +17712,12 @@ function InternalApp() {
       JSON.stringify(savedCharts)
     )
 
-    alert('대시보드가 저장되었습니다.')
+    alert(t('operator.dashboard.messages.saved'))
   }
 
   function resetDashboard() {
     const confirmed = window.confirm(
-      '대시보드를 초기화하시겠습니까?\n저장된 차트가 모두 삭제됩니다.'
+      t('operator.dashboard.messages.resetConfirm')
     )
 
     if (!confirmed) {
@@ -17524,7 +17752,7 @@ function InternalApp() {
         : []
 
 
-    let data = mockAds
+    let data = performanceSourceRows
 
     if (globalBrand !== '전체') {
       data = data.filter(
@@ -17685,7 +17913,7 @@ function InternalApp() {
               <Bar
                 key={field}
                 dataKey={field}
-                name={getLabel(field)}
+                name={getTranslatedFieldLabel(field)}
                 fill={color}
               />
             )
@@ -17696,7 +17924,7 @@ function InternalApp() {
               key={field}
               type="monotone"
               dataKey={field}
-              name={getLabel(field)}
+              name={getTranslatedFieldLabel(field)}
               stroke={color}
               strokeWidth={2}
               dot={{ fill: color }}
@@ -17715,7 +17943,7 @@ function InternalApp() {
           const seriesName =
             chart.yFields.length === 1
               ? String(groupValue)
-              : `${groupValue} · ${getLabel(field)}`
+              : `${groupValue} · ${getTranslatedFieldLabel(field)}`
 
           const color =
             chartColors[
@@ -17801,12 +18029,12 @@ function InternalApp() {
       if (safeYFields.length !== 1) {
         return (
           <div className="saved-chart-error">
-            KPI 카드는 Y축 지표가 1개 필요합니다.
+            {t('operator.dashboard.validation.savedKpiOneMetric')}
           </div>
         )
       }
 
-      let data = mockAds
+      let data = performanceSourceRows
 
       if (globalChannel !== '전체') {
         data = data.filter(
@@ -17859,7 +18087,7 @@ function InternalApp() {
       )
 
       const displayValue =
-        formatDisplayValue(
+        formatLocalizedDisplayValue(
           value,
           chart.numberFormat || 'auto',
           metric
@@ -17868,7 +18096,7 @@ function InternalApp() {
       return (
         <div className="kpi-preview-card">
           <span className="kpi-preview-label">
-            {getLabel(metric)}
+            {getTranslatedFieldLabel(metric)}
           </span>
 
           <strong className="kpi-preview-value">
@@ -17882,7 +18110,7 @@ function InternalApp() {
       if (!chart.xField) {
         return (
           <div className="saved-chart-error">
-            도넛 차트는 X축 차원이 필요합니다.
+            {t('operator.dashboard.validation.savedDonutXAxis')}
           </div>
         )
       }
@@ -17890,7 +18118,7 @@ function InternalApp() {
       if (safeYFields.length !== 1) {
         return (
           <div className="saved-chart-error">
-            도넛 차트는 Y축 지표가 1개 필요합니다.
+            {t('operator.dashboard.validation.savedDonutOneMetric')}
           </div>
         )
       }
@@ -17932,7 +18160,7 @@ function InternalApp() {
 
             <Tooltip
               formatter={(value) =>
-                formatDisplayValue(
+                formatLocalizedDisplayValue(
                   value,
                   chart.numberFormat || 'auto',
                   safeYFields[0]
@@ -17952,7 +18180,7 @@ function InternalApp() {
       if (!chart.xField) {
         return (
           <div className="saved-chart-error">
-            데이터 테이블은 X축 차원이 필요합니다.
+            {t('operator.dashboard.validation.savedTableXAxis')}
           </div>
         )
       }
@@ -17960,7 +18188,7 @@ function InternalApp() {
       if (safeYFields.length === 0) {
         return (
           <div className="saved-chart-error">
-            데이터 테이블은 Y축 지표가 1개 이상 필요합니다.
+            {t('operator.dashboard.validation.savedTableYMetric')}
           </div>
         )
       }
@@ -17971,12 +18199,12 @@ function InternalApp() {
             <thead>
               <tr>
                 <th>
-                  {getLabel(chart.xField)}
+                  {getTranslatedFieldLabel(chart.xField)}
                 </th>
 
                 {(chart.yFields || []).map((field) => (
                   <th key={field}>
-                    {getLabel(field)}
+                    {getTranslatedFieldLabel(field)}
                   </th>
                 ))}
               </tr>
@@ -17993,7 +18221,7 @@ function InternalApp() {
 
                   {(chart.yFields || []).map((field) => (
                     <td key={field}>
-                      {formatDisplayValue(
+                      {formatLocalizedDisplayValue(
                         row[field],
                         chart.numberFormat || 'auto',
                         field
@@ -18029,7 +18257,7 @@ function InternalApp() {
               width={90}
               hide={!(chart.yAxisVisible ?? true)}
               tickFormatter={(value) =>
-                formatDisplayValue(
+                formatLocalizedDisplayValue(
                   value,
                   chart.numberFormat || 'auto',
                   safeYFields[0]
@@ -18042,10 +18270,10 @@ function InternalApp() {
                 const metric =
                   chart.yFields.find(
                     (field) =>
-                      getLabel(field) === name
+                      getTranslatedFieldLabel(field) === name
                   ) || safeYFields[0]
 
-                return formatDisplayValue(
+                return formatLocalizedDisplayValue(
                   value,
                   chart.numberFormat || 'auto',
                   metric
@@ -18071,7 +18299,7 @@ function InternalApp() {
       if (safeYFields.length < 2) {
         return (
           <div className="saved-chart-error">
-            산점도는 Y축 지표가 2개 필요합니다.
+            {t('operator.dashboard.validation.savedScatterTwoMetrics')}
           </div>
         )
       }
@@ -18112,14 +18340,14 @@ function InternalApp() {
             <XAxis
               type="number"
               dataKey="x"
-              name={getLabel(xMetric)}
+              name={getTranslatedFieldLabel(xMetric)}
               hide={!(chart.xAxisVisible ?? true)}
             />
 
             <YAxis
               type="number"
               dataKey="y"
-              name={getLabel(yMetric)}
+              name={getTranslatedFieldLabel(yMetric)}
               hide={!(chart.yAxisVisible ?? true)}
             />
 
@@ -18131,7 +18359,7 @@ function InternalApp() {
 
             <Scatter
               data={scatterData}
-              name={`${getLabel(xMetric)} vs ${getLabel(yMetric)}`}
+              name={`${getTranslatedFieldLabel(xMetric)} vs ${getTranslatedFieldLabel(yMetric)}`}
               fill={chartColors[0]}
             />
           </ScatterChart>
@@ -18166,7 +18394,7 @@ function InternalApp() {
             width={90}
             hide={!(chart.yAxisVisible ?? true)}
             tickFormatter={(value) =>
-              formatDisplayValue(
+              formatLocalizedDisplayValue(
                 value,
                 chart.numberFormat || 'auto',
                 safeYFields[0]
@@ -18176,7 +18404,7 @@ function InternalApp() {
 
           <Tooltip
             formatter={(value, name) =>
-              formatDisplayValue(
+              formatLocalizedDisplayValue(
                 value,
                 chart.numberFormat || 'auto',
                 safeYFields[0]
@@ -18209,7 +18437,7 @@ function InternalApp() {
                         key={seriesKey}
                         type="monotone"
                         dataKey={seriesKey}
-                        name={`${groupValue} - ${getLabel(metric)}`}
+                        name={`${groupValue} - ${getTranslatedFieldLabel(metric)}`}
                         stroke={
                           chartColors[colorIndex]
                         }
@@ -18229,7 +18457,7 @@ function InternalApp() {
                   key={metric}
                   type="monotone"
                   dataKey={metric}
-                  name={getLabel(metric)}
+                  name={getTranslatedFieldLabel(metric)}
                   stroke={
                     chartColors[
                     index % chartColors.length
@@ -18260,7 +18488,7 @@ function InternalApp() {
             <Bar
               key={field}
               dataKey={field}
-              name={getLabel(field)}
+              name={getTranslatedFieldLabel(field)}
               fill={color}
             />
           )
@@ -18271,7 +18499,7 @@ function InternalApp() {
             key={field}
             type="monotone"
             dataKey={field}
-            name={getLabel(field)}
+            name={getTranslatedFieldLabel(field)}
             stroke={color}
             strokeWidth={2}
             dot={{ fill: color }}
@@ -18289,7 +18517,7 @@ function InternalApp() {
           const seriesName =
             yFields.length === 1
               ? String(groupValue)
-              : `${groupValue} · ${getLabel(field)}`
+              : `${groupValue} · ${getTranslatedFieldLabel(field)}`
 
           const color =
             chartColors[
@@ -18331,7 +18559,7 @@ function InternalApp() {
       if (yFields.length !== 1) {
         return (
           <div className="empty-chart">
-            KPI 카드는 Y축에 지표를 1개만 추가해 주세요.
+            {t('operator.dashboard.validation.kpiOneMetric')}
           </div>
         )
       }
@@ -18345,7 +18573,7 @@ function InternalApp() {
       )
 
       const displayValue =
-        formatDisplayValue(
+        formatLocalizedDisplayValue(
           value,
           numberFormat,
           metric
@@ -18354,7 +18582,7 @@ function InternalApp() {
       return (
         <div className="kpi-preview-card">
           <span className="kpi-preview-label">
-            {getLabel(metric)}
+            {getTranslatedFieldLabel(metric)}
           </span>
 
           <strong className="kpi-preview-value">
@@ -18372,7 +18600,7 @@ function InternalApp() {
       if (!xField) {
         return (
           <div className="empty-chart">
-            도넛 차트는 X축에 차원 필드가 필요합니다.
+            {t('operator.dashboard.validation.donutXAxis')}
           </div>
         )
       }
@@ -18380,7 +18608,7 @@ function InternalApp() {
       if (yFields.length !== 1) {
         return (
           <div className="empty-chart">
-            도넛 차트는 Y축에 지표를 1개만 추가해 주세요.
+            {t('operator.dashboard.validation.donutOneMetric')}
           </div>
         )
       }
@@ -18424,7 +18652,7 @@ function InternalApp() {
 
             <Tooltip
               formatter={(value) =>
-                formatDisplayValue(
+                formatLocalizedDisplayValue(
                   value,
                   numberFormat,
                   metric
@@ -18445,7 +18673,7 @@ function InternalApp() {
     if (!xField) {
       return (
         <div className="empty-chart">
-          X축에 필드를 추가해 주세요.
+          {t('operator.dashboard.preview.addXAxisPrompt')}
         </div>
       )
     }
@@ -18453,7 +18681,7 @@ function InternalApp() {
     if (yFields.length === 0) {
       return (
         <div className="empty-chart">
-          Y축에 숫자 지표를 추가해 주세요.
+          {t('operator.dashboard.validation.yNumericMetric')}
         </div>
       )
     }
@@ -18469,12 +18697,12 @@ function InternalApp() {
             <thead>
               <tr>
                 <th>
-                  {getLabel(xField)}
+                  {getTranslatedFieldLabel(xField)}
                 </th>
 
                 {yFields.map((field) => (
                   <th key={field}>
-                    {getLabel(field)}
+                    {getTranslatedFieldLabel(field)}
                   </th>
                 ))}
               </tr>
@@ -18492,7 +18720,7 @@ function InternalApp() {
 
                     {yFields.map((field) => (
                       <td key={field}>
-                        {formatDisplayValue(
+                        {formatLocalizedDisplayValue(
                           row[field],
                           numberFormat,
                           field
@@ -18535,7 +18763,7 @@ function InternalApp() {
                 width={90}
                 hide={!yAxisVisible}
                 tickFormatter={(value) =>
-                  formatDisplayValue(
+                  formatLocalizedDisplayValue(
                     value,
                     numberFormat,
                     yFields[0]
@@ -18549,10 +18777,10 @@ function InternalApp() {
                 const metric =
                   yFields.find(
                     (field) =>
-                      getLabel(field) === name
+                      getTranslatedFieldLabel(field) === name
                   ) || yFields[0]
 
-                return formatDisplayValue(
+                return formatLocalizedDisplayValue(
                   value,
                   numberFormat,
                   metric
@@ -18576,8 +18804,7 @@ function InternalApp() {
       if (yFields.length < 2) {
         return (
           <div className="empty-chart">
-            산점도는 Y축에 숫자 지표를
-            2개 추가해 주세요.
+            {t('operator.dashboard.validation.scatterTwoMetrics')}
           </div>
         )
       }
@@ -18618,10 +18845,10 @@ function InternalApp() {
             <XAxis
               type="number"
               dataKey="x"
-              name={getLabel(xMetric)}
+              name={getTranslatedFieldLabel(xMetric)}
               hide={!xAxisVisible}
               tickFormatter={(value) =>
-                formatDisplayValue(
+                formatLocalizedDisplayValue(
                   value,
                   numberFormat,
                   xMetric
@@ -18632,10 +18859,10 @@ function InternalApp() {
             <YAxis
               type="number"
               dataKey="y"
-              name={getLabel(yMetric)}
+              name={getTranslatedFieldLabel(yMetric)}
               hide={!yAxisVisible}
               tickFormatter={(value) =>
-                formatDisplayValue(
+                formatLocalizedDisplayValue(
                   value,
                   numberFormat,
                   yMetric
@@ -18648,10 +18875,10 @@ function InternalApp() {
                 strokeDasharray: '3 3',
               }}
               formatter={(value, name) =>
-                formatDisplayValue(
+                formatLocalizedDisplayValue(
                   value,
                   numberFormat,
-                  name === getLabel(xMetric)
+                  name === getTranslatedFieldLabel(xMetric)
                     ? xMetric
                     : yMetric
                 )
@@ -18664,7 +18891,7 @@ function InternalApp() {
 
             <Scatter
               data={scatterData}
-              name={`${getLabel(xMetric)} vs ${getLabel(yMetric)}`}
+              name={`${getTranslatedFieldLabel(xMetric)} vs ${getTranslatedFieldLabel(yMetric)}`}
               fill={chartColors[0]}
             />
           </ScatterChart>
@@ -18698,7 +18925,7 @@ function InternalApp() {
               width={90}
               hide={!yAxisVisible}
               tickFormatter={(value) =>
-                formatDisplayValue(
+                formatLocalizedDisplayValue(
                   value,
                   numberFormat,
                   yFields[0]
@@ -18712,10 +18939,10 @@ function InternalApp() {
               const metric =
                 yFields.find(
                   (field) =>
-                    getLabel(field) === name
+                    getTranslatedFieldLabel(field) === name
                 ) || yFields[0]
 
-              return formatDisplayValue(
+              return formatLocalizedDisplayValue(
                 value,
                 numberFormat,
                 metric
@@ -18736,7 +18963,7 @@ function InternalApp() {
       return (
         <div className="shared-proposal-page">
           <div className="shared-proposal-card">
-            제안을 불러오는 중입니다.
+            {t('client.proposals.shared.loading')}
           </div>
         </div>
       )
@@ -18747,7 +18974,7 @@ function InternalApp() {
         <div className="shared-proposal-page">
           <div className="shared-proposal-card">
             <h2>
-              제안을 확인할 수 없습니다.
+              {t('client.proposals.shared.unavailableTitle')}
             </h2>
 
             <p>
@@ -18762,7 +18989,7 @@ function InternalApp() {
       return (
         <div className="shared-proposal-page">
           <div className="shared-proposal-card">
-            제안 정보를 준비하고 있습니다.
+            {t('client.proposals.shared.preparing')}
           </div>
         </div>
       )
@@ -18774,17 +19001,16 @@ function InternalApp() {
           <header className="shared-proposal-header">
             <div>
               <span className="shared-proposal-eyebrow">
-                광고 예산 최적화 제안
+                {t('client.proposals.shared.eyebrow')}
               </span>
 
               <h1>
                 {sharedProposal.scenarioName ||
-                  '최적화 제안'}
+                  t('client.proposals.shared.defaultTitle')}
               </h1>
 
               <p>
-                광고 성과 데이터를 기반으로
-                산출된 예산 최적화 제안입니다.
+                {t('client.proposals.shared.description')}
               </p>
             </div>
 
@@ -18798,7 +19024,7 @@ function InternalApp() {
           <section className="shared-proposal-summary">
             <div>
               <span>
-                총 예산
+                {t('client.proposals.totalBudget')}
               </span>
 
               <strong>
@@ -18813,28 +19039,36 @@ function InternalApp() {
                         ),
                       0
                     )
-                ).toLocaleString()}
-                원
+                ).toLocaleString(
+                  i18n.language === 'en'
+                    ? 'en-US'
+                    : 'ko-KR'
+                )}
+                {t('client.common.currency')}
               </strong>
             </div>
 
             <div>
               <span>
-                예상 매출
+                {t('client.proposals.projectedRevenue')}
               </span>
 
               <strong>
                 {Math.round(
                   sharedProposal.summary
                     ?.projectedRevenue || 0
-                ).toLocaleString()}
-                원
+                ).toLocaleString(
+                  i18n.language === 'en'
+                    ? 'en-US'
+                    : 'ko-KR'
+                )}
+                {t('client.common.currency')}
               </strong>
             </div>
 
             <div>
               <span>
-                예상 ROAS
+                {t('client.proposals.projectedRoas')}
               </span>
 
               <strong>
@@ -18848,7 +19082,7 @@ function InternalApp() {
 
             <div>
               <span>
-                예상 CPA
+                {t('client.proposals.projectedCpa')}
               </span>
 
               <strong>
@@ -18857,7 +19091,11 @@ function InternalApp() {
                   ? `${Math.round(
                     sharedProposal.summary
                       .projectedCpa
-                  ).toLocaleString()}원`
+                  ).toLocaleString(
+                    i18n.language === 'en'
+                      ? 'en-US'
+                      : 'ko-KR'
+                  )}${t('client.common.currency')}`
                   : '-'}
               </strong>
             </div>
@@ -18866,11 +19104,11 @@ function InternalApp() {
           <section className="shared-proposal-section">
             <div className="shared-proposal-section-header">
               <h2>
-                매체별 최적 예산
+                {t('client.proposals.shared.channelBudgetTitle')}
               </h2>
 
               <span>
-                현재 예산 대비 최적화 권장안
+                {t('client.proposals.shared.channelBudgetDescription')}
               </span>
             </div>
 
@@ -18879,23 +19117,23 @@ function InternalApp() {
                 <thead>
                   <tr>
                     <th>
-                      매체
+                      {t('client.proposals.shared.channel')}
                     </th>
 
                     <th>
-                      현재 예산
+                      {t('client.proposals.shared.currentBudget')}
                     </th>
 
                     <th>
-                      제안 예산
+                      {t('client.proposals.shared.proposedBudget')}
                     </th>
 
                     <th>
-                      변화율
+                      {t('client.proposals.shared.changeRate')}
                     </th>
 
                     <th>
-                      예상 ROAS
+                      {t('client.proposals.projectedRoas')}
                     </th>
                   </tr>
                 </thead>
@@ -18918,15 +19156,19 @@ function InternalApp() {
                               allocation.currentBudget ||
                               0
                             ).toLocaleString()}
-                            원
+                            {t('client.common.currency')}
                           </td>
 
                           <td>
                             {Math.round(
                               allocation.optimizedBudget ||
                               0
-                            ).toLocaleString()}
-                            원
+                            ).toLocaleString(
+                              i18n.language === 'en'
+                                ? 'en-US'
+                                : 'ko-KR'
+                            )}
+                            {t('client.common.currency')}
                           </td>
 
                           <td>
@@ -18956,12 +19198,11 @@ function InternalApp() {
             <div className="shared-proposal-response-header">
               <div>
                 <h2>
-                  검토 및 응답
+                  {t('client.proposals.shared.reviewAndRespond')}
                 </h2>
 
                 <p>
-                  제안 내용을 검토하신 후 의견을 남기거나
-                  승인해주세요.
+                  {t('client.proposals.shared.reviewDescription')}
                 </p>
               </div>
             </div>
@@ -18970,7 +19211,7 @@ function InternalApp() {
               'reviewing' ? (
               <>
                 <label className="shared-proposal-revision-label">
-                  의견 및 수정 요청
+                  {t('client.proposals.shared.feedbackAndRevision')}
                 </label>
 
                 <textarea
@@ -18978,7 +19219,9 @@ function InternalApp() {
                   value={
                     sharedRevisionReason
                   }
-                  placeholder="예: Meta 예산 비중을 조금 줄이고 Google 예산을 늘려주세요."
+                  placeholder={t(
+                    'client.proposals.shared.revisionPlaceholder'
+                  )}
                   onChange={(event) =>
                     setSharedRevisionReason(
                       event.target.value
@@ -19000,7 +19243,7 @@ function InternalApp() {
                       )
                     }
                   >
-                    수정 요청
+                    {t('client.proposals.shared.requestRevision')}
                   </button>
 
                   <button
@@ -19012,7 +19255,7 @@ function InternalApp() {
                     onClick={() => {
                       const confirmed =
                         window.confirm(
-                          '현재 제안을 승인하시겠습니까?'
+                          t('client.proposals.shared.confirmApprove')
                         )
 
                       if (!confirmed) {
@@ -19024,7 +19267,7 @@ function InternalApp() {
                       )
                     }}
                   >
-                    제안 승인
+                    {t('client.proposals.shared.approveProposal')}
                   </button>
                 </div>
               </>
@@ -19035,12 +19278,11 @@ function InternalApp() {
                   ? (
                     <>
                       <strong>
-                        수정 요청이 전달되었습니다.
+                        {t('client.proposals.shared.revisionSubmitted')}
                       </strong>
 
                       <p>
-                        담당자가 요청사항을 검토하고
-                        수정안을 준비합니다.
+                        {t('client.proposals.shared.revisionSubmittedDescription')}
                       </p>
                     </>
                   )
@@ -19049,17 +19291,17 @@ function InternalApp() {
                     ? (
                       <>
                         <strong>
-                          제안 승인이 완료되었습니다.
+                          {t('client.proposals.shared.approvedTitle')}
                         </strong>
 
                         <p>
-                          승인해주셔서 감사합니다.
+                          {t('client.proposals.shared.approvedDescription')}
                         </p>
                       </>
                     )
                     : (
                       <p>
-                        현재 제안 상태를 확인하고 있습니다.
+                        {t('client.proposals.shared.checkingStatus')}
                       </p>
                     )}
               </div>
@@ -19077,7 +19319,7 @@ function InternalApp() {
           <h1>AdScope</h1>
 
           <p>
-            멀티채널 광고 분석
+            {t('operator.brand.subtitle')}
           </p>
         </div>
 
@@ -19095,7 +19337,7 @@ function InternalApp() {
                 setActivePage('dashboard')
               }
             >
-              대시보드
+              {t('operator.nav.dashboard')}
             </button>
 
             <button
@@ -19109,7 +19351,7 @@ function InternalApp() {
                 setActivePage('performance')
               }
             >
-              성과 분석
+              {t('operator.nav.performance')}
             </button>
 
             <button
@@ -19123,7 +19365,7 @@ function InternalApp() {
                 setActivePage('budget')
               }
             >
-              예산 최적화
+              {t('operator.nav.budget')}
             </button>
 
             <button
@@ -19137,7 +19379,7 @@ function InternalApp() {
                 setActivePage('scenario')
               }
             >
-              시나리오 관리
+              {t('operator.nav.scenario')}
             </button>
 
             <button
@@ -19148,7 +19390,7 @@ function InternalApp() {
                 loadInternalUnreadCount()
               }}
             >
-              광고주 소통
+              {t('operator.nav.communication')}
 
               {internalUnreadCount > 0 && (
                 <span className="nav-unread-badge">
@@ -19172,7 +19414,7 @@ function InternalApp() {
                 loadAnomalyAlerts()
               }}
             >
-              🔔 이상 알림
+              🔔 {t('operator.nav.alerts')}
 
               {anomalyAlertSummary
                 .open > 0 && (
@@ -19196,7 +19438,7 @@ function InternalApp() {
                 setActivePage('tasks')
               }
             >
-              업무 관리
+              {t('operator.nav.tasks')}
             </button>
           </div>
 
@@ -19220,12 +19462,11 @@ function InternalApp() {
                   <div className="advertiser-manager-header">
                     <div>
                       <h2>
-                        광고주 관리
+                        {t('operator.advertiserManager.title')}
                       </h2>
 
                       <p>
-                        광고주를 추가하거나 기존 광고주 정보를
-                        수정할 수 있습니다.
+                        {t('operator.advertiserManager.description')}
                       </p>
                     </div>
 
@@ -19263,18 +19504,18 @@ function InternalApp() {
                             )
                           }}
                         >
-                          + 광고주 추가
+                          + {t('operator.advertiserManager.addAdvertiser')}
                         </button>
                       </div>
 
                       <div className="advertiser-manager-list">
                         {advertisersLoading ? (
                           <div className="advertiser-manager-empty">
-                            광고주 목록을 불러오는 중입니다.
+                            {t('operator.advertiserManager.loading')}
                           </div>
                         ) : advertisers.length === 0 ? (
                           <div className="advertiser-manager-empty">
-                            등록된 광고주가 없습니다.
+                            {t('operator.advertiserManager.empty')}
                           </div>
                         ) : (
                           advertisers.map(
@@ -19308,15 +19549,15 @@ function InternalApp() {
                                         }
                                       >
                                         {isArchived
-                                          ? '비활성'
-                                          : '활성'}
+                                          ? t('operator.advertiserManager.inactive')
+                                          : t('operator.advertiserManager.active')}
                                       </span>
                                     </div>
 
                                     <div className="advertiser-manager-item-meta">
                                       {advertiser.companyName && (
                                         <span>
-                                          회사명: {
+                                          {t('operator.advertiserManager.companyName')}: {
                                             advertiser.companyName
                                           }
                                         </span>
@@ -19324,7 +19565,7 @@ function InternalApp() {
 
                                       {advertiser.contactName && (
                                         <span>
-                                          담당자: {
+                                          {t('operator.advertiserManager.contact')}: {
                                             advertiser.contactName
                                           }
                                         </span>
@@ -19332,7 +19573,7 @@ function InternalApp() {
 
                                       {advertiser.contactEmail && (
                                         <span>
-                                          이메일: {
+                                          {t('operator.advertiserManager.email')}: {
                                             advertiser.contactEmail
                                           }
                                         </span>
@@ -19340,7 +19581,7 @@ function InternalApp() {
 
                                       {advertiser.contactPhone && (
                                         <span>
-                                          연락처: {
+                                          {t('operator.advertiserManager.phone')}: {
                                             advertiser.contactPhone
                                           }
                                         </span>
@@ -19379,7 +19620,7 @@ function InternalApp() {
                                         )
                                       }}
                                     >
-                                      수정
+                                      {t('operator.advertiserManager.edit')}
                                     </button>
 
                                     {isArchived ? (
@@ -19392,7 +19633,7 @@ function InternalApp() {
                                           )
                                         }
                                       >
-                                        복원
+                                        {t('operator.advertiserManager.restore')}
                                       </button>
                                     ) : (
                                       <button
@@ -19404,7 +19645,7 @@ function InternalApp() {
                                           )
                                         }
                                       >
-                                        비활성화
+                                        {t('operator.advertiserManager.deactivate')}
                                       </button>
 
                                     )}
@@ -19417,7 +19658,7 @@ function InternalApp() {
                                         )
                                       }
                                     >
-                                      삭제
+                                      {t('operator.advertiserManager.delete')}
                                     </button>
                                   </div>
                                 </div>
@@ -19436,14 +19677,14 @@ function InternalApp() {
                           <h3>
                             {advertiserManagerMode ===
                               'create'
-                              ? '광고주 추가'
-                              : '광고주 수정'}
+                              ? t('operator.advertiserManager.addAdvertiser')
+                              : t('operator.advertiserManager.editAdvertiser')}
                           </h3>
                         </div>
 
                         <label>
                           <span>
-                            광고주명 *
+                            {t('operator.advertiserManager.advertiserName')}
                           </span>
 
                           <input
@@ -19460,13 +19701,13 @@ function InternalApp() {
                                 })
                               )
                             }
-                            placeholder="광고주명을 입력하세요."
+                            placeholder={t('operator.advertiserManager.advertiserNamePlaceholder')}
                           />
                         </label>
 
                         <label>
                           <span>
-                            회사명
+                            {t('operator.advertiserManager.companyNameLabel')}
                           </span>
 
                           <input
@@ -19483,13 +19724,13 @@ function InternalApp() {
                                 })
                               )
                             }
-                            placeholder="회사명을 입력하세요."
+                            placeholder={t('operator.advertiserManager.companyNamePlaceholder')}
                           />
                         </label>
 
                         <label>
                           <span>
-                            담당자명
+                            {t('operator.advertiserManager.contactName')}
                           </span>
 
                           <input
@@ -19506,13 +19747,13 @@ function InternalApp() {
                                 })
                               )
                             }
-                            placeholder="담당자명을 입력하세요."
+                            placeholder={t('operator.advertiserManager.contactNamePlaceholder')}
                           />
                         </label>
 
                         <label>
                           <span>
-                            담당자 이메일
+                            {t('operator.advertiserManager.contactEmail')}
                           </span>
 
                           <input
@@ -19535,7 +19776,7 @@ function InternalApp() {
 
                         <label>
                           <span>
-                            담당자 연락처
+                            {t('operator.advertiserManager.contactPhone')}
                           </span>
 
                           <input
@@ -19577,7 +19818,7 @@ function InternalApp() {
                               })
                             }}
                           >
-                            취소
+                            {t('operator.advertiserManager.cancel')}
                           </button>
 
                           <button
@@ -19595,8 +19836,8 @@ function InternalApp() {
                           >
                             {advertiserManagerMode ===
                               'create'
-                              ? '광고주 추가'
-                              : '수정사항 저장'}
+                              ? t('operator.advertiserManager.addAdvertiser')
+                              : t('operator.advertiserManager.saveChanges')}
                           </button>
                         </div>
                       </div>
@@ -19607,7 +19848,7 @@ function InternalApp() {
 
             <div className="advertiser-selector">
               <span className="advertiser-selector-label">
-                현재 광고주
+                {t('operator.topbar.currentAdvertiser')}
               </span>
 
               <select
@@ -19625,11 +19866,11 @@ function InternalApp() {
               >
                 {advertisersLoading ? (
                   <option value="">
-                    광고주 불러오는 중
+                    {t('operator.topbar.loadingAdvertisers')}
                   </option>
                 ) : advertisers.length === 0 ? (
                   <option value="">
-                    등록된 광고주 없음
+                    {t('operator.topbar.noAdvertisers')}
                   </option>
                 ) : (
                   advertisers
@@ -19658,7 +19899,7 @@ function InternalApp() {
                   setAdvertiserManagerOpen(true)
                 }}
               >
-                광고주 관리
+                {t('operator.topbar.manageAdvertisers')}
               </button>
             </div>
 
@@ -19674,7 +19915,7 @@ function InternalApp() {
                   setMediaDataPanelOpen(true)
                 }
               >
-                매체 데이터 가져오기
+                {t('operator.topbar.importPlatformData')}
               </button>
 
               <button
@@ -19682,8 +19923,38 @@ function InternalApp() {
                 className="topbar-action-button"
                 onClick={saveDashboard}
               >
-                대시보드 저장
+                {t('operator.topbar.saveDashboard')}
               </button>
+
+              <div className="language-switcher">
+                <button
+                  type="button"
+                  className={
+                    i18n.language === 'ko'
+                      ? 'active'
+                      : ''
+                  }
+                  onClick={() =>
+                    i18n.changeLanguage('ko')
+                  }
+                >
+                  KO
+                </button>
+
+                <button
+                  type="button"
+                  className={
+                    i18n.language === 'en'
+                      ? 'active'
+                      : ''
+                  }
+                  onClick={() =>
+                    i18n.changeLanguage('en')
+                  }
+                >
+                  EN
+                </button>
+              </div>
 
               <button
                 type="button"
@@ -19701,7 +19972,7 @@ function InternalApp() {
                     '/operator/login'
                 }}
               >
-                로그아웃
+                {t('operator.topbar.logout')}
               </button>
             </div>
 
@@ -19717,7 +19988,7 @@ function InternalApp() {
         <div className="performance-toolbar compact">
           <div className="performance-filter-row">
             <div className="compact-filter brand-filter">
-              <span>브랜드</span>
+              <span>{t('operator.filters.brand')}</span>
 
               <select
                 value={globalBrand}
@@ -19732,7 +20003,7 @@ function InternalApp() {
                 }}
               >
                 <option value="전체">
-                  전체 브랜드
+                  {t('operator.filters.allBrands')}
                 </option>
 
                 {[
@@ -19753,7 +20024,7 @@ function InternalApp() {
             </div>
 
             <div className="compact-filter">
-              <span>기간</span>
+              <span>{t('operator.filters.period')}</span>
 
               <select
                 value={performancePeriod}
@@ -19771,25 +20042,25 @@ function InternalApp() {
                 }}
               >
                 <option value="7d">
-                  최근 7일
+                  {t('operator.filters.last7Days')}
                 </option>
 
                 <option value="30d">
-                  최근 30일
+                  {t('operator.filters.last30Days')}
                 </option>
 
                 <option value="90d">
-                  최근 90일
+                  {t('operator.filters.last90Days')}
                 </option>
 
                 <option value="all">
-                  전체 기간
+                  {t('operator.filters.allPeriod')}
                 </option>
               </select>
             </div>
 
             <div className="compact-filter">
-              <span>데이터 소스</span>
+              <span>{t('operator.filters.dataSource')}</span>
 
               <select
                 value={performanceDataSource}
@@ -19800,17 +20071,17 @@ function InternalApp() {
                 }
               >
                 <option value="mock">
-                  Mock 데이터
+                  {t('operator.filters.mockData')}
                 </option>
 
                 <option value="naver">
-                  Naver 실데이터
+                  {t('operator.filters.naverData')}
                 </option>
               </select>
             </div>
 
             <div className="compact-filter">
-              <span>매체</span>
+              <span>{t('operator.filters.channel')}</span>
 
               <select
                 value={globalChannel}
@@ -19824,7 +20095,7 @@ function InternalApp() {
                 }}
               >
                 <option value="전체">
-                  전체 매체
+                  {t('operator.filters.allChannels')}
                 </option>
 
                 {globalChannelOptions.map(
@@ -19841,7 +20112,7 @@ function InternalApp() {
             </div>
 
             <div className="compact-filter campaign-filter">
-              <span>캠페인</span>
+              <span>{t('operator.filters.campaign')}</span>
 
               <select
                 value={globalCampaign}
@@ -19854,7 +20125,7 @@ function InternalApp() {
                 }}
               >
                 <option value="전체">
-                  전체 캠페인
+                  {t('operator.filters.allCampaigns')}
                 </option>
 
                 {globalCampaignOptions.map(
@@ -19871,7 +20142,7 @@ function InternalApp() {
             </div>
 
             <div className="compact-filter">
-              <span>제품</span>
+              <span>{t('operator.filters.product')}</span>
 
               <select
                 value={globalProduct}
@@ -19882,7 +20153,7 @@ function InternalApp() {
                 }
               >
                 <option value="전체">
-                  전체 제품
+                  {t('operator.filters.allProducts')}
                 </option>
 
                 {globalProductOptions.map(
@@ -19908,7 +20179,7 @@ function InternalApp() {
                 setGlobalProduct('전체')
               }}
             >
-              필터 초기화
+              {t('operator.filters.reset')}
             </button>
           </div>
 
@@ -19945,8 +20216,8 @@ function InternalApp() {
                   <strong>
                     {naverSyncStatus ===
                       'syncing'
-                      ? '동기화 중'
-                      : '최신 데이터'}
+                      ? t('operator.sync.syncing')
+                      : t('operator.sync.latest')}
                   </strong>
 
                   {naverLatestDate && (
@@ -19966,13 +20237,13 @@ function InternalApp() {
                         </span>
 
                         <span>
-                          과거 데이터 수집 완료
+                          {t('operator.sync.historicalComplete')}
                         </span>
                       </div>
                     ) : (
                       <div className="backfill-inline-status">
                         <span>
-                          과거 데이터
+                          {t('operator.sync.historicalData')}
                         </span>
 
                         <strong>
@@ -19990,7 +20261,7 @@ function InternalApp() {
                           /
                           {naverBackfillJob.totalDays ||
                             0}
-                          일
+                          {t('operator.sync.daysUnit')}
                         </span>
                       </div>
                     )}
@@ -20007,7 +20278,7 @@ function InternalApp() {
                       )
                     }
                   >
-                    데이터 관리
+                    {t('operator.sync.dataManagement')}
                     <span className="data-menu-arrow">
                       {performanceDataMenuOpen
                         ? '▲'
@@ -20018,11 +20289,11 @@ function InternalApp() {
                   {performanceDataMenuOpen && (
                     <div className="performance-data-dropdown">
                       <div className="data-dropdown-header">
-                        Naver 데이터 관리
+                        {t('operator.sync.naverDataManagement')}
                       </div>
 
                       <div className="data-dropdown-status">
-                        <span>최신 데이터</span>
+                        <span>{t('operator.sync.latest')}</span>
 
                         <strong>
                           {naverLatestDate || '-'}
@@ -20030,12 +20301,12 @@ function InternalApp() {
                       </div>
 
                       <div className="data-dropdown-status">
-                        <span>과거 데이터</span>
+                        <span>{t('operator.sync.historicalData')}</span>
 
                         <strong>
                           {naverBackfillJob?.status ===
                             'completed'
-                            ? '수집 완료'
+                            ? t('operator.sync.collectionComplete')
                             : `${Number(
                               naverBackfillJob?.progress ||
                               0
@@ -20055,12 +20326,11 @@ function InternalApp() {
                         disabled={isNaverSyncing}
                       >
                         <strong>
-                          선택 기간 다시 동기화
+                          {t('operator.sync.resyncSelectedPeriod')}
                         </strong>
 
                         <span>
-                          현재 설정된 날짜 범위를
-                          Naver에서 다시 가져옵니다.
+                          {t('operator.sync.resyncSelectedPeriodDescription')}
                         </span>
                       </button>
                     </div>
@@ -20077,11 +20347,11 @@ function InternalApp() {
         <>
           <div className="performance-tabs">
             {[
-              ['summary', '요약'],
-              ['channel', '매체'],
-              ['campaign', '캠페인'],
-              ['product', '제품'],
-              ['content', '콘텐츠'],
+              ['summary', t('operator.performance.tabs.summary')],
+              ['channel', t('operator.performance.tabs.channel')],
+              ['campaign', t('operator.performance.tabs.campaign')],
+              ['product', t('operator.performance.tabs.product')],
+              ['content', t('operator.performance.tabs.content')],
             ].map(([key, label]) => (
               <button
                 key={key}
@@ -20103,11 +20373,11 @@ function InternalApp() {
             <>
               <section className="performance-comparison">
                 <div className="performance-comparison-header">
-                  <h2>기간 성과 비교</h2>
+                  <h2>{t('operator.performance.comparison.title')}</h2>
 
                   <div className="performance-period-info">
                     <span>
-                      현재 {startDate || '-'} ~ {endDate || '-'}
+                      {t('operator.performance.comparison.current')} {startDate || '-'} ~ {endDate || '-'}
                     </span>
 
                     <span className="performance-period-vs">
@@ -20115,7 +20385,7 @@ function InternalApp() {
                     </span>
 
                     <span>
-                      이전 {previousPeriodRange.start || '-'} ~{' '}
+                      {t('operator.performance.comparison.previous')} {previousPeriodRange.start || '-'} ~{' '}
                       {previousPeriodRange.end || '-'}
                     </span>
                   </div>
@@ -20125,13 +20395,13 @@ function InternalApp() {
                   {[
                     {
                       key: 'spend',
-                      label: '광고비',
-                      suffix: '원',
+                      label: t('fields.spend'),
+                      suffix: 'currency',
                     },
                     {
                       key: 'revenue',
-                      label: '매출',
-                      suffix: '원',
+                      label: t('fields.revenue'),
+                      suffix: 'currency',
                     },
                     {
                       key: 'roas',
@@ -20141,7 +20411,7 @@ function InternalApp() {
                     {
                       key: 'cpa',
                       label: 'CPA',
-                      suffix: '원',
+                      suffix: 'currency',
                     },
                     {
                       key: 'ctr',
@@ -20150,8 +20420,8 @@ function InternalApp() {
                     },
                     {
                       key: 'conversions',
-                      label: '전환',
-                      suffix: '건',
+                      label: t('fields.conversions'),
+                      suffix: 'count',
                     },
                   ].map((item) => {
                     const metric =
@@ -20212,15 +20482,23 @@ function InternalApp() {
                                 ? 2
                                 : 1
                             )}%`
-                            : `${Math.round(
-                              metric.current
-                            ).toLocaleString()}${item.suffix}`}
+                            : item.key === 'conversions'
+                              ? `${Math.round(
+                                metric.current
+                              ).toLocaleString()}${t(
+                                'operator.performance.units.countSuffix'
+                              )}`
+                              : `${Math.round(
+                                metric.current
+                              ).toLocaleString()}${t(
+                                'operator.performance.units.currencySuffix'
+                              )}`}
                         </strong>
 
                         <div className="performance-kpi-change">
                           {change === null ? (
                             <span className="change-neutral">
-                              비교 데이터 없음
+                              {t('operator.performance.comparison.noComparisonData')}
                             </span>
                           ) : (
                             <span
@@ -20247,7 +20525,7 @@ function InternalApp() {
                           )}
 
                           <small>
-                            이전 기간 대비
+                            {t('operator.performance.comparison.vsPrevious')}
                           </small>
                         </div>
                       </div>
@@ -20261,11 +20539,11 @@ function InternalApp() {
                 <div className="performance-insights-header">
                   <div>
                     <h2>
-                      성과 인사이트
+                      {t('operator.performance.insights.title')}
                     </h2>
 
                     <span>
-                      현재 필터 기준 자동 분석
+                      {t('operator.performance.insights.subtitle')}
                     </span>
                   </div>
                 </div>
@@ -20274,7 +20552,7 @@ function InternalApp() {
 
                   <div className="performance-insight-card">
                     <span>
-                      최고 ROAS
+                      {t('operator.performance.insights.bestRoas')}
                     </span>
 
                     <strong>
@@ -20286,18 +20564,18 @@ function InternalApp() {
                     <p>
                       {bestRoasCampaign
                         ? `ROAS ${bestRoasCampaign.roas.toFixed(1)}%`
-                        : '데이터 없음'}
+                        : t('operator.performance.common.noData')}
                     </p>
 
                     <small>
-                      가장 높은 광고 효율을 기록한 캠페인입니다.
+                      {t('operator.performance.insights.bestRoasDescription')}
                     </small>
                   </div>
 
 
                   <div className="performance-insight-card">
                     <span>
-                      최고 매출
+                      {t('operator.performance.insights.bestRevenue')}
                     </span>
 
                     <strong>
@@ -20308,21 +20586,23 @@ function InternalApp() {
 
                     <p>
                       {bestRevenueCampaign
-                        ? `매출 ${Math.round(
-                          bestRevenueCampaign.revenue
-                        ).toLocaleString()}원`
-                        : '데이터 없음'}
+                        ? t('operator.performance.insights.revenueValue', {
+                          value: Math.round(
+                            bestRevenueCampaign.revenue
+                          ).toLocaleString(),
+                        })
+                        : t('operator.performance.common.noData')}
                     </p>
 
                     <small>
-                      현재 기간에서 가장 많은 매출을 만든 캠페인입니다.
+                      {t('operator.performance.insights.bestRevenueDescription')}
                     </small>
                   </div>
 
 
                   <div className="performance-insight-card">
                     <span>
-                      최저 CPA
+                      {t('operator.performance.insights.lowestCpa')}
                     </span>
 
                     <strong>
@@ -20333,21 +20613,23 @@ function InternalApp() {
 
                     <p>
                       {bestCpaCampaign
-                        ? `CPA ${Math.round(
-                          bestCpaCampaign.cpa
-                        ).toLocaleString()}원`
-                        : '데이터 없음'}
+                        ? t('operator.performance.insights.cpaValue', {
+                          value: Math.round(
+                            bestCpaCampaign.cpa
+                          ).toLocaleString(),
+                        })
+                        : t('operator.performance.common.noData')}
                     </p>
 
                     <small>
-                      전환당 비용이 가장 낮은 캠페인입니다.
+                      {t('operator.performance.insights.lowestCpaDescription')}
                     </small>
                   </div>
 
 
                   <div className="performance-insight-card">
                     <span>
-                      개선 필요
+                      {t('operator.performance.insights.needsImprovement')}
                     </span>
 
                     <strong>
@@ -20359,11 +20641,11 @@ function InternalApp() {
                     <p>
                       {improvementCampaign
                         ? `ROAS ${improvementCampaign.roas.toFixed(1)}%`
-                        : '데이터 없음'}
+                        : t('operator.performance.common.noData')}
                     </p>
 
                     <small>
-                      현재 ROAS가 가장 낮아 예산·소재 점검이 필요합니다.
+                      {t('operator.performance.insights.needsImprovementDescription')}
                     </small>
                   </div>
 
@@ -20374,11 +20656,11 @@ function InternalApp() {
                 <div className="performance-trend-header">
                   <div>
                     <h2>
-                      광고비 · 매출 추이
+                      {t('operator.performance.trend.spendRevenueTitle')}
                     </h2>
 
                     <span>
-                      현재 필터 및 기간 기준
+                      {t('operator.performance.trend.filteredPeriod')}
                     </span>
                   </div>
                 </div>
@@ -20386,7 +20668,7 @@ function InternalApp() {
                 <div className="performance-trend-chart">
                   {performanceDailySummary.length === 0 ? (
                     <div className="performance-empty">
-                      표시할 성과 데이터가 없습니다.
+                      {t('operator.performance.empty.performanceData')}
                     </div>
                   ) : (
                     <ResponsiveContainer
@@ -20417,9 +20699,7 @@ function InternalApp() {
 
                         <Tooltip
                           formatter={(value) =>
-                            `${Math.round(
-                              value
-                            ).toLocaleString()}원`
+                            `${Math.round(Number(value)).toLocaleString()}${t('operator.performance.units.currencySuffix')}`
                           }
                         />
 
@@ -20428,14 +20708,14 @@ function InternalApp() {
                         <Line
                           type="monotone"
                           dataKey="spend"
-                          name="광고비"
+                          name={t('fields.spend')}
                           dot={false}
                         />
 
                         <Line
                           type="monotone"
                           dataKey="revenue"
-                          name="매출"
+                          name={t('fields.revenue')}
                           dot={false}
                         />
                       </LineChart>
@@ -20448,11 +20728,11 @@ function InternalApp() {
                 <div className="performance-trend-header">
                   <div>
                     <h2>
-                      ROAS 추이
+                      {t('operator.performance.trend.roasTitle')}
                     </h2>
 
                     <span>
-                      일별 광고비 대비 매출 효율
+                      {t('operator.performance.trend.roasSubtitle')}
                     </span>
                   </div>
                 </div>
@@ -20460,7 +20740,7 @@ function InternalApp() {
                 <div className="performance-trend-chart">
                   {performanceDailySummary.length === 0 ? (
                     <div className="performance-empty">
-                      표시할 성과 데이터가 없습니다.
+                      {t('operator.performance.empty.performanceData')}
                     </div>
                   ) : (
                     <ResponsiveContainer
@@ -20511,10 +20791,10 @@ function InternalApp() {
           {performanceAlerts.length > 0 && (
             <section className="performance-change-section">
               <div className="performance-change-header">
-                <h2>성과 변화</h2>
+                <h2>{t('operator.performance.changes.title')}</h2>
 
                 <span>
-                  이전 동일 기간 대비
+                  {t('operator.performance.changes.subtitle')}
                 </span>
               </div>
 
@@ -20522,7 +20802,7 @@ function InternalApp() {
                 {performanceAlerts.map(
                   (alert, index) => (
                     <div
-                      key={`${alert.categoryLabel}-${alert.name || alert.channel}-${alert.metric}-${index}`}
+                      key={`${t(`operator.performance.alerts.categories.${alert.category}`, { defaultValue: alert.categoryLabel })}-${alert.name || alert.channel}-${alert.metric}-${index}`}
                       className={
                         alert.type === 'warning'
                           ? 'performance-change-item warning'
@@ -20536,11 +20816,11 @@ function InternalApp() {
                       </span>
 
                       <span className="performance-change-category">
-                        {alert.categoryLabel}
+                        {t(`operator.performance.alerts.categories.${alert.category}`, { defaultValue: alert.categoryLabel })}
                       </span>
 
                       <span>
-                        {alert.message}
+                        {getPerformanceAlertMessage(alert)}
                       </span>
                     </div>
                   )
@@ -20556,10 +20836,10 @@ function InternalApp() {
               <section className="channel-performance-section">
                 <div className="channel-performance-header">
                   <div>
-                    <h2>매체별 성과 순위</h2>
+                    <h2>{t('operator.performance.rankings.channel')}</h2>
 
                     <span>
-                      현재 필터 기준
+                      {t('operator.performance.common.currentFilter')}
                     </span>
                   </div>
 
@@ -20573,23 +20853,23 @@ function InternalApp() {
                     }
                   >
                     <option value="roas_desc">
-                      ROAS 높은 순
+                      {t('operator.performance.sort.roasDesc')}
                     </option>
 
                     <option value="spend_desc">
-                      광고비 높은 순
+                      {t('operator.performance.sort.spendDesc')}
                     </option>
 
                     <option value="revenue_desc">
-                      매출 높은 순
+                      {t('operator.performance.sort.revenueDesc')}
                     </option>
 
                     <option value="cpa_asc">
-                      CPA 낮은 순
+                      {t('operator.performance.sort.cpaAsc')}
                     </option>
 
                     <option value="conversions_desc">
-                      전환 높은 순
+                      {t('operator.performance.sort.conversionsDesc')}
                     </option>
                   </select>
                 </div>
@@ -20597,7 +20877,7 @@ function InternalApp() {
                 {sortedChannelDiagnostics.length > 0 && (
                   <div className="channel-performance-summary">
                     <div className="channel-summary-item">
-                      <span>최고 ROAS</span>
+                      <span>{t('operator.performance.insights.bestRoas')}</span>
 
                       <strong>
                         🏆{' '}
@@ -20625,7 +20905,7 @@ function InternalApp() {
 
                     {channelDiagnostics.length > 1 && (
                       <div className="channel-summary-item">
-                        <span>최저 ROAS</span>
+                        <span>{t('operator.performance.summary.lowestRoas')}</span>
 
                         <strong>
                           {
@@ -20657,22 +20937,22 @@ function InternalApp() {
                   <table className="channel-performance-table">
                     <thead>
                       <tr>
-                        <th>순위</th>
-                        <th>매체</th>
-                        <th>광고비</th>
-                        <th>매출</th>
-                        <th>전환</th>
-                        <th>클릭</th>
+                        <th>{t('operator.performance.table.rank')}</th>
+                        <th>{t('operator.performance.table.channel')}</th>
+                        <th>{t('fields.spend')}</th>
+                        <th>{t('fields.revenue')}</th>
+                        <th>{t('fields.conversions')}</th>
+                        <th>{t('fields.clicks')}</th>
                         <th>ROAS</th>
                         <th>CPA</th>
                         <th>CPC</th>
                         <th>CTR</th>
                         <th>CVR</th>
                         <th>CPM</th>
-                        <th>광고비 비중</th>
-                        <th>매출 비중</th>
-                        <th>기여도 차이</th>
-                        <th>진단</th>
+                        <th>{t('operator.performance.table.spendShare')}</th>
+                        <th>{t('operator.performance.table.revenueShare')}</th>
+                        <th>{t('operator.performance.table.contributionGap')}</th>
+                        <th>{t('operator.performance.table.diagnosis')}</th>
                       </tr>
                     </thead>
 
@@ -20705,21 +20985,21 @@ function InternalApp() {
                               {Math.round(
                                 item.spend
                               ).toLocaleString()}
-                              원
+                              {t('operator.performance.units.currencySuffix')}
                             </td>
 
                             <td>
                               {Math.round(
                                 item.revenue
                               ).toLocaleString()}
-                              원
+                              {t('operator.performance.units.currencySuffix')}
                             </td>
 
                             <td>
                               {Math.round(
                                 item.conversions
                               ).toLocaleString()}
-                              건
+                              {t('operator.performance.units.countSuffix')}
                             </td>
 
                             <td>
@@ -20736,14 +21016,14 @@ function InternalApp() {
                               {Math.round(
                                 item.cpa
                               ).toLocaleString()}
-                              원
+                              {t('operator.performance.units.currencySuffix')}
                             </td>
 
                             <td>
                               {Math.round(
                                 item.cpc
                               ).toLocaleString()}
-                              원
+                              {t('operator.performance.units.currencySuffix')}
                             </td>
 
                             <td>
@@ -20758,7 +21038,7 @@ function InternalApp() {
                               {Math.round(
                                 item.cpm
                               ).toLocaleString()}
-                              원
+                              {t('operator.performance.units.currencySuffix')}
                             </td>
 
                             <td>
@@ -20798,11 +21078,11 @@ function InternalApp() {
                                         : 'diagnosis-normal'
                                   }
                                 >
-                                  {item.status}
+                                  {getPerformanceDiagnosisStatus(item.status)}
                                 </span>
 
                                 <small>
-                                  {item.reason}
+                                  {getPerformanceDiagnosisReason(item.reason)}
                                 </small>
                               </div>
                             </td>
@@ -20818,7 +21098,7 @@ function InternalApp() {
                 <section className="channel-performance-section">
                   <div className="channel-performance-header">
                     <div>
-                      <h2>매체 상세</h2>
+                      <h2>{t('operator.performance.detail.channel')}</h2>
 
                       <span>
                         {selectedInternalChannelData.channel}
@@ -20831,28 +21111,28 @@ function InternalApp() {
                         setSelectedInternalChannel(null)
                       }
                     >
-                      닫기
+                      {t('operator.performance.common.close')}
                     </button>
                   </div>
 
                   <div className="client-campaign-detail-metrics">
                     <div>
-                      <span>광고비</span>
+                      <span>{t('fields.spend')}</span>
                       <strong>
                         {Math.round(
                           selectedInternalChannelData.spend
                         ).toLocaleString()}
-                        원
+                        {t('operator.performance.units.currencySuffix')}
                       </strong>
                     </div>
 
                     <div>
-                      <span>매출</span>
+                      <span>{t('fields.revenue')}</span>
                       <strong>
                         {Math.round(
                           selectedInternalChannelData.revenue
                         ).toLocaleString()}
-                        원
+                        {t('operator.performance.units.currencySuffix')}
                       </strong>
                     </div>
 
@@ -20870,7 +21150,7 @@ function InternalApp() {
                         {Math.round(
                           selectedInternalChannelData.cpa
                         ).toLocaleString()}
-                        원
+                        {t('operator.performance.units.currencySuffix')}
                       </strong>
                     </div>
 
@@ -20883,12 +21163,12 @@ function InternalApp() {
                     </div>
 
                     <div>
-                      <span>전환</span>
+                      <span>{t('fields.conversions')}</span>
                       <strong>
                         {Math.round(
                           selectedInternalChannelData.conversions
                         ).toLocaleString()}
-                        건
+                        {t('operator.performance.units.countSuffix')}
                       </strong>
                     </div>
                   </div>
@@ -20923,14 +21203,14 @@ function InternalApp() {
                         <Line
                           type="monotone"
                           dataKey="spend"
-                          name="광고비"
+                          name={t('fields.spend')}
                           dot={false}
                         />
 
                         <Line
                           type="monotone"
                           dataKey="revenue"
-                          name="매출"
+                          name={t('fields.revenue')}
                           dot={false}
                         />
                       </LineChart>
@@ -20941,11 +21221,11 @@ function InternalApp() {
                     <div className="channel-performance-header">
                       <div>
                         <h2>
-                          캠페인별 성과
+                          {t('operator.performance.detail.campaignPerformance')}
                         </h2>
 
                         <span>
-                          ROAS 높은 순
+                          {t('operator.performance.sort.roasDesc')}
                         </span>
                       </div>
                     </div>
@@ -20954,13 +21234,13 @@ function InternalApp() {
                       <table className="channel-performance-table">
                         <thead>
                           <tr>
-                            <th>캠페인</th>
-                            <th>광고비</th>
-                            <th>매출</th>
+                            <th>{t('operator.performance.table.campaign')}</th>
+                            <th>{t('fields.spend')}</th>
+                            <th>{t('fields.revenue')}</th>
                             <th>ROAS</th>
                             <th>CPA</th>
                             <th>CTR</th>
-                            <th>전환</th>
+                            <th>{t('fields.conversions')}</th>
                           </tr>
                         </thead>
 
@@ -20976,14 +21256,14 @@ function InternalApp() {
                                   {Math.round(
                                     row.spend
                                   ).toLocaleString()}
-                                  원
+                                  {t('operator.performance.units.currencySuffix')}
                                 </td>
 
                                 <td>
                                   {Math.round(
                                     row.revenue
                                   ).toLocaleString()}
-                                  원
+                                  {t('operator.performance.units.currencySuffix')}
                                 </td>
 
                                 <td>
@@ -20994,7 +21274,7 @@ function InternalApp() {
                                   {Math.round(
                                     row.cpa
                                   ).toLocaleString()}
-                                  원
+                                  {t('operator.performance.units.currencySuffix')}
                                 </td>
 
                                 <td>
@@ -21005,7 +21285,7 @@ function InternalApp() {
                                   {Math.round(
                                     row.conversions
                                   ).toLocaleString()}
-                                  건
+                                  {t('operator.performance.units.countSuffix')}
                                 </td>
                               </tr>
                             )
@@ -21023,10 +21303,10 @@ function InternalApp() {
               <section className="campaign-performance-section">
                 <div className="channel-performance-header">
                   <div>
-                    <h2>캠페인별 성과 순위</h2>
+                    <h2>{t('operator.performance.rankings.campaign')}</h2>
 
                     <span>
-                      현재 필터 기준
+                      {t('operator.performance.common.currentFilter')}
                     </span>
                   </div>
 
@@ -21040,23 +21320,23 @@ function InternalApp() {
                     }
                   >
                     <option value="roas_desc">
-                      ROAS 높은 순
+                      {t('operator.performance.sort.roasDesc')}
                     </option>
 
                     <option value="spend_desc">
-                      광고비 높은 순
+                      {t('operator.performance.sort.spendDesc')}
                     </option>
 
                     <option value="revenue_desc">
-                      매출 높은 순
+                      {t('operator.performance.sort.revenueDesc')}
                     </option>
 
                     <option value="cpa_asc">
-                      CPA 낮은 순
+                      {t('operator.performance.sort.cpaAsc')}
                     </option>
 
                     <option value="conversions_desc">
-                      전환 높은 순
+                      {t('operator.performance.sort.conversionsDesc')}
                     </option>
                   </select>
                 </div>
@@ -21065,22 +21345,22 @@ function InternalApp() {
                   <table className="channel-performance-table">
                     <thead>
                       <tr>
-                        <th>순위</th>
-                        <th>캠페인</th>
-                        <th>광고비</th>
-                        <th>매출</th>
-                        <th>전환</th>
-                        <th>클릭</th>
+                        <th>{t('operator.performance.table.rank')}</th>
+                        <th>{t('operator.performance.table.campaign')}</th>
+                        <th>{t('fields.spend')}</th>
+                        <th>{t('fields.revenue')}</th>
+                        <th>{t('fields.conversions')}</th>
+                        <th>{t('fields.clicks')}</th>
                         <th>ROAS</th>
                         <th>CPA</th>
                         <th>CPC</th>
                         <th>CTR</th>
                         <th>CVR</th>
                         <th>CPM</th>
-                        <th>광고비 비중</th>
-                        <th>매출 비중</th>
-                        <th>기여도 차이</th>
-                        <th>진단</th>
+                        <th>{t('operator.performance.table.spendShare')}</th>
+                        <th>{t('operator.performance.table.revenueShare')}</th>
+                        <th>{t('operator.performance.table.contributionGap')}</th>
+                        <th>{t('operator.performance.table.diagnosis')}</th>
                       </tr>
                     </thead>
 
@@ -21115,21 +21395,21 @@ function InternalApp() {
                               {Math.round(
                                 item.spend
                               ).toLocaleString()}
-                              원
+                              {t('operator.performance.units.currencySuffix')}
                             </td>
 
                             <td>
                               {Math.round(
                                 item.revenue
                               ).toLocaleString()}
-                              원
+                              {t('operator.performance.units.currencySuffix')}
                             </td>
 
                             <td>
                               {Math.round(
                                 item.conversions
                               ).toLocaleString()}
-                              건
+                              {t('operator.performance.units.countSuffix')}
                             </td>
 
                             <td>
@@ -21146,14 +21426,14 @@ function InternalApp() {
                               {Math.round(
                                 item.cpa
                               ).toLocaleString()}
-                              원
+                              {t('operator.performance.units.currencySuffix')}
                             </td>
 
                             <td>
                               {Math.round(
                                 item.cpc
                               ).toLocaleString()}
-                              원
+                              {t('operator.performance.units.currencySuffix')}
                             </td>
 
                             <td>
@@ -21168,7 +21448,7 @@ function InternalApp() {
                               {Math.round(
                                 item.cpm
                               ).toLocaleString()}
-                              원
+                              {t('operator.performance.units.currencySuffix')}
                             </td>
 
                             <td>
@@ -21209,11 +21489,11 @@ function InternalApp() {
                                         : 'diagnosis-normal'
                                   }
                                 >
-                                  {item.status}
+                                  {getPerformanceDiagnosisStatus(item.status)}
                                 </span>
 
                                 <small>
-                                  {item.reason}
+                                  {getPerformanceDiagnosisReason(item.reason)}
                                 </small>
                               </div>
                             </td>
@@ -21229,7 +21509,7 @@ function InternalApp() {
                 <section className="campaign-performance-section">
                   <div className="channel-performance-header">
                     <div>
-                      <h2>캠페인 상세</h2>
+                      <h2>{t('operator.performance.detail.campaign')}</h2>
 
                       <span>
                         {selectedInternalCampaignData.campaign}
@@ -21242,30 +21522,30 @@ function InternalApp() {
                         setSelectedInternalCampaign(null)
                       }
                     >
-                      닫기
+                      {t('operator.performance.common.close')}
                     </button>
                   </div>
 
                   <div className="client-campaign-detail-metrics">
                     <div>
-                      <span>광고비</span>
+                      <span>{t('fields.spend')}</span>
 
                       <strong>
                         {Math.round(
                           selectedInternalCampaignData.spend
                         ).toLocaleString()}
-                        원
+                        {t('operator.performance.units.currencySuffix')}
                       </strong>
                     </div>
 
                     <div>
-                      <span>매출</span>
+                      <span>{t('fields.revenue')}</span>
 
                       <strong>
                         {Math.round(
                           selectedInternalCampaignData.revenue
                         ).toLocaleString()}
-                        원
+                        {t('operator.performance.units.currencySuffix')}
                       </strong>
                     </div>
 
@@ -21285,7 +21565,7 @@ function InternalApp() {
                         {Math.round(
                           selectedInternalCampaignData.cpa
                         ).toLocaleString()}
-                        원
+                        {t('operator.performance.units.currencySuffix')}
                       </strong>
                     </div>
 
@@ -21299,13 +21579,13 @@ function InternalApp() {
                     </div>
 
                     <div>
-                      <span>전환</span>
+                      <span>{t('fields.conversions')}</span>
 
                       <strong>
                         {Math.round(
                           selectedInternalCampaignData.conversions
                         ).toLocaleString()}
-                        건
+                        {t('operator.performance.units.countSuffix')}
                       </strong>
                     </div>
                   </div>
@@ -21314,7 +21594,7 @@ function InternalApp() {
                     {selectedInternalCampaignDailyData.length ===
                       0 ? (
                       <div className="performance-empty">
-                        표시할 일별 데이터가 없습니다.
+                        {t('operator.performance.empty.dailyData')}
                       </div>
                     ) : (
                       <ResponsiveContainer
@@ -21347,9 +21627,7 @@ function InternalApp() {
 
                           <Tooltip
                             formatter={(value) =>
-                              `${Math.round(
-                                Number(value)
-                              ).toLocaleString()}원`
+                              `${Math.round(Number(value)).toLocaleString()}${t('operator.performance.units.currencySuffix')}`
                             }
                           />
 
@@ -21358,14 +21636,14 @@ function InternalApp() {
                           <Line
                             type="monotone"
                             dataKey="spend"
-                            name="광고비"
+                            name={t('fields.spend')}
                             dot={false}
                           />
 
                           <Line
                             type="monotone"
                             dataKey="revenue"
-                            name="매출"
+                            name={t('fields.revenue')}
                             dot={false}
                           />
                         </LineChart>
@@ -21376,10 +21654,10 @@ function InternalApp() {
                   <div className="client-campaign-content-section">
                     <div className="channel-performance-header">
                       <div>
-                        <h2>소재별 성과</h2>
+                        <h2>{t('operator.performance.detail.creativePerformance')}</h2>
 
                         <span>
-                          ROAS 높은 순
+                          {t('operator.performance.sort.roasDesc')}
                         </span>
                       </div>
                     </div>
@@ -21387,20 +21665,20 @@ function InternalApp() {
                     {selectedInternalCampaignContentData.length ===
                       0 ? (
                       <div className="performance-empty">
-                        소재 성과 데이터가 없습니다.
+                        {t('operator.performance.empty.creativePerformance')}
                       </div>
                     ) : (
                       <div className="channel-performance-table-wrapper">
                         <table className="channel-performance-table">
                           <thead>
                             <tr>
-                              <th>소재</th>
-                              <th>광고비</th>
-                              <th>매출</th>
+                              <th>{t('operator.performance.table.creative')}</th>
+                              <th>{t('fields.spend')}</th>
+                              <th>{t('fields.revenue')}</th>
                               <th>ROAS</th>
                               <th>CPA</th>
                               <th>CTR</th>
-                              <th>전환</th>
+                              <th>{t('fields.conversions')}</th>
                             </tr>
                           </thead>
 
@@ -21416,14 +21694,14 @@ function InternalApp() {
                                     {Math.round(
                                       row.spend
                                     ).toLocaleString()}
-                                    원
+                                    {t('operator.performance.units.currencySuffix')}
                                   </td>
 
                                   <td>
                                     {Math.round(
                                       row.revenue
                                     ).toLocaleString()}
-                                    원
+                                    {t('operator.performance.units.currencySuffix')}
                                   </td>
 
                                   <td>
@@ -21434,7 +21712,7 @@ function InternalApp() {
                                     {Math.round(
                                       row.cpa
                                     ).toLocaleString()}
-                                    원
+                                    {t('operator.performance.units.currencySuffix')}
                                   </td>
 
                                   <td>
@@ -21445,7 +21723,7 @@ function InternalApp() {
                                     {Math.round(
                                       row.conversions
                                     ).toLocaleString()}
-                                    건
+                                    {t('operator.performance.units.countSuffix')}
                                   </td>
                                 </tr>
                               )
@@ -21465,8 +21743,8 @@ function InternalApp() {
               <section className="product-performance-section">
                 <div className="channel-performance-header">
                   <div>
-                    <h2>제품별 성과 순위</h2>
-                    <span>현재 필터 기준</span>
+                    <h2>{t('operator.performance.rankings.product')}</h2>
+                    <span>{t('operator.performance.common.currentFilter')}</span>
                   </div>
 
                   <select
@@ -21479,23 +21757,23 @@ function InternalApp() {
                     }
                   >
                     <option value="roas_desc">
-                      ROAS 높은 순
+                      {t('operator.performance.sort.roasDesc')}
                     </option>
 
                     <option value="spend_desc">
-                      광고비 높은 순
+                      {t('operator.performance.sort.spendDesc')}
                     </option>
 
                     <option value="revenue_desc">
-                      매출 높은 순
+                      {t('operator.performance.sort.revenueDesc')}
                     </option>
 
                     <option value="cpa_asc">
-                      CPA 낮은 순
+                      {t('operator.performance.sort.cpaAsc')}
                     </option>
 
                     <option value="conversions_desc">
-                      전환 높은 순
+                      {t('operator.performance.sort.conversionsDesc')}
                     </option>
                   </select>
                 </div>
@@ -21504,22 +21782,22 @@ function InternalApp() {
                   <table className="channel-performance-table">
                     <thead>
                       <tr>
-                        <th>순위</th>
-                        <th>제품</th>
-                        <th>광고비</th>
-                        <th>매출</th>
-                        <th>전환</th>
-                        <th>클릭</th>
+                        <th>{t('operator.performance.table.rank')}</th>
+                        <th>{t('operator.performance.table.product')}</th>
+                        <th>{t('fields.spend')}</th>
+                        <th>{t('fields.revenue')}</th>
+                        <th>{t('fields.conversions')}</th>
+                        <th>{t('fields.clicks')}</th>
                         <th>ROAS</th>
                         <th>CPA</th>
                         <th>CPC</th>
                         <th>CTR</th>
                         <th>CVR</th>
                         <th>CPM</th>
-                        <th>광고비 비중</th>
-                        <th>매출 비중</th>
-                        <th>기여도 차이</th>
-                        <th>진단</th>
+                        <th>{t('operator.performance.table.spendShare')}</th>
+                        <th>{t('operator.performance.table.revenueShare')}</th>
+                        <th>{t('operator.performance.table.contributionGap')}</th>
+                        <th>{t('operator.performance.table.diagnosis')}</th>
                       </tr>
                     </thead>
 
@@ -21552,21 +21830,21 @@ function InternalApp() {
                               {Math.round(
                                 item.spend
                               ).toLocaleString()}
-                              원
+                              {t('operator.performance.units.currencySuffix')}
                             </td>
 
                             <td>
                               {Math.round(
                                 item.revenue
                               ).toLocaleString()}
-                              원
+                              {t('operator.performance.units.currencySuffix')}
                             </td>
 
                             <td>
                               {Math.round(
                                 item.conversions
                               ).toLocaleString()}
-                              건
+                              {t('operator.performance.units.countSuffix')}
                             </td>
 
                             <td>
@@ -21583,14 +21861,14 @@ function InternalApp() {
                               {Math.round(
                                 item.cpa
                               ).toLocaleString()}
-                              원
+                              {t('operator.performance.units.currencySuffix')}
                             </td>
 
                             <td>
                               {Math.round(
                                 item.cpc
                               ).toLocaleString()}
-                              원
+                              {t('operator.performance.units.currencySuffix')}
                             </td>
 
                             <td>
@@ -21605,7 +21883,7 @@ function InternalApp() {
                               {Math.round(
                                 item.cpm
                               ).toLocaleString()}
-                              원
+                              {t('operator.performance.units.currencySuffix')}
                             </td>
 
                             <td>
@@ -21645,11 +21923,11 @@ function InternalApp() {
                                         : 'diagnosis-normal'
                                   }
                                 >
-                                  {item.status}
+                                  {getPerformanceDiagnosisStatus(item.status)}
                                 </span>
 
                                 <small>
-                                  {item.reason}
+                                  {getPerformanceDiagnosisReason(item.reason)}
                                 </small>
                               </div>
                             </td>
@@ -21665,7 +21943,7 @@ function InternalApp() {
                 <section className="product-performance-section">
                   <div className="channel-performance-header">
                     <div>
-                      <h2>제품 상세</h2>
+                      <h2>{t('operator.performance.detail.product')}</h2>
 
                       <span>
                         {selectedInternalProductData.product}
@@ -21678,28 +21956,28 @@ function InternalApp() {
                         setSelectedInternalProduct(null)
                       }
                     >
-                      닫기
+                      {t('operator.performance.common.close')}
                     </button>
                   </div>
 
                   <div className="client-campaign-detail-metrics">
                     <div>
-                      <span>광고비</span>
+                      <span>{t('fields.spend')}</span>
                       <strong>
                         {Math.round(
                           selectedInternalProductData.spend
                         ).toLocaleString()}
-                        원
+                        {t('operator.performance.units.currencySuffix')}
                       </strong>
                     </div>
 
                     <div>
-                      <span>매출</span>
+                      <span>{t('fields.revenue')}</span>
                       <strong>
                         {Math.round(
                           selectedInternalProductData.revenue
                         ).toLocaleString()}
-                        원
+                        {t('operator.performance.units.currencySuffix')}
                       </strong>
                     </div>
 
@@ -21717,7 +21995,7 @@ function InternalApp() {
                         {Math.round(
                           selectedInternalProductData.cpa
                         ).toLocaleString()}
-                        원
+                        {t('operator.performance.units.currencySuffix')}
                       </strong>
                     </div>
 
@@ -21730,12 +22008,12 @@ function InternalApp() {
                     </div>
 
                     <div>
-                      <span>전환</span>
+                      <span>{t('fields.conversions')}</span>
                       <strong>
                         {Math.round(
                           selectedInternalProductData.conversions
                         ).toLocaleString()}
-                        건
+                        {t('operator.performance.units.countSuffix')}
                       </strong>
                     </div>
                   </div>
@@ -21744,7 +22022,7 @@ function InternalApp() {
                     {selectedInternalProductDailyData.length ===
                       0 ? (
                       <div className="performance-empty">
-                        표시할 일별 데이터가 없습니다.
+                        {t('operator.performance.empty.dailyData')}
                       </div>
                     ) : (
                       <ResponsiveContainer
@@ -21776,14 +22054,14 @@ function InternalApp() {
                           <Line
                             type="monotone"
                             dataKey="spend"
-                            name="광고비"
+                            name={t('fields.spend')}
                             dot={false}
                           />
 
                           <Line
                             type="monotone"
                             dataKey="revenue"
-                            name="매출"
+                            name={t('fields.revenue')}
                             dot={false}
                           />
                         </LineChart>
@@ -21795,11 +22073,11 @@ function InternalApp() {
                     <div className="channel-performance-header">
                       <div>
                         <h2>
-                          매체 · 캠페인별 성과
+                          {t('operator.performance.detail.channelCampaignPerformance')}
                         </h2>
 
                         <span>
-                          ROAS 높은 순
+                          {t('operator.performance.sort.roasDesc')}
                         </span>
                       </div>
                     </div>
@@ -21807,21 +22085,21 @@ function InternalApp() {
                     {selectedInternalProductCampaignData.length ===
                       0 ? (
                       <div className="performance-empty">
-                        캠페인 성과 데이터가 없습니다.
+                        {t('operator.performance.empty.campaignPerformance')}
                       </div>
                     ) : (
                       <div className="channel-performance-table-wrapper">
                         <table className="channel-performance-table">
                           <thead>
                             <tr>
-                              <th>매체</th>
-                              <th>캠페인</th>
-                              <th>광고비</th>
-                              <th>매출</th>
+                              <th>{t('operator.performance.table.channel')}</th>
+                              <th>{t('operator.performance.table.campaign')}</th>
+                              <th>{t('fields.spend')}</th>
+                              <th>{t('fields.revenue')}</th>
                               <th>ROAS</th>
                               <th>CPA</th>
                               <th>CTR</th>
-                              <th>전환</th>
+                              <th>{t('fields.conversions')}</th>
                             </tr>
                           </thead>
 
@@ -21841,14 +22119,14 @@ function InternalApp() {
                                     {Math.round(
                                       row.spend
                                     ).toLocaleString()}
-                                    원
+                                    {t('operator.performance.units.currencySuffix')}
                                   </td>
 
                                   <td>
                                     {Math.round(
                                       row.revenue
                                     ).toLocaleString()}
-                                    원
+                                    {t('operator.performance.units.currencySuffix')}
                                   </td>
 
                                   <td>
@@ -21859,7 +22137,7 @@ function InternalApp() {
                                     {Math.round(
                                       row.cpa
                                     ).toLocaleString()}
-                                    원
+                                    {t('operator.performance.units.currencySuffix')}
                                   </td>
 
                                   <td>
@@ -21870,7 +22148,7 @@ function InternalApp() {
                                     {Math.round(
                                       row.conversions
                                     ).toLocaleString()}
-                                    건
+                                    {t('operator.performance.units.countSuffix')}
                                   </td>
                                 </tr>
                               )
@@ -21890,10 +22168,10 @@ function InternalApp() {
               <section className="content-performance-section">
                 <div className="channel-performance-header">
                   <div>
-                    <h2>콘텐츠별 성과 순위</h2>
+                    <h2>{t('operator.performance.rankings.content')}</h2>
 
                     <span>
-                      현재 필터 기준
+                      {t('operator.performance.common.currentFilter')}
                     </span>
                   </div>
 
@@ -21907,23 +22185,23 @@ function InternalApp() {
                     }
                   >
                     <option value="roas_desc">
-                      ROAS 높은 순
+                      {t('operator.performance.sort.roasDesc')}
                     </option>
 
                     <option value="spend_desc">
-                      광고비 높은 순
+                      {t('operator.performance.sort.spendDesc')}
                     </option>
 
                     <option value="revenue_desc">
-                      매출 높은 순
+                      {t('operator.performance.sort.revenueDesc')}
                     </option>
 
                     <option value="cpa_asc">
-                      CPA 낮은 순
+                      {t('operator.performance.sort.cpaAsc')}
                     </option>
 
                     <option value="conversions_desc">
-                      전환 높은 순
+                      {t('operator.performance.sort.conversionsDesc')}
                     </option>
                   </select>
                 </div>
@@ -21932,22 +22210,22 @@ function InternalApp() {
                   <table className="channel-performance-table">
                     <thead>
                       <tr>
-                        <th>순위</th>
-                        <th>콘텐츠</th>
-                        <th>광고비</th>
-                        <th>매출</th>
-                        <th>전환</th>
-                        <th>클릭</th>
+                        <th>{t('operator.performance.table.rank')}</th>
+                        <th>{t('operator.performance.table.content')}</th>
+                        <th>{t('fields.spend')}</th>
+                        <th>{t('fields.revenue')}</th>
+                        <th>{t('fields.conversions')}</th>
+                        <th>{t('fields.clicks')}</th>
                         <th>ROAS</th>
                         <th>CPA</th>
                         <th>CPC</th>
                         <th>CTR</th>
                         <th>CVR</th>
                         <th>CPM</th>
-                        <th>광고비 비중</th>
-                        <th>매출 비중</th>
-                        <th>기여도 차이</th>
-                        <th>진단</th>
+                        <th>{t('operator.performance.table.spendShare')}</th>
+                        <th>{t('operator.performance.table.revenueShare')}</th>
+                        <th>{t('operator.performance.table.contributionGap')}</th>
+                        <th>{t('operator.performance.table.diagnosis')}</th>
                       </tr>
                     </thead>
 
@@ -21980,21 +22258,21 @@ function InternalApp() {
                               {Math.round(
                                 item.spend
                               ).toLocaleString()}
-                              원
+                              {t('operator.performance.units.currencySuffix')}
                             </td>
 
                             <td>
                               {Math.round(
                                 item.revenue
                               ).toLocaleString()}
-                              원
+                              {t('operator.performance.units.currencySuffix')}
                             </td>
 
                             <td>
                               {Math.round(
                                 item.conversions
                               ).toLocaleString()}
-                              건
+                              {t('operator.performance.units.countSuffix')}
                             </td>
 
                             <td>
@@ -22011,14 +22289,14 @@ function InternalApp() {
                               {Math.round(
                                 item.cpa
                               ).toLocaleString()}
-                              원
+                              {t('operator.performance.units.currencySuffix')}
                             </td>
 
                             <td>
                               {Math.round(
                                 item.cpc
                               ).toLocaleString()}
-                              원
+                              {t('operator.performance.units.currencySuffix')}
                             </td>
 
                             <td>
@@ -22033,7 +22311,7 @@ function InternalApp() {
                               {Math.round(
                                 item.cpm
                               ).toLocaleString()}
-                              원
+                              {t('operator.performance.units.currencySuffix')}
                             </td>
 
                             <td>
@@ -22074,11 +22352,11 @@ function InternalApp() {
                                         : 'diagnosis-normal'
                                   }
                                 >
-                                  {item.status}
+                                  {getPerformanceDiagnosisStatus(item.status)}
                                 </span>
 
                                 <small>
-                                  {item.reason}
+                                  {getPerformanceDiagnosisReason(item.reason)}
                                 </small>
                               </div>
                             </td>
@@ -22094,7 +22372,7 @@ function InternalApp() {
                 <section className="content-performance-section">
                   <div className="channel-performance-header">
                     <div>
-                      <h2>콘텐츠 상세</h2>
+                      <h2>{t('operator.performance.detail.content')}</h2>
 
                       <span>
                         {selectedInternalContentData.content}
@@ -22107,30 +22385,30 @@ function InternalApp() {
                         setSelectedInternalContent(null)
                       }
                     >
-                      닫기
+                      {t('operator.performance.common.close')}
                     </button>
                   </div>
 
                   <div className="client-campaign-detail-metrics">
                     <div>
-                      <span>광고비</span>
+                      <span>{t('fields.spend')}</span>
 
                       <strong>
                         {Math.round(
                           selectedInternalContentData.spend
                         ).toLocaleString()}
-                        원
+                        {t('operator.performance.units.currencySuffix')}
                       </strong>
                     </div>
 
                     <div>
-                      <span>매출</span>
+                      <span>{t('fields.revenue')}</span>
 
                       <strong>
                         {Math.round(
                           selectedInternalContentData.revenue
                         ).toLocaleString()}
-                        원
+                        {t('operator.performance.units.currencySuffix')}
                       </strong>
                     </div>
 
@@ -22150,7 +22428,7 @@ function InternalApp() {
                         {Math.round(
                           selectedInternalContentData.cpa
                         ).toLocaleString()}
-                        원
+                        {t('operator.performance.units.currencySuffix')}
                       </strong>
                     </div>
 
@@ -22164,13 +22442,13 @@ function InternalApp() {
                     </div>
 
                     <div>
-                      <span>전환</span>
+                      <span>{t('fields.conversions')}</span>
 
                       <strong>
                         {Math.round(
                           selectedInternalContentData.conversions
                         ).toLocaleString()}
-                        건
+                        {t('operator.performance.units.countSuffix')}
                       </strong>
                     </div>
                   </div>
@@ -22178,7 +22456,7 @@ function InternalApp() {
                   <div className="performance-trend-chart">
                     {selectedInternalContentDailyData.length === 0 ? (
                       <div className="performance-empty">
-                        표시할 일별 데이터가 없습니다.
+                        {t('operator.performance.empty.dailyData')}
                       </div>
                     ) : (
                       <ResponsiveContainer
@@ -22210,14 +22488,14 @@ function InternalApp() {
                           <Line
                             type="monotone"
                             dataKey="spend"
-                            name="광고비"
+                            name={t('fields.spend')}
                             dot={false}
                           />
 
                           <Line
                             type="monotone"
                             dataKey="revenue"
-                            name="매출"
+                            name={t('fields.revenue')}
                             dot={false}
                           />
                         </LineChart>
@@ -22229,33 +22507,33 @@ function InternalApp() {
                     <div className="channel-performance-header">
                       <div>
                         <h2>
-                          매체 · 캠페인 · 제품별 성과
+                          {t('operator.performance.detail.channelCampaignProductPerformance')}
                         </h2>
 
                         <span>
-                          ROAS 높은 순
+                          {t('operator.performance.sort.roasDesc')}
                         </span>
                       </div>
                     </div>
 
                     {selectedInternalContentBreakdownData.length === 0 ? (
                       <div className="performance-empty">
-                        세부 성과 데이터가 없습니다.
+                        {t('operator.performance.empty.detailPerformance')}
                       </div>
                     ) : (
                       <div className="channel-performance-table-wrapper">
                         <table className="channel-performance-table">
                           <thead>
                             <tr>
-                              <th>매체</th>
-                              <th>캠페인</th>
-                              <th>제품</th>
-                              <th>광고비</th>
-                              <th>매출</th>
+                              <th>{t('operator.performance.table.channel')}</th>
+                              <th>{t('operator.performance.table.campaign')}</th>
+                              <th>{t('operator.performance.table.product')}</th>
+                              <th>{t('fields.spend')}</th>
+                              <th>{t('fields.revenue')}</th>
                               <th>ROAS</th>
                               <th>CPA</th>
                               <th>CTR</th>
-                              <th>전환</th>
+                              <th>{t('fields.conversions')}</th>
                             </tr>
                           </thead>
 
@@ -22279,14 +22557,14 @@ function InternalApp() {
                                     {Math.round(
                                       row.spend
                                     ).toLocaleString()}
-                                    원
+                                    {t('operator.performance.units.currencySuffix')}
                                   </td>
 
                                   <td>
                                     {Math.round(
                                       row.revenue
                                     ).toLocaleString()}
-                                    원
+                                    {t('operator.performance.units.currencySuffix')}
                                   </td>
 
                                   <td>
@@ -22297,7 +22575,7 @@ function InternalApp() {
                                     {Math.round(
                                       row.cpa
                                     ).toLocaleString()}
-                                    원
+                                    {t('operator.performance.units.currencySuffix')}
                                   </td>
 
                                   <td>
@@ -22308,7 +22586,7 @@ function InternalApp() {
                                     {Math.round(
                                       row.conversions
                                     ).toLocaleString()}
-                                    건
+                                    {t('operator.performance.units.countSuffix')}
                                   </td>
                                 </tr>
                               )
@@ -22332,16 +22610,16 @@ function InternalApp() {
             <aside className="field-panel">
 
               <h2>
-                데이터 필드
+                {t('operator.dashboard.fields.title')}
               </h2>
 
               <p>
-                필드를 드래그해서 추가하세요.
+                {t('operator.dashboard.fields.dragHint')}
               </p>
 
 
               <h3>
-                차원
+                {t('operator.dashboard.fields.dimensions')}
               </h3>
 
 
@@ -22364,14 +22642,14 @@ function InternalApp() {
                   "
                     />
 
-                    {field.label}
+                    {getTranslatedFieldLabel(field.key)}
                   </button>
                 )
               )}
 
 
               <h3>
-                지표
+                {t('operator.dashboard.fields.metrics')}
               </h3>
 
 
@@ -22394,7 +22672,7 @@ function InternalApp() {
                   "
                     />
 
-                    {field.label}
+                    {getTranslatedFieldLabel(field.key)}
                   </button>
                 )
               )}
@@ -22407,7 +22685,7 @@ function InternalApp() {
               <div className="builder-header">
 
                 <h2>
-                  셀프서비스 차트 빌더
+                  {t('operator.dashboard.builder.title')}
                 </h2>
 
 
@@ -22422,25 +22700,25 @@ function InternalApp() {
                     }
                   >
                     <option value="line">
-                      선 그래프
+                      {t('operator.dashboard.chartTypes.line')}
                     </option>
 
                     <option value="bar">
-                      막대 그래프
+                      {t('operator.dashboard.chartTypes.bar')}
                     </option>
 
                     <option value="scatter">
-                      산점도
+                      {t('operator.dashboard.chartTypes.scatter')}
                     </option>
 
                     <option value="donut">
-                      도넛 차트
+                      {t('operator.dashboard.chartTypes.donut')}
                     </option>
 
-                    <option value="kpi">KPI 카드</option>
+                    <option value="kpi">{t('operator.dashboard.chartTypes.kpi')}</option>
 
                     <option value="table">
-                      데이터 테이블
+                      {t('operator.dashboard.chartTypes.table')}
                     </option>
                   </select>
 
@@ -22453,7 +22731,7 @@ function InternalApp() {
                       resetBuilder
                     }
                   >
-                    빌더 초기화
+                    {t('operator.dashboard.builder.reset')}
                   </button>
 
                 </div>
@@ -22472,13 +22750,13 @@ function InternalApp() {
                   }
                 >
                   <strong>
-                    X축
+                    {t('operator.dashboard.builder.xAxis')}
                   </strong>
 
 
                   {xField ? (
                     <div className="field-chip">
-                      {getLabel(xField)}
+                      {getTranslatedFieldLabel(xField)}
 
                       <button
                         type="button"
@@ -22491,7 +22769,7 @@ function InternalApp() {
                     </div>
                   ) : (
                     <span>
-                      차원을 여기에 놓으세요
+                      {t('operator.dashboard.builder.dropDimension')}
                     </span>
                   )}
                 </div>
@@ -22507,7 +22785,7 @@ function InternalApp() {
                   }
                 >
                   <strong>
-                    Y축
+                    {t('operator.dashboard.builder.yAxis')}
                   </strong>
 
 
@@ -22517,7 +22795,7 @@ function InternalApp() {
                       yFields.length === 0
                       && (
                         <span>
-                          지표를 여기에 놓으세요
+                          {t('operator.dashboard.builder.dropMetric')}
                         </span>
                       )
                     }
@@ -22529,7 +22807,7 @@ function InternalApp() {
                           key={field}
                           className="field-chip"
                         >
-                          {getLabel(field)}
+                          {getTranslatedFieldLabel(field)}
 
                           <button
                             type="button"
@@ -22561,13 +22839,13 @@ function InternalApp() {
                   }
                 >
                   <strong>
-                    그룹 / 색상
+                    {t('operator.dashboard.builder.groupColor')}
                   </strong>
 
 
                   {groupField ? (
                     <div className="field-chip">
-                      {getLabel(
+                      {getTranslatedFieldLabel(
                         groupField
                       )}
 
@@ -22584,7 +22862,7 @@ function InternalApp() {
                     </div>
                   ) : (
                     <span>
-                      차원을 여기에 놓으세요
+                      {t('operator.dashboard.builder.dropDimension')}
                     </span>
                   )}
                 </div>
@@ -22600,13 +22878,13 @@ function InternalApp() {
                   }
                 >
                   <strong>
-                    필터
+                    {t('operator.dashboard.builder.filter')}
                   </strong>
 
                   {filterField ? (
                     <>
                       <div className="field-chip">
-                        {getLabel(filterField)}
+                        {getTranslatedFieldLabel(filterField)}
 
                         <button
                           type="button"
@@ -22627,7 +22905,7 @@ function InternalApp() {
                         }
                       >
                         <option value="전체">
-                          전체
+                          {t('common.all')}
                         </option>
 
                         {filterOptions.map((value) => (
@@ -22642,7 +22920,7 @@ function InternalApp() {
                     </>
                   ) : (
                     <span>
-                      차원을 여기에 놓으세요
+                      {t('operator.dashboard.builder.dropDimension')}
                     </span>
                   )}
                 </div>
@@ -22650,22 +22928,22 @@ function InternalApp() {
 
                 <div className="drop-zone">
                   <strong>
-                    툴팁
+                    {t('operator.dashboard.builder.tooltip')}
                   </strong>
 
                   <span>
-                    차트에서 자동 표시
+                    {t('operator.dashboard.builder.tooltipAuto')}
                   </span>
                 </div>
 
 
                 <div className="drop-zone">
                   <strong>
-                    크기
+                    {t('operator.dashboard.builder.size')}
                   </strong>
 
                   <span>
-                    다음 단계에서 구현
+                    {t('operator.dashboard.builder.comingSoon')}
                   </span>
                 </div>
 
@@ -22682,13 +22960,12 @@ function InternalApp() {
                         xField &&
                           yFields.length > 0
 
-                          ? `${getLabel(
-                            xField
-                          )}별 ${yFields
-                            .map(getLabel)
-                            .join(', ')}`
+                          ? buildAutoChartTitle(
+                            xField,
+                            yFields
+                          )
 
-                          : '차트 미리보기'
+                          : t('operator.dashboard.preview.emptyTitle')
                       }
                     </h3>
 
@@ -22696,10 +22973,10 @@ function InternalApp() {
                     <p>
                       {
                         groupField
-                          ? `${getLabel(
-                            groupField
-                          )} 기준으로 그룹화`
-                          : '그룹 없음'
+                          ? t('operator.dashboard.preview.groupedBy', {
+                            field: getTranslatedFieldLabel(groupField),
+                          })
+                          : t('operator.dashboard.preview.noGroup')
                       }
                     </p>
                   </div>
@@ -22719,7 +22996,7 @@ function InternalApp() {
 
 
               <h2>
-                차트 설정
+                {t('operator.dashboard.settings.title')}
               </h2>
 
               <div className="chart-setting-group">
@@ -22730,7 +23007,7 @@ function InternalApp() {
                     setInfoOpen((current) => !current)
                   }
                 >
-                  <span>차트 정보</span>
+                  <span>{t('operator.dashboard.settings.chartInfo')}</span>
                   <span>
                     {infoOpen ? '−' : '+'}
                   </span>
@@ -22740,7 +23017,7 @@ function InternalApp() {
                   <div className="chart-setting-group-content">
 
                     <div className="field-section">
-                      <label>차트 제목</label>
+                      <label>{t('operator.dashboard.settings.chartTitle')}</label>
 
                       <input
                         type="text"
@@ -22748,19 +23025,19 @@ function InternalApp() {
                         onChange={(e) =>
                           setChartTitle(e.target.value)
                         }
-                        placeholder="예: 매체별 광고비 추이"
+                        placeholder={t('operator.dashboard.settings.chartTitlePlaceholder')}
                       />
                     </div>
 
                     <div className="field-section">
-                      <label>차트 설명</label>
+                      <label>{t('operator.dashboard.settings.chartDescription')}</label>
 
                       <textarea
                         value={chartDescription}
                         onChange={(e) =>
                           setChartDescription(e.target.value)
                         }
-                        placeholder="차트 설명을 입력하세요."
+                        placeholder={t('operator.dashboard.settings.chartDescriptionPlaceholder')}
                         rows={3}
                       />
                     </div>
@@ -22777,7 +23054,7 @@ function InternalApp() {
                     setDataOpen((current) => !current)
                   }
                 >
-                  <span>데이터 설정</span>
+                  <span>{t('operator.dashboard.settings.dataSettings')}</span>
                   <span>
                     {dataOpen ? '−' : '+'}
                   </span>
@@ -22787,7 +23064,7 @@ function InternalApp() {
                   <div className="chart-setting-group-content">
 
                     <div className="field-section">
-                      <label>정렬</label>
+                      <label>{t('operator.dashboard.settings.sort')}</label>
 
                       <select
                         value={sortOrder}
@@ -22796,15 +23073,15 @@ function InternalApp() {
                         }
                       >
                         <option value="none">
-                          기본 순서
+                          {t('operator.dashboard.settings.sortDefault')}
                         </option>
 
                         <option value="desc">
-                          높은 값부터
+                          {t('operator.dashboard.settings.sortDesc')}
                         </option>
 
                         <option value="asc">
-                          낮은 값부터
+                          {t('operator.dashboard.settings.sortAsc')}
                         </option>
                       </select>
                     </div>
@@ -22819,25 +23096,25 @@ function InternalApp() {
                         }
                       >
                         <option value="all">
-                          전체
+                          {t('common.all')}
                         </option>
 
                         <option value="5">
-                          상위 5개
+                          {t('operator.dashboard.settings.top5')}
                         </option>
 
                         <option value="10">
-                          상위 10개
+                          {t('operator.dashboard.settings.top10')}
                         </option>
 
                         <option value="20">
-                          상위 20개
+                          {t('operator.dashboard.settings.top20')}
                         </option>
                       </select>
                     </div>
 
                     <div className="field-section">
-                      <label>집계 방식</label>
+                      <label>{t('operator.dashboard.settings.aggregation')}</label>
 
                       <select
                         value={aggregation}
@@ -22846,19 +23123,19 @@ function InternalApp() {
                         }
                       >
                         <option value="sum">
-                          합계
+                          {t('operator.dashboard.settings.sum')}
                         </option>
 
                         <option value="avg">
-                          평균
+                          {t('operator.dashboard.settings.average')}
                         </option>
 
                         <option value="max">
-                          최대
+                          {t('operator.dashboard.settings.maximum')}
                         </option>
 
                         <option value="min">
-                          최소
+                          {t('operator.dashboard.settings.minimum')}
                         </option>
                       </select>
                     </div>
@@ -22875,7 +23152,7 @@ function InternalApp() {
                     setDisplayOpen((current) => !current)
                   }
                 >
-                  <span>표시 형식</span>
+                  <span>{t('operator.dashboard.settings.displayFormat')}</span>
                   <span>
                     {displayOpen ? '−' : '+'}
                   </span>
@@ -22885,7 +23162,7 @@ function InternalApp() {
                   <div className="chart-setting-group-content">
 
                     <div className="field-section">
-                      <label>숫자 표시</label>
+                      <label>{t('operator.dashboard.settings.numberDisplay')}</label>
 
                       <select
                         value={numberFormat}
@@ -22894,15 +23171,15 @@ function InternalApp() {
                         }
                       >
                         <option value="auto">
-                          자동
+                          {t('operator.dashboard.settings.auto')}
                         </option>
 
                         <option value="full">
-                          전체 숫자
+                          {t('operator.dashboard.settings.fullNumber')}
                         </option>
 
                         <option value="compact">
-                          축약 표시
+                          {t('operator.dashboard.settings.compact')}
                         </option>
 
                         {[
@@ -22912,7 +23189,7 @@ function InternalApp() {
                           'cpa',
                         ].includes(primaryMetric) && (
                             <option value="currency">
-                              원화
+                              {t('operator.dashboard.settings.currency')}
                             </option>
                           )}
 
@@ -22921,7 +23198,7 @@ function InternalApp() {
                           'cvr',
                         ].includes(primaryMetric) && (
                             <option value="percent">
-                              퍼센트
+                              {t('operator.dashboard.settings.percent')}
                             </option>
                           )}
                       </select>
@@ -22937,7 +23214,7 @@ function InternalApp() {
                               setLegendVisible(e.target.checked)
                             }
                           />
-                          범례 표시
+                          {t('operator.dashboard.settings.showLegend')}
                         </label>
                       </div>
                     )}
@@ -22953,7 +23230,7 @@ function InternalApp() {
                                 setXAxisVisible(e.target.checked)
                               }
                             />
-                            X축 표시
+                            {t('operator.dashboard.settings.showXAxis')}
                           </label>
                         </div>
 
@@ -22966,7 +23243,7 @@ function InternalApp() {
                                 setYAxisVisible(e.target.checked)
                               }
                             />
-                            Y축 표시
+                            {t('operator.dashboard.settings.showYAxis')}
                           </label>
                         </div>
                       </>
@@ -22984,7 +23261,7 @@ function InternalApp() {
                     resetBuilder()
                   }}
                 >
-                  편집 취소
+                  {t('operator.dashboard.actions.cancelEdit')}
                 </button>
               )}
 
@@ -22994,8 +23271,8 @@ function InternalApp() {
                 className="add-dashboard-button"
               >
                 {editingChartId
-                  ? '차트 수정 완료'
-                  : '대시보드에 추가'}
+                  ? t('operator.dashboard.actions.finishEdit')
+                  : t('operator.dashboard.actions.addToDashboard')}
               </button>
 
             </aside>
@@ -23010,11 +23287,13 @@ function InternalApp() {
 
               <div className="saved-dashboard-title-area">
                 <h2>
-                  내 대시보드
+                  {t('operator.dashboard.saved.title')}
                 </h2>
 
                 <span>
-                  {savedCharts.length}개 차트
+                  {t('operator.dashboard.saved.chartCount', {
+                    count: savedCharts.length,
+                  })}
                 </span>
               </div>
 
@@ -23024,7 +23303,7 @@ function InternalApp() {
 
                   <div className="dashboard-control-group">
                     <span className="dashboard-control-label">
-                      카드 크기
+                      {t('operator.dashboard.saved.cardSize')}
                     </span>
 
                     <select
@@ -23034,22 +23313,22 @@ function InternalApp() {
                       }
                     >
                       <option value="small">
-                        작은 카드
+                        {t('operator.dashboard.saved.smallCard')}
                       </option>
 
                       <option value="medium">
-                        기본 카드
+                        {t('operator.dashboard.saved.defaultCard')}
                       </option>
 
                       <option value="large">
-                        큰 카드
+                        {t('operator.dashboard.saved.largeCard')}
                       </option>
                     </select>
                   </div>
 
                   <div className="dashboard-control-group">
                     <span className="dashboard-control-label">
-                      열 개수
+                      {t('operator.dashboard.saved.columns')}
                     </span>
 
                     <select
@@ -23059,15 +23338,15 @@ function InternalApp() {
                       }
                     >
                       <option value="1">
-                        1열
+                        {t('operator.dashboard.saved.oneColumn')}
                       </option>
 
                       <option value="2">
-                        2열
+                        {t('operator.dashboard.saved.twoColumns')}
                       </option>
 
                       <option value="3">
-                        3열
+                        {t('operator.dashboard.saved.threeColumns')}
                       </option>
                     </select>
                   </div>
@@ -23077,7 +23356,7 @@ function InternalApp() {
                     className="dashboard-auto-arrange-button"
                     onClick={autoArrangeCharts}
                   >
-                    자동 정렬
+                    {t('operator.dashboard.saved.autoArrange')}
                   </button>
 
                 </div>
@@ -23086,8 +23365,8 @@ function InternalApp() {
                   type="button"
                   className="dashboard-reset-button"
                   onClick={resetDashboard}
-                  title="대시보드 초기화"
-                  aria-label="대시보드 초기화"
+                  title={t('operator.dashboard.saved.resetDashboard')}
+                  aria-label={t('operator.dashboard.saved.resetDashboard')}
                 >
                   🗑️
                 </button>
@@ -23103,7 +23382,7 @@ function InternalApp() {
             {
               savedCharts.length === 0 ? (
                 <div className="saved-empty">
-                  아직 추가된 차트가 없습니다.
+                  {t('operator.dashboard.saved.empty')}
                 </div>
               ) : (
                 <div
@@ -23157,8 +23436,10 @@ function InternalApp() {
 
                           <p>
                             {chart.groupField
-                              ? `${getLabel(chart.groupField)} 그룹`
-                              : '그룹 없음'}
+                              ? t('operator.dashboard.saved.groupLabel', {
+                                field: getTranslatedFieldLabel(chart.groupField),
+                              })
+                              : t('operator.dashboard.preview.noGroup')}
                           </p>
                         </div>
 
@@ -23169,7 +23450,7 @@ function InternalApp() {
                               editSavedChart(chart)
                             }
                           >
-                            설정 편집
+                            {t('operator.dashboard.saved.editSettings')}
                           </button>
 
                           <button
@@ -23178,7 +23459,7 @@ function InternalApp() {
                               duplicateChart(chart)
                             }
                           >
-                            복제
+                            {t('common.duplicate')}
                           </button>
 
                           <button
@@ -23192,7 +23473,7 @@ function InternalApp() {
                               )
                             }
                           >
-                            삭제
+                            {t('common.delete')}
                           </button>
 
                           <button
@@ -23210,7 +23491,7 @@ function InternalApp() {
                                 startChartY: chart.y ?? 0,
                               })
                             }}
-                            title="차트 이동"
+                            title={t('operator.dashboard.saved.moveChart')}
                           >
                             ⠿
                           </button>
@@ -23219,26 +23500,26 @@ function InternalApp() {
 
                       <div className="saved-chart-summary">
                         <span>
-                          차트 유형: {chart.chartType}
+                          {t('operator.dashboard.saved.chartType')}: {getChartTypeLabel(chart.chartType)}
                         </span>
 
                         {chart.xField && (
                           <span>
-                            X축: {getLabel(chart.xField)}
+                            {t('operator.dashboard.builder.xAxis')}: {getTranslatedFieldLabel(chart.xField)}
                           </span>
                         )}
 
                         <span>
-                          Y축:{' '}
+                          {t('operator.dashboard.builder.yAxis')}:{' '}
                           {chart.yFields
-                            .map(getLabel)
+                            .map(getTranslatedFieldLabel)
                             .join(', ')}
                         </span>
 
                         {chart.filterField && (
                           <span>
-                            필터:{' '}
-                            {getLabel(chart.filterField)}
+                            {t('operator.dashboard.builder.filter')}:{' '}
+                            {getTranslatedFieldLabel(chart.filterField)}
                             {' = '}
                             {chart.filterValue}
                           </span>
@@ -23266,12 +23547,11 @@ function InternalApp() {
           <div className="anomaly-alert-header">
             <div>
               <h2>
-                이상 지표 알림
+                {t('operator.alerts.header.title')}
               </h2>
 
               <p>
-                주요 광고 성과 지표의
-                급격한 변동을 탐지합니다.
+                {t('operator.alerts.header.description')}
               </p>
             </div>
 
@@ -23285,8 +23565,8 @@ function InternalApp() {
               }
             >
               {anomalyAlertsLoading
-                ? '불러오는 중...'
-                : '새로고침'}
+                ? t('operator.alerts.header.loading')
+                : t('operator.alerts.header.refresh')}
             </button>
           </div>
 
@@ -23295,7 +23575,7 @@ function InternalApp() {
 
             <div className="anomaly-summary-card">
               <span>
-                미확인 Alert
+                {t('operator.alerts.summary.open')}
               </span>
 
               <strong>
@@ -23308,7 +23588,7 @@ function InternalApp() {
 
             <div className="anomaly-summary-card critical">
               <span>
-                Critical
+                {t('operator.alerts.summary.critical')}
               </span>
 
               <strong>
@@ -23321,7 +23601,7 @@ function InternalApp() {
 
             <div className="anomaly-summary-card warning">
               <span>
-                Warning
+                {t('operator.alerts.summary.warning')}
               </span>
 
               <strong>
@@ -23334,7 +23614,7 @@ function InternalApp() {
 
             <div className="anomaly-summary-card">
               <span>
-                확인 완료
+                {t('operator.alerts.summary.acknowledged')}
               </span>
 
               <strong>
@@ -23358,13 +23638,13 @@ function InternalApp() {
           {anomalyAlertsLoading ? (
 
             <div className="anomaly-alert-empty">
-              이상 알림을 불러오는 중입니다.
+              {t('operator.alerts.empty.loading')}
             </div>
 
           ) : anomalyAlerts.length === 0 ? (
 
             <div className="anomaly-alert-empty">
-              현재 이상 지표가 없습니다.
+              {t('operator.alerts.empty.none')}
             </div>
 
           ) : (
@@ -23378,26 +23658,29 @@ function InternalApp() {
                     alert.severity ===
                     'critical'
 
-                  const metricLabelMap = {
-                    roas: 'ROAS',
-                    cpa: 'CPA',
-                    cvr: 'CVR',
-                    ctr: 'CTR',
-                    cpc: 'CPC',
-                    revenue: '매출',
-                    conversions: '전환',
-                  }
-
                   const metricLabel =
-                    metricLabelMap[
-                    alert.metric
-                    ] ||
-                    alert.metric
+                    t(
+                      `fields.${alert.metric}`,
+                      {
+                        defaultValue:
+                          String(
+                            alert.metric || '-'
+                          ).toUpperCase(),
+                      }
+                    )
 
                   const guidance =
                     getAnomalyGuidance(
-                      alert
+                      alert,
+                      t
                     )
+
+                  const alertStatusKey =
+                    alert.status === 'acknowledged'
+                      ? 'acknowledged'
+                      : alert.status === 'resolved'
+                        ? 'resolved'
+                        : 'open'
 
                   return (
                     <div
@@ -23415,8 +23698,8 @@ function InternalApp() {
                             }
                           >
                             {isCritical
-                              ? 'CRITICAL'
-                              : 'WARNING'}
+                              ? t('operator.alerts.severity.critical')
+                              : t('operator.alerts.severity.warning')}
                           </span>
 
                           <span className="anomaly-alert-date">
@@ -23439,7 +23722,7 @@ function InternalApp() {
                                   )
                                 }
                               >
-                                확인
+                                {t('operator.alerts.actions.acknowledge')}
                               </button>
                             )}
 
@@ -23454,7 +23737,7 @@ function InternalApp() {
                                   )
                                 }
                               >
-                                해결 완료
+                                {t('operator.alerts.actions.resolve')}
                               </button>
                             )}
 
@@ -23466,10 +23749,16 @@ function InternalApp() {
 
                         <div className="anomaly-alert-title">
                           <strong>
-                            {
-                              alert.title ||
-                              `${metricLabel} 이상 변동`
-                            }
+                            {i18n.language === 'en'
+                              ? t(
+                                'operator.alerts.card.anomalyTitle',
+                                { metric: metricLabel }
+                              )
+                              : alert.title ||
+                              t(
+                                'operator.alerts.card.anomalyTitle',
+                                { metric: metricLabel }
+                              )}
                           </strong>
 
                           <span>
@@ -23488,7 +23777,7 @@ function InternalApp() {
                             'campaign'
                             ? (
                               <>
-                                캠페인 ·{' '}
+                                {t('operator.alerts.scope.campaign')} ·{' '}
                                 {
                                   alert.campaignName ||
                                   alert.campaignId ||
@@ -23498,7 +23787,7 @@ function InternalApp() {
                             )
                             : (
                               <>
-                                매체 ·{' '}
+                                {t('operator.alerts.scope.channel')} ·{' '}
                                 {
                                   alert.channel ||
                                   alert.platform ||
@@ -23513,7 +23802,7 @@ function InternalApp() {
 
                           <div>
                             <span>
-                              성과 기준일
+                              {t('operator.alerts.time.performanceDate')}
                             </span>
 
                             <strong>
@@ -23526,13 +23815,14 @@ function InternalApp() {
 
                           <div>
                             <span>
-                              최초 감지
+                              {t('operator.alerts.time.firstDetected')}
                             </span>
 
                             <strong>
                               {
                                 formatAlertDateTime(
-                                  alert.createdAt
+                                  alert.createdAt,
+                                  i18n.language
                                 )
                               }
                             </strong>
@@ -23540,13 +23830,14 @@ function InternalApp() {
 
                           <div>
                             <span>
-                              마지막 재검사
+                              {t('operator.alerts.time.lastChecked')}
                             </span>
 
                             <strong>
                               {
                                 formatAlertDateTime(
-                                  alert.updatedAt
+                                  alert.updatedAt,
+                                  i18n.language
                                 )
                               }
                             </strong>
@@ -23559,7 +23850,7 @@ function InternalApp() {
 
                           <div>
                             <span>
-                              지표
+                              {t('operator.alerts.metrics.metric')}
                             </span>
 
                             <strong>
@@ -23569,7 +23860,7 @@ function InternalApp() {
 
                           <div>
                             <span>
-                              기준값
+                              {t('operator.alerts.metrics.baseline')}
                             </span>
 
                             <strong>
@@ -23577,7 +23868,9 @@ function InternalApp() {
                                 alert.baselineValue ??
                                 0
                               ).toLocaleString(
-                                undefined,
+                                i18n.language === 'en'
+                                  ? 'en-US'
+                                  : 'ko-KR',
                                 {
                                   maximumFractionDigits:
                                     2,
@@ -23588,7 +23881,7 @@ function InternalApp() {
 
                           <div>
                             <span>
-                              현재값
+                              {t('operator.alerts.metrics.current')}
                             </span>
 
                             <strong>
@@ -23596,7 +23889,9 @@ function InternalApp() {
                                 alert.currentValue ??
                                 0
                               ).toLocaleString(
-                                undefined,
+                                i18n.language === 'en'
+                                  ? 'en-US'
+                                  : 'ko-KR',
                                 {
                                   maximumFractionDigits:
                                     2,
@@ -23607,7 +23902,7 @@ function InternalApp() {
 
                           <div>
                             <span>
-                              변화율
+                              {t('operator.alerts.metrics.changeRate')}
                             </span>
 
                             <strong>
@@ -23642,7 +23937,7 @@ function InternalApp() {
 
                           <div>
                             <span>
-                              Robust Z
+                              {t('operator.alerts.metrics.robustZ')}
                             </span>
 
                             <strong>
@@ -23657,7 +23952,12 @@ function InternalApp() {
 
 
                         <p className="anomaly-alert-message">
-                          {alert.message}
+                          {getAnomalyDisplayMessage(
+                            alert,
+                            t,
+                            i18n.language,
+                            metricLabel
+                          )}
                         </p>
 
                         <div className="anomaly-guidance">
@@ -23665,7 +23965,7 @@ function InternalApp() {
                           <div className="anomaly-guidance-block">
 
                             <strong className="anomaly-guidance-title">
-                              가능한 원인
+                              {t('operator.alerts.guidance.possibleCausesTitle')}
                             </strong>
 
                             <ul>
@@ -23695,7 +23995,7 @@ function InternalApp() {
                           <div className="anomaly-guidance-block">
 
                             <strong className="anomaly-guidance-title">
-                              권장 조치
+                              {t('operator.alerts.guidance.recommendedActionsTitle')}
                             </strong>
 
                             <ol>
@@ -23727,10 +24027,10 @@ function InternalApp() {
                         <div className="anomaly-alert-footer">
 
                           <span>
-                            상태:{' '}
-                            {
-                              alert.status
-                            }
+                            {t('operator.alerts.footer.status')}:{' '}
+                            {t(
+                              `operator.alerts.status.${alertStatusKey}`
+                            )}
                           </span>
 
                           <span>
@@ -23758,16 +24058,16 @@ function InternalApp() {
           <div className="budget-optimization-header">
             <div>
               <h2>
-                예산 최적화
+                {t('operator.budget.header.title')}
               </h2>
 
               <span>
-                실제 광고 성과를 기반으로 캠페인별 예산을 재배분합니다.
+                {t('operator.budget.header.description')}
               </span>
             </div>
 
             <span className="optimization-shadow-badge">
-              추천 전용
+              {t('operator.budget.header.shadowOnly')}
             </span>
           </div>
 
@@ -23788,8 +24088,8 @@ function InternalApp() {
             >
               {performanceDataSource ===
                 'naver'
-                ? 'Naver 캠페인별 예산'
-                : '캠페인별 예산'}
+                ? t('operator.budget.modes.naverCampaign')
+                : t('operator.budget.modes.campaign')}
             </button>
 
             <button
@@ -23806,7 +24106,7 @@ function InternalApp() {
                 )
               }
             >
-              매체별 예산 배분
+              {t('operator.budget.modes.channel')}
             </button>
 
             <button
@@ -23823,7 +24123,7 @@ function InternalApp() {
                 )
               }
             >
-              예산 확장 분석
+              {t('operator.budget.scaling.title')}
             </button>
           </div>
 
@@ -23832,21 +24132,21 @@ function InternalApp() {
               <div className="naver-optimization-settings">
                 <div className="naver-setting-item">
                   <label>
-                    최적화 목표
+                    {t('operator.budget.campaign.objective')}
                   </label>
 
                   <strong>
-                    예상 매출 최대화
+                    {t('operator.budget.campaign.maximizeRevenue')}
                   </strong>
 
                   <small>
-                    캠페인별 Response Curve 기반
+                    {t('operator.budget.campaign.responseCurveBased')}
                   </small>
                 </div>
 
                 <div className="naver-setting-item">
                   <label>
-                    예산 변경 한도
+                    {t('operator.budget.campaign.changeLimit')}
                   </label>
 
                   <div className="optimization-limit-input">
@@ -23882,18 +24182,18 @@ function InternalApp() {
 
                 <div className="naver-setting-item">
                   <label>
-                    실행 방식
+                    {t('operator.budget.campaign.executionMode')}
                   </label>
 
                   <strong>
-                    추천 결과만 확인
+                    {t('operator.budget.campaign.recommendationOnly')}
                   </strong>
 
                   <small>
                     {performanceDataSource ===
                       'mock'
-                      ? 'Mock 테스트 전용 · 실제 매체 예산에는 영향 없음'
-                      : '실제 Naver 예산은 변경하지 않음'}
+                      ? t('operator.budget.campaign.mockNoImpact')
+                      : t('operator.budget.campaign.naverNoChange')}
                   </small>
                 </div>
               </div>
@@ -23909,8 +24209,8 @@ function InternalApp() {
                 }
               >
                 {naverPreviewLoading
-                  ? '캠페인 최적화 계산 중...'
-                  : '캠페인 예산 최적화 실행'}
+                  ? t('operator.budget.campaign.calculating')
+                  : t('operator.budget.campaign.run')}
               </button>
 
               {naverPreviewError && (
@@ -23925,11 +24225,11 @@ function InternalApp() {
                     <div className="naver-readiness-header">
                       <div>
                         <span className="naver-status-label">
-                          데이터 준비 중
+                          {t('operator.budget.campaign.preparing')}
                         </span>
 
                         <h3>
-                          캠페인 최적화 대기
+                          {t('operator.budget.campaign.pending')}
                         </h3>
                       </div>
 
@@ -23964,7 +24264,7 @@ function InternalApp() {
                     <div className="naver-readiness-grid">
                       <div>
                         <span>
-                          Conversion 유효 시작일
+                          {t('operator.budget.campaign.conversionValidStart')}
                         </span>
 
                         <strong>
@@ -23976,38 +24276,38 @@ function InternalApp() {
 
                       <div>
                         <span>
-                          현재 유효 데이터
+                          {t('operator.budget.campaign.validData')}
                         </span>
 
                         <strong>
                           {naverPreviewResult
                             .validRevenueDays ?? 0}
-                          일
+                          {t('operator.budget.common.days')}
                         </strong>
                       </div>
 
                       <div>
                         <span>
-                          최소 필요 데이터
+                          {t('operator.budget.campaign.minimumData')}
                         </span>
 
                         <strong>
                           {naverPreviewResult
                             .minimumValidTotalDays ??
                             0}
-                          일
+                          {t('operator.budget.common.days')}
                         </strong>
                       </div>
 
                       <div>
                         <span>
-                          추가 필요
+                          {t('operator.budget.campaign.additionalNeeded')}
                         </span>
 
                         <strong>
                           {naverPreviewResult
                             .remainingValidDays ?? 0}
-                          일
+                          {t('operator.budget.common.days')}
                         </strong>
                       </div>
                     </div>
@@ -24023,7 +24323,7 @@ function InternalApp() {
                   <div className="naver-portfolio-summary">
                     <div>
                       <span>
-                        현재 총 일예산
+                        {t('operator.budget.campaign.currentTotalDailyBudget')}
                       </span>
 
                       <strong>
@@ -24036,13 +24336,13 @@ function InternalApp() {
                             0
                           )
                         ).toLocaleString()}
-                        원
+                        {t('client.common.currency')}
                       </strong>
                     </div>
 
                     <div>
                       <span>
-                        추천 총 일예산
+                        {t('operator.budget.campaign.recommendedTotalDailyBudget')}
                       </span>
 
                       <strong>
@@ -24055,13 +24355,13 @@ function InternalApp() {
                             0
                           )
                         ).toLocaleString()}
-                        원
+                        {t('client.common.currency')}
                       </strong>
                     </div>
 
                     <div>
                       <span>
-                        예상 Lift
+                        {t('operator.budget.campaign.expectedLift')}
                       </span>
 
                       <strong>
@@ -24075,7 +24375,7 @@ function InternalApp() {
 
                     <div>
                       <span>
-                        최적화 대상
+                        {t('operator.budget.campaign.eligible')}
                       </span>
 
                       <strong>
@@ -24094,20 +24394,19 @@ function InternalApp() {
                     <div className="campaign-recommendation-header">
                       <div>
                         <h3>
-                          캠페인 예산 추천
+                          {t('operator.budget.campaign.recommendationTitle')}
                         </h3>
 
                         <p>
-                          현재 예산에서 얼마로 조정할지와
-                          추천 이유를 캠페인별로 확인합니다.
+                          {t('operator.budget.campaign.recommendationDescription')}
                         </p>
                       </div>
 
                       <span className="campaign-recommendation-source">
                         {performanceDataSource ===
                           'mock'
-                          ? 'Mock 데이터 기준'
-                          : '실제 Naver 데이터 기준'}
+                          ? t('operator.budget.campaign.sourceMock')
+                          : t('operator.budget.campaign.sourceNaver')}
                       </span>
                     </div>
 
@@ -24116,27 +24415,27 @@ function InternalApp() {
                         <thead>
                           <tr>
                             <th>
-                              캠페인
+                              {t('operator.budget.common.campaign')}
                             </th>
 
                             <th>
-                              현재 예산
+                              {t('operator.budget.common.currentBudget')}
                             </th>
 
                             <th>
-                              추천 예산
+                              {t('operator.budget.common.recommendedBudget')}
                             </th>
 
                             <th>
-                              조정
+                              {t('operator.budget.common.adjustment')}
                             </th>
 
                             <th>
-                              추천 액션
+                              {t('operator.budget.common.recommendedAction')}
                             </th>
 
                             <th>
-                              추천 근거
+                              {t('operator.budget.common.rationale')}
                             </th>
                           </tr>
                         </thead>
@@ -24218,7 +24517,7 @@ function InternalApp() {
                                   : []
 
                               let recommendationAction =
-                                '유지'
+                                t('operator.budget.campaign.hold')
 
                               let actionClass =
                                 'hold'
@@ -24228,7 +24527,7 @@ function InternalApp() {
                                 'REVIEW'
                               ) {
                                 recommendationAction =
-                                  '유지 검토'
+                                  t('operator.budget.campaign.reviewHold')
 
                                 actionClass =
                                   'review'
@@ -24238,7 +24537,7 @@ function InternalApp() {
                                 'HOLD_CURRENT'
                               ) {
                                 recommendationAction =
-                                  '현재 유지'
+                                  t('operator.budget.campaign.keepCurrent')
 
                                 actionClass =
                                   'hold'
@@ -24247,7 +24546,7 @@ function InternalApp() {
                                 changePct > 0.05
                               ) {
                                 recommendationAction =
-                                  '증액'
+                                  t('operator.budget.campaign.increase')
 
                                 actionClass =
                                   'increase'
@@ -24256,14 +24555,14 @@ function InternalApp() {
                                 changePct < -0.05
                               ) {
                                 recommendationAction =
-                                  '감액'
+                                  t('operator.budget.campaign.decrease')
 
                                 actionClass =
                                   'decrease'
                               }
 
                               let recommendationReason =
-                                '현재 수준 유지가 권장됩니다.'
+                                t('operator.budget.campaign.reasonHold')
 
                               if (
                                 safetyAction ===
@@ -24273,8 +24572,8 @@ function InternalApp() {
                                   safetyReasons.includes(
                                     'SLOPE_SENSITIVE'
                                   )
-                                    ? '반응곡선의 기울기 민감도가 높아 현재 예산을 유지하고 추가 확인이 필요합니다.'
-                                    : 'Safety 검토 대상으로 분류되어 현재 예산을 유지합니다.'
+                                    ? t('operator.budget.campaign.reasonSlopeSensitive')
+                                    : t('operator.budget.campaign.reasonSafetyReview')
 
                               } else if (
                                 safetyAction ===
@@ -24284,32 +24583,28 @@ function InternalApp() {
                                   safetyReasons.includes(
                                     'NO_VALIDATION_GAIN_VS_TRAIN_MEAN'
                                   )
-                                    ? '검증 데이터에서 충분한 개선 효과가 확인되지 않아 현재 예산을 유지합니다.'
+                                    ? t('operator.budget.campaign.reasonNoValidationGain')
                                     : safetyReasons.includes(
                                       'INSUFFICIENT_HISTORY'
                                     )
-                                      ? '학습 이력이 충분하지 않아 현재 예산을 유지합니다.'
-                                      : 'Safety Gate에 따라 현재 예산을 유지합니다.'
+                                      ? t('operator.budget.campaign.reasonInsufficientHistory')
+                                      : t('operator.budget.campaign.reasonSafetyGate')
 
                               } else if (
                                 changePct > 0.05
                               ) {
                                 recommendationReason =
-                                  `모델 최적화 결과 현재 대비 ${Math.abs(
-                                    changePct
-                                  ).toFixed(
-                                    1
-                                  )}% 증액이 계산되었습니다.`
+                                  t('operator.budget.campaign.reasonIncrease', {
+                                    change: Math.abs(changePct).toFixed(1),
+                                  })
 
                               } else if (
                                 changePct < -0.05
                               ) {
                                 recommendationReason =
-                                  `모델 최적화 결과 현재 대비 ${Math.abs(
-                                    changePct
-                                  ).toFixed(
-                                    1
-                                  )}% 감액이 계산되었습니다.`
+                                  t('operator.budget.campaign.reasonDecrease', {
+                                    change: Math.abs(changePct).toFixed(1),
+                                  })
                               }
 
                               return (
@@ -24334,7 +24629,7 @@ function InternalApp() {
                                     {Math.round(
                                       currentBudget
                                     ).toLocaleString()}
-                                    원
+                                    {t('client.common.currency')}
                                   </td>
 
                                   <td className="campaign-recommendation-budget">
@@ -24342,7 +24637,7 @@ function InternalApp() {
                                       {Math.round(
                                         recommendedBudget
                                       ).toLocaleString()}
-                                      원
+                                      {t('client.common.currency')}
                                     </strong>
                                   </td>
 
@@ -24387,26 +24682,26 @@ function InternalApp() {
 
                                     <details className="campaign-model-details">
                                       <summary>
-                                        모델 상세 보기
+                                        {t('operator.budget.campaign.modelDetails')}
                                       </summary>
 
                                       <div className="campaign-model-detail-grid">
                                         <div>
                                           <span>
-                                            Safety 적용 전 후보
+                                            {t('operator.budget.campaign.preSafetyCandidate')}
                                           </span>
 
                                           <strong>
                                             {Math.round(
                                               candidateBudget
                                             ).toLocaleString()}
-                                            원
+                                            {t('client.common.currency')}
                                           </strong>
                                         </div>
 
                                         <div>
                                           <span>
-                                            예상 매출
+                                            {t('operator.budget.common.expectedRevenue')}
                                           </span>
 
                                           <strong>
@@ -24415,7 +24710,7 @@ function InternalApp() {
                                             )
                                               ? `${Math.round(
                                                 expectedRevenue
-                                              ).toLocaleString()}원`
+                                              ).toLocaleString()}${t('client.common.currency')}`
                                               : '-'}
                                           </strong>
                                         </div>
@@ -24438,7 +24733,7 @@ function InternalApp() {
 
                                         <div>
                                           <span>
-                                            Safety 판정
+                                            {t('operator.budget.campaign.safetyDecision')}
                                           </span>
 
                                           <strong>
@@ -24452,7 +24747,7 @@ function InternalApp() {
                                       {safetyReasons
                                         .length > 0 && (
                                           <div className="campaign-model-reasons">
-                                            원본 진단:
+                                            {t('operator.budget.campaign.rawDiagnostics')}
                                             {' '}
                                             {safetyReasons.join(
                                               ', '
@@ -24481,12 +24776,11 @@ function InternalApp() {
                 <div className="budget-scaling-header">
                   <div>
                     <h3>
-                      예산 확장 분석
+                      {t('operator.budget.scaling.title')}
                     </h3>
 
                     <p>
-                      현재 예산을 기준으로 증액·감액 시나리오별
-                      예상 성과와 효율 변화를 비교합니다.
+                      {t('operator.budget.scaling.description')}
                     </p>
                   </div>
                 </div>
@@ -24494,7 +24788,7 @@ function InternalApp() {
                 <div className="budget-scaling-summary">
                   <div className="budget-scaling-summary-card">
                     <span>
-                      현재 대상 일예산
+                      {t('operator.budget.scaling.currentTargetDailyBudget')}
                     </span>
 
                     <strong>
@@ -24504,13 +24798,13 @@ function InternalApp() {
                             ?.optimizationCurrentTotalDailyBudget
                         ) || 0
                       ).toLocaleString()}
-                      원
+                      {t('client.common.currency')}
                     </strong>
                   </div>
 
                   <div className="budget-scaling-summary-card">
                     <span>
-                      분석 시나리오
+                      {t('operator.budget.scaling.scenarioCount')}
                     </span>
 
                     <strong>
@@ -24518,13 +24812,13 @@ function InternalApp() {
                         budgetScalingMultipliers
                           .length
                       }
-                      개
+                      {t('operator.budget.common.campaigns')}
                     </strong>
                   </div>
 
                   <div className="budget-scaling-summary-card">
                     <span>
-                      예산 조정 허용폭
+                      {t('operator.budget.scaling.allowedRange')}
                     </span>
 
                     <strong>
@@ -24567,7 +24861,7 @@ function InternalApp() {
                         >
                           <span>
                             {multiplier === 1
-                              ? '현재'
+                              ? t('operator.budget.common.current')
                               : `${changePct > 0
                                 ? '+'
                                 : ''
@@ -24580,7 +24874,7 @@ function InternalApp() {
                             {Math.round(
                               scenarioBudget
                             ).toLocaleString()}
-                            원
+                            {t('client.common.currency')}
                           </strong>
                         </div>
                       )
@@ -24607,14 +24901,14 @@ function InternalApp() {
                   }
                 >
                   {budgetScalingLoading
-                    ? '예산 시나리오 분석 중...'
-                    : '예산 확장 분석 실행'}
+                    ? t('operator.budget.scaling.analyzing')
+                    : t('operator.budget.scaling.run')}
                 </button>
 
                 <div className="budget-scaling-decision-summary">
                   <div className="budget-scaling-decision-card">
                     <span>
-                      현재 운영 예산
+                      {t('operator.budget.scaling.currentOperatingBudget')}
                     </span>
 
                     <strong>
@@ -24622,24 +24916,23 @@ function InternalApp() {
                         budgetScalingKpis
                           .currentBudget
                       ).toLocaleString()}
-                      원
+                      {t('client.common.currency')}
                     </strong>
 
                     <small>
-                      최적화 대상 캠페인 기준
+                      {t('operator.budget.scaling.eligibleCampaignBasis')}
                     </small>
                   </div>
 
                   <div className="budget-scaling-decision-card">
                     <span>
-                      증액 검토 가능 구간
+                      {t('operator.budget.scaling.increaseRange')}
                     </span>
 
                     <strong>
-                      {
-                        budgetScalingKpis
-                          .expansionLabel
-                      }
+                      {getBudgetScalingLabel(
+                        budgetScalingKpis.expansionLabel
+                      )}
                     </strong>
 
                     <small>
@@ -24650,21 +24943,20 @@ function InternalApp() {
                         ? `${Math.round(
                           budgetScalingKpis
                             .expansionBudget
-                        ).toLocaleString()}원`
-                        : '학습 데이터 대기 중'}
+                        ).toLocaleString()}${t('client.common.currency')}`
+                        : t('operator.budget.scaling.waitingTraining')}
                     </small>
                   </div>
 
                   <div className="budget-scaling-decision-card">
                     <span>
-                      효율 둔화 시작
+                      {t('operator.budget.scaling.slowdownStart')}
                     </span>
 
                     <strong>
-                      {
-                        budgetScalingKpis
-                          .slowdownLabel
-                      }
+                      {getBudgetScalingLabel(
+                        budgetScalingKpis.slowdownLabel
+                      )}
                     </strong>
 
                     <small>
@@ -24675,12 +24967,12 @@ function InternalApp() {
                         ? `${Math.round(
                           budgetScalingKpis
                             .slowdownBudget
-                        ).toLocaleString()}원`
+                        ).toLocaleString()}${t('client.common.currency')}`
                         : budgetScalingKpis
                           .slowdownLabel ===
                           '범위 내 미감지'
-                          ? '현재 분석 범위 기준'
-                          : '학습 데이터 대기 중'}
+                          ? t('operator.budget.scaling.basedOnCurrentRange')
+                          : t('operator.budget.scaling.waitingTraining')}
                     </small>
                   </div>
                 </div>
@@ -24695,41 +24987,41 @@ function InternalApp() {
                   'ok' && (
                     <div className="budget-scaling-results">
                       <h4>
-                        예산 시나리오 비교
+                        {t('operator.budget.scaling.scenarioComparison')}
                       </h4>
 
                       <div className="budget-scaling-table">
                         <div className="budget-scaling-table-header">
                           <span>
-                            변화
+                            {t('operator.budget.scaling.change')}
                           </span>
 
                           <span>
-                            일예산
+                            {t('operator.budget.scaling.dailyBudget')}
                           </span>
 
                           <span>
-                            예상 매출
+                            {t('operator.budget.common.expectedRevenue')}
                           </span>
 
                           <span>
-                            예상 ROAS
+                            {t('operator.budget.common.expectedRoas')}
                           </span>
 
                           <span>
-                            증분 매출
+                            {t('operator.budget.scaling.incrementalRevenue')}
                           </span>
 
                           <span>
-                            한계 ROAS
+                            {t('operator.budget.scaling.marginalRoas')}
                           </span>
 
                           <span>
-                            효율 판단
+                            {t('operator.budget.scaling.efficiencyAssessment')}
                           </span>
 
                           <span>
-                            분석 상태
+                            {t('operator.budget.scaling.analysisStatus')}
                           </span>
                         </div>
 
@@ -24782,7 +25074,7 @@ function InternalApp() {
                                 rawBlockCode.includes(
                                   'Total budget'
                                 )
-                                ? '현재 제약조건에서 실행 불가'
+                                ? t('operator.budget.scaling.infeasible')
                                 : (
                                   rawBlockCode ||
                                   '-'
@@ -24814,14 +25106,14 @@ function InternalApp() {
                                   ? (
                                     marginalRoas >=
                                       budgetScalingEfficiencyThreshold
-                                      ? '효율 유지'
-                                      : '효율 둔화'
+                                      ? t('operator.budget.scaling.efficiencyMaintained')
+                                      : t('operator.budget.scaling.efficiencySlowdown')
                                   )
                                   : '-'
 
                             const statusLabel =
                               isOk
-                                ? '분석 완료'
+                                ? t('operator.budget.scaling.analysisComplete')
                                 : blockCode ===
                                   'INSUFFICIENT_VALID_REVENUE_HISTORY'
                                   ? (
@@ -24831,8 +25123,11 @@ function InternalApp() {
                                       Number.isFinite(
                                         minimumValidTotalDays
                                       )
-                                      ? `학습 데이터 부족 · ${validRevenueDays}/${minimumValidTotalDays}일`
-                                      : '학습 데이터 부족'
+                                      ? t('operator.budget.scaling.insufficientTrainingDays', {
+                                        valid: validRevenueDays,
+                                        minimum: minimumValidTotalDays,
+                                      })
+                                      : t('operator.budget.scaling.insufficientTraining')
                                   )
                                   : blockCode
 
@@ -24849,7 +25144,7 @@ function InternalApp() {
                               >
                                 <span>
                                   {multiplier === 1
-                                    ? '현재'
+                                    ? t('operator.budget.common.current')
                                     : `${changePct >
                                       0
                                       ? '+'
@@ -24863,7 +25158,7 @@ function InternalApp() {
                                   {Math.round(
                                     scenarioBudget
                                   ).toLocaleString()}
-                                  원
+                                  {t('client.common.currency')}
                                 </strong>
 
                                 <span>
@@ -24873,7 +25168,7 @@ function InternalApp() {
                                     )
                                     ? `${Math.round(
                                       expectedRevenue
-                                    ).toLocaleString()}원`
+                                    ).toLocaleString()}${t('client.common.currency')}`
                                     : '-'}
                                 </span>
 
@@ -24896,7 +25191,7 @@ function InternalApp() {
                                       : ''
                                     }${Math.round(
                                       incrementalRevenue
-                                    ).toLocaleString()}원`
+                                    ).toLocaleString()}${t('client.common.currency')}`
                                     : '-'}
                                 </span>
 
@@ -24913,10 +25208,10 @@ function InternalApp() {
                                 <span
                                   className={
                                     efficiencyLabel ===
-                                      '효율 유지'
+                                      t('operator.budget.scaling.efficiencyMaintained')
                                       ? 'budget-scaling-efficiency maintained'
                                       : efficiencyLabel ===
-                                        '효율 둔화'
+                                        t('operator.budget.scaling.efficiencySlowdown')
                                         ? 'budget-scaling-efficiency slowdown'
                                         : 'budget-scaling-efficiency'
                                   }
@@ -24964,11 +25259,11 @@ function InternalApp() {
                         <div className="budget-scaling-chart-header">
                           <div>
                             <h4>
-                              예산 · 예상 매출 반응곡선
+                              {t('operator.budget.scaling.responseCurveTitle')}
                             </h4>
 
                             <p>
-                              현재 예산 대비 증감 시 예상 매출 변화를 보여줍니다.
+                              {t('operator.budget.scaling.responseCurveDescription')}
                             </p>
                           </div>
                         </div>
@@ -24981,8 +25276,7 @@ function InternalApp() {
                             )
                         ).length < 2 ? (
                           <div className="budget-scaling-chart-empty">
-                            유효한 학습 데이터가 충분해지면
-                            예산-매출 반응곡선이 표시됩니다.
+                            {t('operator.budget.scaling.responseCurveWaiting')}
                           </div>
                         ) : (
                           <ResponsiveContainer
@@ -25033,7 +25327,7 @@ function InternalApp() {
                                   value
                                 ) =>
                                   value === 0
-                                    ? '현재'
+                                    ? t('operator.budget.common.current')
                                     : `${value > 0
                                       ? '+'
                                       : ''
@@ -25054,7 +25348,7 @@ function InternalApp() {
                                     )
 
                                   return roundedValue === 0
-                                    ? '현재'
+                                    ? t('operator.budget.common.current')
                                     : `${roundedValue > 0
                                       ? '+'
                                       : ''
@@ -25068,25 +25362,23 @@ function InternalApp() {
                                 ) =>
                                   `${Math.round(
                                     value
-                                  ).toLocaleString()}원`
+                                  ).toLocaleString()}${t('client.common.currency')}`
                                 }
                                 labelFormatter={(
                                   value
                                 ) =>
                                   value === 0
-                                    ? '현재 예산'
-                                    : `현재 대비 ${value >
-                                      0
-                                      ? '+'
-                                      : ''
-                                    }${value}%`
+                                    ? t('operator.budget.scaling.currentBudget')
+                                    : t('operator.budget.scaling.relativeBudget', {
+                                      change: `${value > 0 ? '+' : ''}${value}`,
+                                    })
                                 }
                               />
 
                               <Line
                                 type="monotone"
                                 dataKey="revenue"
-                                name="예상 매출"
+                                name={t('operator.budget.common.expectedRevenue')}
                                 strokeWidth={2}
                                 dot
                               />
@@ -25099,11 +25391,11 @@ function InternalApp() {
                         <div className="budget-scaling-chart-header">
                           <div>
                             <h4>
-                              증액 구간별 한계 ROAS
+                              {t('operator.budget.scaling.marginalTitle')}
                             </h4>
 
                             <p>
-                              추가 예산 1원당 예상되는 추가 매출 효율입니다.
+                              {t('operator.budget.scaling.marginalDescription')}
                             </p>
                           </div>
                         </div>
@@ -25116,8 +25408,7 @@ function InternalApp() {
                             )
                         ).length < 1 ? (
                           <div className="budget-scaling-chart-empty">
-                            유효한 학습 데이터가 충분해지면
-                            증액 구간별 한계 ROAS가 표시됩니다.
+                            {t('operator.budget.scaling.marginalWaiting')}
                           </div>
                         ) : (
                           <ResponsiveContainer
@@ -25194,16 +25485,12 @@ function InternalApp() {
                                     ).toFixed(
                                       1
                                     )}%`,
-                                    '한계 ROAS',
+                                    t('operator.budget.scaling.marginalRoas'),
                                   ]}
                                 labelFormatter={(
                                   value
                                 ) =>
-                                  `현재 대비 +${Math.round(
-                                    Number(
-                                      value
-                                    ) || 0
-                                  )}% 예산 구간`
+                                  t('operator.budget.scaling.budgetRange', { change: Math.round(Number(value) || 0) })
                                 }
                               />
 
@@ -25217,9 +25504,7 @@ function InternalApp() {
                                     strokeDasharray="5 5"
                                     label={{
                                       value:
-                                        `효율 유지 기준 ${budgetScalingEfficiencyThreshold.toFixed(
-                                          0
-                                        )}%`,
+                                        t('operator.budget.scaling.efficiencyThreshold', { value: budgetScalingEfficiencyThreshold.toFixed(0) }),
                                       position:
                                         'insideTopRight',
                                     }}
@@ -25229,7 +25514,7 @@ function InternalApp() {
                               <Line
                                 type="monotone"
                                 dataKey="marginalRoas"
-                                name="한계 ROAS"
+                                name={t('operator.budget.scaling.marginalRoas')}
                                 strokeWidth={2}
                                 dot
                               />
@@ -25248,14 +25533,14 @@ function InternalApp() {
 
               <div className="budget-input-section">
                 <label>
-                  최적화할 총 예산
+                  {t('operator.budget.channel.totalBudget')}
                 </label>
 
                 <div className="budget-input-row">
                   <input
                     type="number"
                     min="0"
-                    placeholder="예: 10000000"
+                    placeholder={t('operator.budget.channel.totalBudgetPlaceholder')}
                     value={optimizationBudget}
                     onChange={(event) =>
                       setOptimizationBudget(
@@ -25264,13 +25549,13 @@ function InternalApp() {
                     }
                   />
 
-                  <span>원</span>
+                  <span>{t('client.common.currency')}</span>
                 </div>
               </div>
 
               <div className="optimization-objective-group">
                 <label>
-                  최적화 목표
+                  {t('operator.budget.campaign.objective')}
                 </label>
 
                 <select
@@ -25282,23 +25567,23 @@ function InternalApp() {
                   }
                 >
                   <option value="revenue">
-                    예상 매출 최대화
+                    {t('operator.budget.campaign.maximizeRevenue')}
                   </option>
 
                   <option value="conversions">
-                    예상 전환 최대화
+                    {t('operator.budget.channel.maximizeConversions')}
                   </option>
 
                   <option value="revenueWithRoas">
-                    목표 ROAS 이상에서 매출 최대화
+                    {t('operator.budget.channel.maximizeRevenueWithRoas')}
                   </option>
 
                   <option value="conversionsWithCpa">
-                    목표 CPA 이하에서 전환 최대화
+                    {t('operator.budget.channel.maximizeConversionsWithCpa')}
                   </option>
 
                   <option value="riskAdjustedRevenue">
-                    리스크를 고려한 매출 최대화
+                    {t('operator.budget.channel.riskAdjustedRevenue')}
                   </option>
 
 
@@ -25308,7 +25593,7 @@ function InternalApp() {
               {optimizationObjective === 'revenueWithRoas' && (
                 <div className="optimization-target-group">
                   <label>
-                    목표 ROAS
+                    {t('operator.budget.channel.targetRoas')}
                   </label>
 
                   <div className="optimization-target-input">
@@ -25332,7 +25617,7 @@ function InternalApp() {
               {optimizationObjective === 'conversionsWithCpa' && (
                 <div className="optimization-target-group">
                   <label>
-                    목표 CPA
+                    {t('operator.budget.channel.targetCpa')}
                   </label>
 
                   <div className="optimization-target-input">
@@ -25340,7 +25625,7 @@ function InternalApp() {
                       type="number"
                       min="0"
                       step="1000"
-                      placeholder="예: 30000"
+                      placeholder={t('operator.budget.channel.targetCpaPlaceholder')}
                       value={targetCpa}
                       onChange={(event) =>
                         setTargetCpa(
@@ -25349,7 +25634,7 @@ function InternalApp() {
                       }
                     />
 
-                    <span>원</span>
+                    <span>{t('client.common.currency')}</span>
                   </div>
                 </div>
               )}
@@ -25357,7 +25642,7 @@ function InternalApp() {
               {optimizationObjective === 'riskAdjustedRevenue' && (
                 <div className="optimization-target-group">
                   <label>
-                    리스크 허용 수준
+                    {t('operator.budget.channel.riskTolerance')}
                   </label>
 
                   <select
@@ -25369,15 +25654,15 @@ function InternalApp() {
                     }
                   >
                     <option value="low">
-                      낮음
+                      {t('operator.budget.channel.riskLow')}
                     </option>
 
                     <option value="medium">
-                      보통
+                      {t('operator.budget.channel.riskMedium')}
                     </option>
 
                     <option value="high">
-                      높음
+                      {t('operator.budget.channel.riskHigh')}
                     </option>
                   </select>
                 </div>
@@ -25385,7 +25670,7 @@ function InternalApp() {
 
               <div className="optimization-limit-group">
                 <label>
-                  예산 조정 허용폭
+                  {t('operator.budget.scaling.allowedRange')}
                 </label>
 
                 <div className="optimization-limit-input">
@@ -25441,23 +25726,23 @@ function InternalApp() {
                   {optimizationFeasibility.isFeasible && (
                     <>
                       <strong>
-                        최적화 가능한 예산입니다.
+                        {t('operator.budget.channel.feasible')}
                       </strong>
 
                       <div>
-                        가능한 기간 총예산 범위:
+                        {t('operator.budget.channel.feasibleRange')}
                         {' '}
                         {Math.round(
                           optimizationFeasibility.minimumFeasibleBudget *
                           optimizationPeriodDays
                         ).toLocaleString()}
-                        원
+                        {t('client.common.currency')}
                         {' ~ '}
                         {Math.round(
                           optimizationFeasibility.maximumFeasibleBudget *
                           optimizationPeriodDays
                         ).toLocaleString()}
-                        원
+                        {t('client.common.currency')}
                       </div>
                     </>
                   )}
@@ -25466,11 +25751,11 @@ function InternalApp() {
                     !optimizationFeasibility.hasValidBudgetRange && (
                       <>
                         <strong>
-                          성과 데이터가 부족하여 유효한 최적화 예산 범위를 계산할 수 없습니다.
+                          {t('operator.budget.channel.noValidRange')}
                         </strong>
 
                         <div>
-                          일부 매체의 데이터량 또는 예산 제약 조건을 확인해 주세요.
+                          {t('operator.budget.channel.checkConstraints')}
                         </div>
                       </>
                     )}
@@ -25479,23 +25764,23 @@ function InternalApp() {
                     optimizationFeasibility.hasValidBudgetRange && (
                       <>
                         <strong>
-                          현재 총예산은 최적화 가능 범위를 벗어났습니다.
+                          {t('operator.budget.channel.outOfRange')}
                         </strong>
 
                         <div>
-                          가능한 기간 총예산 범위:
+                          {t('operator.budget.channel.feasibleRange')}
                           {' '}
                           {Math.round(
                             optimizationFeasibility.minimumFeasibleBudget *
                             optimizationPeriodDays
                           ).toLocaleString()}
-                          원
+                          {t('client.common.currency')}
                           {' ~ '}
                           {Math.round(
                             optimizationFeasibility.maximumFeasibleBudget *
                             optimizationPeriodDays
                           ).toLocaleString()}
-                          원
+                          {t('client.common.currency')}
                         </div>
                       </>
                     )}
@@ -25511,13 +25796,13 @@ function InternalApp() {
                   }
                 >
                   <strong>
-                    OR 모델 검증
+                    {t('operator.budget.channel.orValidation')}
                   </strong>
 
                   <span>
-                    변수 {lpModelValidation.variableCount}개
+                    {t('operator.budget.channel.variables', { count: lpModelValidation.variableCount })}
                     {' · '}
-                    제약식 {lpModelValidation.constraintCount}개
+                    {t('operator.budget.channel.constraints', { count: lpModelValidation.constraintCount })}
                   </span>
 
                   {!lpModelValidation.isValid && (
@@ -25560,22 +25845,22 @@ function InternalApp() {
                 <>
                   <div className="optimization-api-result">
                     <strong>
-                      V2 최적화 Preview 완료
+                      {t('operator.budget.channel.previewComplete')}
                     </strong>
 
                     <span>
                       {naverPreviewResult
                         .portfolioAction ===
                         'SHADOW_WITH_GUARDRAILS'
-                        ? '안전장치 적용 Shadow 추천'
-                        : 'Shadow 추천 가능'}
+                        ? t('operator.budget.channel.shadowSafety')
+                        : t('operator.budget.channel.shadowAvailable')}
                     </span>
                   </div>
 
                   <div className="gurobi-scenario-summary">
                     <div className="gurobi-summary-card">
                       <span>
-                        현재 일예산
+                        {t('operator.budget.channel.currentDailyBudget')}
                       </span>
 
                       <strong>
@@ -25583,13 +25868,13 @@ function InternalApp() {
                           naverPreviewResult
                             .totalDailyBudget || 0
                         ).toLocaleString()}
-                        원
+                        {t('client.common.currency')}
                       </strong>
                     </div>
 
                     <div className="gurobi-summary-card">
                       <span>
-                        추천 일예산
+                        {t('operator.budget.channel.recommendedDailyBudget')}
                       </span>
 
                       <strong>
@@ -25598,13 +25883,13 @@ function InternalApp() {
                             .recommendedTotalBudget ||
                           0
                         ).toLocaleString()}
-                        원
+                        {t('client.common.currency')}
                       </strong>
                     </div>
 
                     <div className="gurobi-summary-card">
                       <span>
-                        현재 예상 일매출
+                        {t('operator.budget.channel.currentExpectedDailyRevenue')}
                       </span>
 
                       <strong>
@@ -25613,13 +25898,13 @@ function InternalApp() {
                             .estimatedCurrentRevenue ||
                           0
                         ).toLocaleString()}
-                        원
+                        {t('client.common.currency')}
                       </strong>
                     </div>
 
                     <div className="gurobi-summary-card">
                       <span>
-                        추천 예상 일매출
+                        {t('operator.budget.channel.recommendedExpectedDailyRevenue')}
                       </span>
 
                       <strong>
@@ -25628,13 +25913,13 @@ function InternalApp() {
                             .estimatedRecommendedRevenue ||
                           0
                         ).toLocaleString()}
-                        원
+                        {t('client.common.currency')}
                       </strong>
                     </div>
 
                     <div className="gurobi-summary-card">
                       <span>
-                        예상 Lift
+                        {t('operator.budget.campaign.expectedLift')}
                       </span>
 
                       <strong>
@@ -25655,22 +25940,20 @@ function InternalApp() {
 
                     <div className="gurobi-summary-card">
                       <span>
-                        모델링 캠페인
+                        {t('operator.budget.channel.modeledCampaigns')}
                       </span>
 
                       <strong>
                         {naverPreviewResult
                           .campaignCounts
                           ?.modeled || 0}
-                        개
+                        {t('operator.budget.common.campaigns')}
                       </strong>
 
                       <small>
-                        전체{' '}
-                        {naverPreviewResult
-                          .campaignCounts
-                          ?.total || 0}
-                        개
+                        {t('operator.budget.channel.totalLabel', {
+                          count: naverPreviewResult.campaignCounts?.total || 0,
+                        })}
                       </small>
                     </div>
                   </div>
@@ -25687,8 +25970,8 @@ function InternalApp() {
                 onClick={runOptimization}
               >
                 {optimizationApiLoading
-                  ? '추천 예산 계산 중...'
-                  : '매체별 추천 예산 계산'}
+                  ? t('operator.budget.channel.calculating')
+                  : t('operator.budget.channel.calculate')}
               </button>
 
               {optimizationApiResult?.status === 'optimal' && (
@@ -25696,7 +25979,7 @@ function InternalApp() {
                   <input
                     type="text"
                     value={scenarioName}
-                    placeholder="시나리오 이름"
+                    placeholder={t('operator.budget.channel.scenarioNamePlaceholder')}
                     onChange={(event) =>
                       setScenarioName(
                         event.target.value
@@ -25710,7 +25993,7 @@ function InternalApp() {
                       saveCurrentOptimizationScenario
                     }
                   >
-                    현재 결과 저장
+                    {t('operator.budget.channel.saveCurrentResult')}
                   </button>
                 </div>
               )}
@@ -25732,8 +26015,8 @@ function InternalApp() {
                 }
               >
                 {riskScenarioLoading
-                  ? '리스크 시나리오 계산 중...'
-                  : '낮음 · 보통 · 높음 비교'}
+                  ? t('operator.budget.channel.comparingRisk')
+                  : t('operator.budget.channel.compareRisk')}
               </button>
             )}
 
@@ -25749,14 +26032,14 @@ function InternalApp() {
                 <div className="campaign-budget-policy-header">
                   <div>
                     <h3>
-                      캠페인 예산 범위 설정
+                      {t('operator.budget.policy.title')}
                     </h3>
 
                     <p>
                       {performanceDataSource ===
                         'mock'
-                        ? '현재 선택한 Mock 데이터와 상단 필터를 기준으로 캠페인별 예산 범위를 계산합니다.'
-                        : '실제 Naver 일예산을 기준으로 최적화 가능한 최소·최대 예산을 설정합니다.'}
+                        ? t('operator.budget.policy.mockDescription')
+                        : t('operator.budget.policy.naverDescription')}
                     </p>
                   </div>
 
@@ -25779,15 +26062,15 @@ function InternalApp() {
                   >
                     {performanceDataSource ===
                       'mock'
-                      ? 'Mock 다시 계산'
-                      : '새로고침'}
+                      ? t('operator.budget.policy.recalculateMock')
+                      : t('operator.budget.policy.refresh')}
                   </button>
                 </div>
 
                 <div className="campaign-budget-policy-summary">
                   <div>
                     <span>
-                      전체 캠페인
+                      {t('operator.budget.policy.totalCampaigns')}
                     </span>
 
                     <strong>
@@ -25795,13 +26078,13 @@ function InternalApp() {
                         displayedCampaignBudgetPolicyMeta
                           .campaignCount
                       }
-                      개
+                      {t('operator.budget.common.campaigns')}
                     </strong>
                   </div>
 
                   <div>
                     <span>
-                      최적화 대상
+                      {t('operator.budget.campaign.eligible')}
                     </span>
 
                     <strong>
@@ -25809,13 +26092,13 @@ function InternalApp() {
                         displayedCampaignBudgetPolicyMeta
                           .optimizationEligibleCount
                       }
-                      개
+                      {t('operator.budget.common.campaigns')}
                     </strong>
                   </div>
 
                   <div>
                     <span>
-                      최적화 제외
+                      {t('operator.budget.policy.excluded')}
                     </span>
 
                     <strong>
@@ -25823,13 +26106,13 @@ function InternalApp() {
                         displayedCampaignBudgetPolicyMeta
                           .excludedCampaignCount
                       }
-                      개
+                      {t('operator.budget.common.campaigns')}
                     </strong>
                   </div>
 
                   <div>
                     <span>
-                      대상 현재 총 일예산
+                      {t('operator.budget.policy.targetCurrentDailyBudget')}
                     </span>
 
                     <strong>
@@ -25838,13 +26121,13 @@ function InternalApp() {
                           .optimizationCurrentTotalDailyBudget ||
                         0
                       ).toLocaleString()}
-                      원
+                      {t('client.common.currency')}
                     </strong>
                   </div>
 
                   <div>
                     <span>
-                      정책 설정 완료
+                      {t('operator.budget.policy.configured')}
                     </span>
 
                     <strong>
@@ -25864,19 +26147,19 @@ function InternalApp() {
                 <div className="campaign-budget-bulk-policy">
                   <div>
                     <strong>
-                      일괄 초안
+                      {t('operator.budget.policy.bulkDraft')}
                     </strong>
 
                     <span>
                       {performanceDataSource ===
                         'mock'
-                        ? '현재 선택된 Mock 데이터의 평균 일예산 대비 비율입니다.'
-                        : '현재 Naver 일예산 대비 비율을 직접 지정합니다.'}
+                        ? t('operator.budget.policy.mockRatioDescription')
+                        : t('operator.budget.policy.naverRatioDescription')}
                     </span>
                   </div>
 
                   <label>
-                    최소 예산
+                    {t('operator.budget.policy.minimumBudget')}
 
                     <div>
                       <input
@@ -25884,7 +26167,7 @@ function InternalApp() {
                         min="0"
                         max="100"
                         step="1"
-                        placeholder="예: 50"
+                        placeholder={t('operator.budget.policy.minPercentPlaceholder')}
                         value={
                           campaignBudgetBulkMinPct
                         }
@@ -25902,14 +26185,14 @@ function InternalApp() {
                   </label>
 
                   <label>
-                    최대 예산
+                    {t('operator.budget.policy.maximumBudget')}
 
                     <div>
                       <input
                         type="number"
                         min="100"
                         step="1"
-                        placeholder="예: 150"
+                        placeholder={t('operator.budget.policy.maxPercentPlaceholder')}
                         value={
                           campaignBudgetBulkMaxPct
                         }
@@ -25932,15 +26215,15 @@ function InternalApp() {
                       applyBulkCampaignBudgetPolicy
                     }
                   >
-                    전체 캠페인에 적용
+                    {t('operator.budget.policy.applyAll')}
                   </button>
                 </div>
 
                 <p className="campaign-budget-policy-note">
                   {performanceDataSource ===
                     'mock'
-                    ? '최소·최대 예산은 Mock 테스트용 Business Constraint이며 실제 매체 예산에는 영향을 주지 않습니다.'
-                    : '최소·최대 예산은 Business Constraint입니다. 예산 조정 허용폭과는 별도로 적용되며, 이 화면에서 저장해도 Naver의 실제 예산은 변경되지 않습니다.'}
+                    ? t('operator.budget.policy.mockConstraintDescription')
+                    : t('operator.budget.policy.naverConstraintDescription')}
                 </p>
 
                 {campaignBudgetPolicyError && (
@@ -25955,16 +26238,15 @@ function InternalApp() {
                   'mock' &&
                   campaignBudgetPolicyLoading ? (
                   <div className="campaign-budget-policy-empty">
-                    캠페인 예산 정보를
-                    불러오는 중입니다.
+                    {t('operator.budget.policy.loading')}
                   </div>
                 ) : displayedCampaignBudgetPolicies.length ===
                   0 ? (
                   <div className="campaign-budget-policy-empty">
                     {performanceDataSource ===
                       'mock'
-                      ? '현재 상단 필터 조건에 해당하는 Mock 캠페인이 없습니다.'
-                      : '동기화된 Naver 캠페인 예산이 없습니다.'}
+                      ? t('operator.budget.policy.noMockCampaigns')
+                      : t('operator.budget.policy.noNaverCampaigns')}
                   </div>
                 ) : (
                   <div className="campaign-budget-policy-table-wrap">
@@ -25972,23 +26254,23 @@ function InternalApp() {
                       <thead>
                         <tr>
                           <th>
-                            캠페인
+                            {t('operator.budget.common.campaign')}
                           </th>
 
                           <th>
-                            현재 예산 x₀
+                            {t('operator.budget.policy.currentBudgetX0')}
                           </th>
 
                           <th>
-                            최소 예산 L
+                            {t('operator.budget.policy.minimumBudgetL')}
                           </th>
 
                           <th>
-                            최대 예산 U
+                            {t('operator.budget.policy.maximumBudgetU')}
                           </th>
 
                           <th>
-                            정책 상태
+                            {t('operator.budget.policy.policyStatus')}
                           </th>
                         </tr>
                       </thead>
@@ -26037,7 +26319,7 @@ function InternalApp() {
                                       Number(
                                         policy.currentDailyBudget
                                       )
-                                    ).toLocaleString()}원`
+                                    ).toLocaleString()}${t('client.common.currency')}`
                                     : '-'}
                                 </td>
 
@@ -26136,13 +26418,13 @@ function InternalApp() {
                                     }
                                   >
                                     {!policy.optimizationEligible
-                                      ? '최적화 제외'
+                                      ? t('operator.budget.policy.statusExcluded')
                                       : performanceDataSource ===
                                         'mock'
-                                        ? 'Mock 준비됨'
+                                        ? t('operator.budget.policy.statusMockReady')
                                         : policy.policyReady
-                                          ? '저장됨'
-                                          : '미설정'}
+                                          ? t('operator.budget.policy.statusSaved')
+                                          : t('operator.budget.policy.statusUnset')}
                                   </span>
                                 </td>
                               </tr>
@@ -26170,8 +26452,8 @@ function InternalApp() {
                         }
                       >
                         {campaignBudgetPolicySaving
-                          ? 'Budget Policy 저장 중...'
-                          : 'Budget Policy 저장'}
+                          ? t('operator.budget.policy.saving')
+                          : t('operator.budget.policy.save')}
                       </button>
                     </div>
                   )}
@@ -26185,11 +26467,11 @@ function InternalApp() {
                 <div className="naver-readiness-header">
                   <div>
                     <span className="naver-status-label">
-                      매체 최적화 대기
+                      {t('operator.budget.source.pending')}
                     </span>
 
                     <h3>
-                      추천 예산을 아직 계산할 수 없습니다.
+                      {t('operator.budget.source.cannotCalculate')}
                     </h3>
                   </div>
                 </div>
@@ -26199,7 +26481,7 @@ function InternalApp() {
                 </p>
 
                 <div className="naver-block-reason">
-                  사유:{' '}
+                  {t('operator.budget.common.reason')}:{' '}
                   {optimizationApiResult.blockCode}
                 </div>
 
@@ -26211,7 +26493,7 @@ function InternalApp() {
                     <div className="naver-campaign-table-card">
                       <div className="naver-campaign-table-header">
                         <h3>
-                          연결된 매체 데이터
+                          {t('operator.budget.source.connectedData')}
                         </h3>
                       </div>
 
@@ -26219,13 +26501,13 @@ function InternalApp() {
                         <table>
                           <thead>
                             <tr>
-                              <th>매체</th>
-                              <th>데이터 일수</th>
-                              <th>시작일</th>
-                              <th>최근일</th>
-                              <th>매출 발생일</th>
-                              <th>누적 광고비</th>
-                              <th>누적 매출</th>
+                              <th>{t('operator.budget.common.channel')}</th>
+                              <th>{t('operator.budget.source.dataDays')}</th>
+                              <th>{t('operator.budget.source.startDate')}</th>
+                              <th>{t('operator.budget.source.latestDate')}</th>
+                              <th>{t('operator.budget.source.revenueDays')}</th>
+                              <th>{t('operator.budget.source.cumulativeSpend')}</th>
+                              <th>{t('operator.budget.source.cumulativeRevenue')}</th>
                             </tr>
                           </thead>
 
@@ -26249,7 +26531,7 @@ function InternalApp() {
 
                                   <td>
                                     {channel.totalDays}
-                                    일
+                                    {t('operator.budget.common.days')}
                                   </td>
 
                                   <td>
@@ -26266,7 +26548,7 @@ function InternalApp() {
                                     {channel
                                       .positiveRevenueDays ??
                                       0}
-                                    일
+                                    {t('operator.budget.common.days')}
                                   </td>
 
                                   <td>
@@ -26276,7 +26558,7 @@ function InternalApp() {
                                         0
                                       )
                                     ).toLocaleString()}
-                                    원
+                                    {t('client.common.currency')}
                                   </td>
 
                                   <td>
@@ -26286,7 +26568,7 @@ function InternalApp() {
                                         0
                                       )
                                     ).toLocaleString()}
-                                    원
+                                    {t('client.common.currency')}
                                   </td>
                                 </tr>
                               )
@@ -26305,18 +26587,17 @@ function InternalApp() {
                 <div className="naver-readiness-header">
                   <div>
                     <span className="naver-status-label">
-                      매체 최적화 완료
+                      {t('operator.budget.source.complete')}
                     </span>
 
                     <h3>
-                      매체별 추천 예산
+                      {t('operator.budget.source.recommendation')}
                     </h3>
                   </div>
                 </div>
 
                 <p>
-                  V2 Response Curve와 Safety Gate를
-                  통과한 Shadow Preview 결과입니다.
+                  {t('operator.budget.source.shadowDescription')}
                 </p>
 
                 <div className="naver-block-reason">
@@ -26332,7 +26613,7 @@ function InternalApp() {
                     <div className="naver-campaign-table-card">
                       <div className="naver-campaign-table-header">
                         <h3>
-                          매체별 예산 배분 결과
+                          {t('operator.budget.source.allocationResult')}
                         </h3>
                       </div>
 
@@ -26340,14 +26621,14 @@ function InternalApp() {
                         <table>
                           <thead>
                             <tr>
-                              <th>매체</th>
-                              <th>현재 예산</th>
-                              <th>추천 예산</th>
-                              <th>변경률</th>
-                              <th>예상 매출</th>
-                              <th>예상 ROAS</th>
+                              <th>{t('operator.budget.common.channel')}</th>
+                              <th>{t('operator.budget.common.currentBudget')}</th>
+                              <th>{t('operator.budget.common.recommendedBudget')}</th>
+                              <th>{t('operator.budget.common.changeRate')}</th>
+                              <th>{t('operator.budget.common.expectedRevenue')}</th>
+                              <th>{t('operator.budget.common.expectedRoas')}</th>
                               <th>Safety Gate</th>
-                              <th>데이터 일수</th>
+                              <th>{t('operator.budget.source.dataDays')}</th>
                             </tr>
                           </thead>
 
@@ -26376,7 +26657,7 @@ function InternalApp() {
                                         maximumFractionDigits: 0,
                                       }
                                     )}
-                                    원
+                                    {t('client.common.currency')}
                                   </td>
 
                                   <td>
@@ -26390,7 +26671,7 @@ function InternalApp() {
                                           maximumFractionDigits: 0,
                                         }
                                       )}
-                                      원
+                                      {t('client.common.currency')}
                                     </strong>
                                   </td>
 
@@ -26412,7 +26693,7 @@ function InternalApp() {
                                         maximumFractionDigits: 0,
                                       }
                                     )}
-                                    원
+                                    {t('client.common.currency')}
                                   </td>
 
                                   <td>
@@ -26432,7 +26713,7 @@ function InternalApp() {
                                     {channel.history
                                       ?.observedDays ??
                                       '-'}
-                                    일
+                                    {t('operator.budget.common.days')}
                                   </td>
                                 </tr>
                               )
@@ -26449,34 +26730,35 @@ function InternalApp() {
           {optimizationApiResult?.status === 'infeasible' && (
             <div className="optimization-infeasible-panel">
               <strong>
-                현재 설정으로는 최적화할 수 없습니다.
+                {t('operator.budget.infeasible.title')}
               </strong>
 
               <p>
                 {optimizationApiResult
                   .conflictingConstraints
                   ?.includes('target_cpa')
-                  ? `설정한 목표 CPA ${targetCpa
-                    ? Number(targetCpa).toLocaleString()
-                    : ''
-                  }원을 만족하면서 현재 예산 및 매체별 예산 제약을 동시에 충족하는 배분이 없습니다.`
+                  ? t('operator.budget.infeasible.cpaMessage', {
+                    target: targetCpa
+                      ? Number(targetCpa).toLocaleString()
+                      : '',
+                  })
                   : optimizationApiResult
                     .conflictingConstraints
                     ?.includes('target_roas')
-                    ? `설정한 목표 ROAS를 만족하면서 현재 예산 및 매체별 예산 제약을 동시에 충족하는 배분이 없습니다.`
-                    : '현재 입력한 목표와 예산 제약을 동시에 만족하는 최적해가 없습니다.'}
+                    ? t('operator.budget.infeasible.roasMessage')
+                    : t('operator.budget.infeasible.genericMessage')}
               </p>
 
               <p>
                 {optimizationApiResult
                   .conflictingConstraints
                   ?.includes('target_cpa')
-                  ? '목표 CPA를 완화하거나 예산 조정 허용폭을 늘려 다시 시도해 주세요.'
+                  ? t('operator.budget.infeasible.cpaAction')
                   : optimizationApiResult
                     .conflictingConstraints
                     ?.includes('target_roas')
-                    ? '목표 ROAS를 완화하거나 예산 조정 허용폭을 늘려 다시 시도해 주세요.'
-                    : '목표값 또는 예산 제약 조건을 조정한 뒤 다시 실행해 주세요.'}
+                    ? t('operator.budget.infeasible.roasAction')
+                    : t('operator.budget.infeasible.genericAction')}
               </p>
             </div>
           )}
@@ -26484,51 +26766,51 @@ function InternalApp() {
           {gurobiScenarioSummary && (
             <div className="gurobi-scenario-summary">
               <div className="gurobi-summary-card">
-                <span>현재 총예산</span>
+                <span>{t('operator.budget.common.currentTotalBudget')}</span>
 
                 <strong>
                   {Math.round(
                     gurobiScenarioSummary.currentBudget
                   ).toLocaleString()}
-                  원
+                  {t('client.common.currency')}
                 </strong>
               </div>
 
               <div className="gurobi-summary-card">
-                <span>최적 총예산</span>
+                <span>{t('operator.budget.common.optimizedTotalBudget')}</span>
 
                 <strong>
                   {Math.round(
                     gurobiScenarioSummary.optimizedBudget
                   ).toLocaleString()}
-                  원
+                  {t('client.common.currency')}
                 </strong>
               </div>
 
               <div className="gurobi-summary-card">
-                <span>현재 총매출</span>
+                <span>{t('operator.budget.common.currentRevenue')}</span>
 
                 <strong>
                   {Math.round(
                     gurobiScenarioSummary.currentRevenue
                   ).toLocaleString()}
-                  원
+                  {t('client.common.currency')}
                 </strong>
               </div>
 
               <div className="gurobi-summary-card">
-                <span>예상 총매출</span>
+                <span>{t('operator.budget.common.projectedRevenue')}</span>
 
                 <strong>
                   {Math.round(
                     gurobiScenarioSummary.projectedRevenue
                   ).toLocaleString()}
-                  원
+                  {t('client.common.currency')}
                 </strong>
               </div>
 
               <div className="gurobi-summary-card">
-                <span>현재 ROAS</span>
+                <span>{t('operator.budget.common.currentRoas')}</span>
 
                 <strong>
                   {gurobiScenarioSummary.currentRoas.toFixed(
@@ -26539,7 +26821,7 @@ function InternalApp() {
               </div>
 
               <div className="gurobi-summary-card">
-                <span>예상 ROAS</span>
+                <span>{t('operator.budget.common.expectedRoas')}</span>
 
                 <strong>
                   {gurobiScenarioSummary.projectedRoas.toFixed(
@@ -26552,18 +26834,18 @@ function InternalApp() {
 
 
               <div className="gurobi-summary-card">
-                <span>예상 CPA</span>
+                <span>{t('operator.budget.common.expectedCpa')}</span>
 
                 <strong>
                   {Math.round(
                     gurobiScenarioSummary.projectedCpa
                   ).toLocaleString()}
-                  원
+                  {t('client.common.currency')}
                 </strong>
               </div>
 
               <div className="gurobi-summary-card">
-                <span>예상 매출 변화</span>
+                <span>{t('operator.budget.common.revenueChange')}</span>
 
                 <strong>
                   {gurobiScenarioSummary.revenueChange > 0
@@ -26573,7 +26855,7 @@ function InternalApp() {
                   {Math.round(
                     gurobiScenarioSummary.revenueChange
                   ).toLocaleString()}
-                  원
+                  {t('client.common.currency')}
                 </strong>
 
                 <small>
@@ -26589,7 +26871,7 @@ function InternalApp() {
               </div>
 
               <div className="gurobi-summary-card">
-                <span>ROAS 변화</span>
+                <span>{t('operator.budget.common.roasChange')}</span>
 
                 <strong>
                   {gurobiScenarioSummary.roasChange > 0
@@ -26612,28 +26894,25 @@ function InternalApp() {
               <div className="risk-diagnostics-header">
                 <div>
                   <h3>
-                    리스크 최적화 진단
+                    {t('operator.budget.risk.diagnosticsTitle')}
                   </h3>
 
                   <p>
-                    현재 데이터에서 계산된
-                    동적 리스크 허용 범위입니다.
+                    {t('operator.budget.risk.diagnosticsDescription')}
                   </p>
                 </div>
 
                 <span className="risk-level-badge">
-                  {riskDiagnosticsSummary.riskLevel === 'low'
-                    ? '낮음'
-                    : riskDiagnosticsSummary.riskLevel === 'high'
-                      ? '높음'
-                      : '보통'}
+                  {getBudgetRiskLevelLabel(
+                    riskDiagnosticsSummary.riskLevel
+                  )}
                 </span>
               </div>
 
               <div className="risk-diagnostics-grid">
                 <div className="risk-diagnostic-card">
                   <span>
-                    최소 필요 리스크
+                    {t('operator.budget.risk.minimumRisk')}
                   </span>
 
                   <strong>
@@ -26644,14 +26923,13 @@ function InternalApp() {
                   </strong>
 
                   <small>
-                    현재 목표 예산을 만족하기 위해
-                    최소한 필요한 리스크
+                    {t('operator.budget.risk.minimumRiskDescription')}
                   </small>
                 </div>
 
                 <div className="risk-diagnostic-card">
                   <span>
-                    선택된 허용 리스크
+                    {t('operator.budget.risk.allowedRisk')}
                   </span>
 
                   <strong>
@@ -26662,14 +26940,13 @@ function InternalApp() {
                   </strong>
 
                   <small>
-                    선택한 리스크 수준에 따라
-                    자동 계산된 Risk Budget
+                    {t('operator.budget.risk.allowedRiskDescription')}
                   </small>
                 </div>
 
                 <div className="risk-diagnostic-card">
                   <span>
-                    실제 사용 리스크
+                    {t('operator.budget.risk.realizedRisk')}
                   </span>
 
                   <strong>
@@ -26680,14 +26957,13 @@ function InternalApp() {
                   </strong>
 
                   <small>
-                    최종 Gurobi 해가 실제로
-                    사용한 리스크
+                    {t('operator.budget.risk.realizedRiskDescription')}
                   </small>
                 </div>
 
                 <div className="risk-diagnostic-card">
                   <span>
-                    최대매출 기준 리스크
+                    {t('operator.budget.risk.revenueOptimalRisk')}
                   </span>
 
                   <strong>
@@ -26698,22 +26974,21 @@ function InternalApp() {
                   </strong>
 
                   <small>
-                    리스크 제약 없이 최대매출을
-                    달성하는 데 필요한 최소 리스크
+                    {t('operator.budget.risk.revenueOptimalRiskDescription')}
                   </small>
                 </div>
               </div>
 
               <div className="risk-diagnostics-summary">
                 <strong>
-                  해석
+                  {t('operator.budget.risk.interpretation')}
                 </strong>
 
                 <span>
                   {riskDiagnosticsSummary.realizedRiskPercent <
                     riskDiagnosticsSummary.revenueOptimalRiskPercent
-                    ? `현재 설정은 최대매출 기준보다 리스크를 낮게 제한하고 있습니다. 더 높은 리스크를 허용하면 추가 매출 여지가 있을 수 있습니다.`
-                    : `현재 설정은 최대매출을 달성하는 데 필요한 리스크 수준에 거의 도달했습니다.`}
+                    ? t('operator.budget.risk.belowRevenueOptimal')
+                    : t('operator.budget.risk.nearRevenueOptimal')}
                 </span>
               </div>
             </div>
@@ -26723,11 +26998,11 @@ function InternalApp() {
             <div className="channel-risk-panel">
               <div className="channel-risk-header">
                 <h3>
-                  매체별 리스크 기여도
+                  {t('operator.budget.risk.channelContribution')}
                 </h3>
 
                 <span>
-                  현재 예산 대비 변화 기준
+                  {t('operator.budget.risk.relativeToCurrent')}
                 </span>
               </div>
 
@@ -26735,13 +27010,13 @@ function InternalApp() {
                 <table className="channel-risk-table">
                   <thead>
                     <tr>
-                      <th>매체</th>
-                      <th>현재 예산</th>
-                      <th>최적 예산</th>
-                      <th>예산 변화율</th>
-                      <th>성과 변동성</th>
+                      <th>{t('operator.budget.common.channel')}</th>
+                      <th>{t('operator.budget.common.currentBudget')}</th>
+                      <th>{t('operator.budget.common.optimizedBudget')}</th>
+                      <th>{t('operator.budget.risk.budgetChangeRate')}</th>
+                      <th>{t('operator.budget.risk.volatility')}</th>
                       <th>Risk Weight</th>
-                      <th>리스크 기여도</th>
+                      <th>{t('operator.budget.risk.riskContribution')}</th>
                     </tr>
                   </thead>
 
@@ -26757,14 +27032,14 @@ function InternalApp() {
                             {Math.round(
                               item.currentBudget
                             ).toLocaleString()}
-                            원
+                            {t('client.common.currency')}
                           </td>
 
                           <td>
                             {Math.round(
                               item.optimizedBudget
                             ).toLocaleString()}
-                            원
+                            {t('client.common.currency')}
                           </td>
 
                           <td>
@@ -26809,11 +27084,11 @@ function InternalApp() {
             <div className="risk-interpretation-panel">
               <div className="risk-interpretation-header">
                 <h3>
-                  최적화 결과 해석
+                  {t('operator.budget.risk.resultInterpretation')}
                 </h3>
 
                 <span>
-                  OR 모델 자동 설명
+                  {t('operator.budget.risk.autoExplanation')}
                 </span>
               </div>
 
@@ -26849,11 +27124,11 @@ function InternalApp() {
             <div className="risk-recommendations-panel">
               <div className="risk-recommendations-header">
                 <h3>
-                  추천 액션
+                  {t('operator.budget.common.recommendedAction')}
                 </h3>
 
                 <span>
-                  최적화 결과 기반
+                  {t('operator.budget.risk.basedOnResult')}
                 </span>
               </div>
 
@@ -26891,11 +27166,11 @@ function InternalApp() {
               <div className="risk-scenario-comparison-panel">
                 <div className="risk-scenario-comparison-header">
                   <h3>
-                    리스크 시나리오 비교
+                    {t('operator.budget.risk.scenarioComparison')}
                   </h3>
 
                   <span>
-                    낮음 · 보통 · 높음
+                    {t('operator.budget.risk.levels')}
                   </span>
                 </div>
 
@@ -26903,12 +27178,12 @@ function InternalApp() {
                   <table className="risk-scenario-comparison-table">
                     <thead>
                       <tr>
-                        <th>항목</th>
+                        <th>{t('operator.budget.risk.item')}</th>
 
                         {riskScenarioComparisonRows.map(
                           (scenario) => (
                             <th key={scenario.key}>
-                              {scenario.label}
+                              {getBudgetRiskLevelLabel(scenario.key)}
                             </th>
                           )
                         )}
@@ -26918,7 +27193,7 @@ function InternalApp() {
                     <tbody>
                       <tr>
                         <td>
-                          실제 리스크
+                          {t('operator.budget.risk.actualRisk')}
                         </td>
 
                         {riskScenarioComparisonRows.map(
@@ -26937,7 +27212,7 @@ function InternalApp() {
 
                       <tr>
                         <td>
-                          허용 리스크
+                          {t('operator.budget.risk.allowedRiskShort')}
                         </td>
 
                         {riskScenarioComparisonRows.map(
@@ -26956,7 +27231,7 @@ function InternalApp() {
 
                       <tr>
                         <td>
-                          예상 매출
+                          {t('operator.budget.common.expectedRevenue')}
                         </td>
 
                         {riskScenarioComparisonRows.map(
@@ -26965,7 +27240,7 @@ function InternalApp() {
                               {scenario.status === 'optimal'
                                 ? `${Math.round(
                                   scenario.expectedRevenue
-                                ).toLocaleString()}원`
+                                ).toLocaleString()}${t('client.common.currency')}`
                                 : '-'}
                             </td>
                           )
@@ -26974,7 +27249,7 @@ function InternalApp() {
 
                       <tr>
                         <td>
-                          예상 ROAS
+                          {t('operator.budget.common.expectedRoas')}
                         </td>
 
                         {riskScenarioComparisonRows.map(
@@ -26993,7 +27268,7 @@ function InternalApp() {
 
                       <tr>
                         <td>
-                          예상 CPA
+                          {t('operator.budget.common.expectedCpa')}
                         </td>
 
                         {riskScenarioComparisonRows.map(
@@ -27002,7 +27277,7 @@ function InternalApp() {
                               {scenario.status === 'optimal'
                                 ? `${Math.round(
                                   scenario.expectedCpa
-                                ).toLocaleString()}원`
+                                ).toLocaleString()}${t('client.common.currency')}`
                                 : '-'}
                             </td>
                           )
@@ -27011,7 +27286,7 @@ function InternalApp() {
 
                       <tr>
                         <td>
-                          매출 점수
+                          {t('operator.budget.risk.revenueScore')}
                         </td>
 
                         {riskScenarioScoreRows.map(
@@ -27028,7 +27303,7 @@ function InternalApp() {
 
                       <tr>
                         <td>
-                          ROAS 점수
+                          {t('operator.budget.risk.roasScore')}
                         </td>
 
                         {riskScenarioScoreRows.map(
@@ -27045,7 +27320,7 @@ function InternalApp() {
 
                       <tr>
                         <td>
-                          CPA 점수
+                          {t('operator.budget.risk.cpaScore')}
                         </td>
 
                         {riskScenarioScoreRows.map(
@@ -27062,7 +27337,7 @@ function InternalApp() {
 
                       <tr>
                         <td>
-                          리스크 점수
+                          {t('operator.budget.risk.riskScore')}
                         </td>
 
                         {riskScenarioScoreRows.map(
@@ -27080,7 +27355,7 @@ function InternalApp() {
                       <tr className="recommendation-score-row">
                         <td>
                           <strong>
-                            종합 추천 점수
+                            {t('operator.budget.risk.recommendationScore')}
                           </strong>
                         </td>
 
@@ -27100,7 +27375,7 @@ function InternalApp() {
 
                       <tr>
                         <td>
-                          매출 목적값
+                          {t('operator.budget.risk.revenueObjective')}
                         </td>
 
                         {riskScenarioComparisonRows.map(
@@ -27111,7 +27386,7 @@ function InternalApp() {
                                   scenario.objectiveValue *
                                   optimizationPeriodDays
                                 ).toLocaleString() +
-                                '원'
+                                t('operator.budget.common.currency')
                                 : '-'}
                             </td>
                           )
@@ -27128,7 +27403,7 @@ function InternalApp() {
                             <td>
                               {channelItem.channel}
                               {' '}
-                              최적 예산
+                              {t('operator.budget.common.optimizedBudget')}
                             </td>
 
                             {riskScenarioComparisonRows.map(
@@ -27140,7 +27415,7 @@ function InternalApp() {
                                       channelItem.channel
                                       ] || 0
                                     ).toLocaleString() +
-                                    '원'
+                                    t('operator.budget.common.currency')
                                     : '-'}
                                 </td>
                               )
@@ -27157,21 +27432,21 @@ function InternalApp() {
                     <div className="recommended-risk-scenario">
                       <div className="recommended-risk-scenario-summary">
                         <strong>
-                          추천 시나리오:
+                          {t('operator.budget.risk.recommendedScenario')}
                           {' '}
-                          {recommendedRiskScenario.label}
+                          {getBudgetRiskLevelLabel(recommendedRiskScenario.key)}
                         </strong>
 
                         <span>
-                          예상 매출
+                          {t('operator.budget.common.expectedRevenue')}
                           {' '}
                           {Math.round(
                             recommendedRiskScenario
                               .expectedRevenue
                           ).toLocaleString()}
-                          원
+                          {t('client.common.currency')}
                           {' · '}
-                          예상 ROAS
+                          {t('operator.budget.common.expectedRoas')}
                           {' '}
                           {(
                             recommendedRiskScenario
@@ -27179,7 +27454,7 @@ function InternalApp() {
                           ).toFixed(1)}
                           %
                           {' · '}
-                          실제 리스크
+                          {t('operator.budget.risk.actualRisk')}
                           {' '}
                           {(
                             recommendedRiskScenario
@@ -27192,7 +27467,7 @@ function InternalApp() {
                       {riskScenarioRecommendationExplanation && (
                         <div className="risk-recommendation-explanation">
                           <div className="risk-recommendation-score">
-                            종합 추천 점수
+                            {t('operator.budget.risk.recommendationScore')}
                             {' '}
                             <strong>
                               {riskScenarioRecommendationExplanation
@@ -27203,7 +27478,7 @@ function InternalApp() {
 
                           <div className="risk-recommendation-reasons">
                             <strong>
-                              추천 근거
+                              {t('operator.budget.common.rationale')}
                             </strong>
 
                             <ul>
@@ -27226,7 +27501,7 @@ function InternalApp() {
                             .cautions.length > 0 && (
                               <div className="risk-recommendation-cautions">
                                 <strong>
-                                  고려사항
+                                  {t('operator.budget.risk.cautions')}
                                 </strong>
 
                                 <ul>
@@ -27262,11 +27537,11 @@ function InternalApp() {
             <div className="gurobi-result-section">
               <div className="gurobi-result-header">
                 <h3>
-                  Gurobi 최적 예산 배분
+                  {t('operator.budget.allocation.title')}
                 </h3>
 
                 <span>
-                  선택 기간 기준
+                  {t('operator.budget.allocation.selectedPeriod')}
                 </span>
               </div>
 
@@ -27274,18 +27549,18 @@ function InternalApp() {
                 <table className="channel-performance-table">
                   <thead>
                     <tr>
-                      <th>매체</th>
-                      <th>현재 예산</th>
-                      <th>최적 예산</th>
-                      <th>조정 금액</th>
-                      <th>조정률</th>
-                      <th>예상 매출</th>
-                      <th>예상 ROAS</th>
-                      <th>예상 CPA</th>
-                      <th>매출 변화</th>
-                      <th>ROAS 변화</th>
-                      <th>추천</th>
-                      <th>최적화 사유</th>
+                      <th>{t('operator.budget.common.channel')}</th>
+                      <th>{t('operator.budget.common.currentBudget')}</th>
+                      <th>{t('operator.budget.common.optimizedBudget')}</th>
+                      <th>{t('operator.budget.allocation.adjustmentAmount')}</th>
+                      <th>{t('operator.budget.allocation.adjustmentRate')}</th>
+                      <th>{t('operator.budget.common.expectedRevenue')}</th>
+                      <th>{t('operator.budget.common.expectedRoas')}</th>
+                      <th>{t('operator.budget.common.expectedCpa')}</th>
+                      <th>{t('operator.budget.common.revenueChange')}</th>
+                      <th>{t('operator.budget.common.roasChange')}</th>
+                      <th>{t('operator.budget.allocation.recommendation')}</th>
+                      <th>{t('operator.budget.common.optimizationReason')}</th>
                     </tr>
                   </thead>
 
@@ -27303,7 +27578,7 @@ function InternalApp() {
 
                         const reason =
                           explanation?.reason ||
-                          '최적화 결과를 기반으로 예산이 계산되었습니다.'
+                          t('operator.budget.allocation.defaultReason')
 
                         return (
                           <tr key={item.channel}>
@@ -27317,14 +27592,14 @@ function InternalApp() {
                               {Math.round(
                                 item.currentPeriodBudget
                               ).toLocaleString()}
-                              원
+                              {t('client.common.currency')}
                             </td>
 
                             <td>
                               {Math.round(
                                 item.optimizedPeriodBudget
                               ).toLocaleString()}
-                              원
+                              {t('client.common.currency')}
                             </td>
 
                             <td>
@@ -27344,7 +27619,7 @@ function InternalApp() {
                                 {Math.round(
                                   item.budgetChange
                                 ).toLocaleString()}
-                                원
+                                {t('client.common.currency')}
                               </span>
                             </td>
 
@@ -27363,7 +27638,7 @@ function InternalApp() {
                               {Math.round(
                                 item.projectedPeriodRevenue
                               ).toLocaleString()}
-                              원
+                              {t('client.common.currency')}
                             </td>
 
                             <td>
@@ -27376,7 +27651,7 @@ function InternalApp() {
                                 item.projectedCpa !== undefined
                                 ? `${Math.round(
                                   item.projectedCpa
-                                ).toLocaleString()}원`
+                                ).toLocaleString()}${t('client.common.currency')}`
                                 : '-'}
                             </td>
 
@@ -27397,8 +27672,7 @@ function InternalApp() {
                                 {Math.round(
                                   item.revenueChange
                                 ).toLocaleString()}
-                                원
-
+                                {t('client.common.currency')}
                                 {item.revenueChangeRate !== null && (
                                   <>
                                     {' '}
@@ -27447,7 +27721,7 @@ function InternalApp() {
                                       : 'diagnosis-normal'
                                 }
                               >
-                                {recommendation}
+                                {getBudgetRecommendationLabel(recommendation)}
                               </span>
                             </td>
 
@@ -27472,36 +27746,36 @@ function InternalApp() {
             optimizationFeasibility.isFeasible && (
               <div className="budget-allocation-summary">
                 <div>
-                  <span>입력 총예산</span>
+                  <span>{t('operator.budget.common.inputTotalBudget')}</span>
 
                   <strong>
                     {Math.round(
                       budgetAllocationSummary.inputBudget
                     ).toLocaleString()}
-                    원
+                    {t('client.common.currency')}
                   </strong>
                 </div>
 
                 <div>
-                  <span>추천 배분 합계</span>
+                  <span>{t('operator.budget.common.recommendedAllocationTotal')}</span>
 
                   <strong>
                     {Math.round(
                       gurobiScenarioSummary?.optimizedBudget || 0
                     ).toLocaleString()}
-                    원
+                    {t('client.common.currency')}
                   </strong>
                 </div>
 
                 <div className="gurobi-summary-card">
-                  <span>미배분 차액</span>
+                  <span>{t('operator.budget.common.unallocatedDifference')}</span>
 
                   <strong>
                     {Math.round(
                       (Number(optimizationBudget) || 0) -
                       (gurobiScenarioSummary?.optimizedBudget || 0)
                     ).toLocaleString()}
-                    원
+                    {t('client.common.currency')}
                   </strong>
                 </div>
               </div>
@@ -27511,21 +27785,25 @@ function InternalApp() {
         </section>
       )}
 
+
+
       {activePage === 'scenario' && (
         <section className="scenario-management-section">
           <div className="scenario-management-header">
             <div>
               <h2>
-                시나리오 관리
+                {t('operator.scenario.title')}
               </h2>
 
               <p>
-                저장한 최적화 결과를 관리하고 비교할 수 있습니다.
+                {t('operator.scenario.description')}
               </p>
             </div>
 
             <span>
-              {advertiserOptimizationScenarios.length}개 저장됨
+              {t('operator.scenario.savedCount', {
+                count: advertiserOptimizationScenarios.length,
+              })}
             </span>
           </div>
 
@@ -27534,11 +27812,11 @@ function InternalApp() {
               <div className="scenario-comparison-header">
                 <div>
                   <h3>
-                    시나리오 비교
+                    {t('operator.scenario.comparison.title')}
                   </h3>
 
                   <p>
-                    선택한 두 최적화 결과의 핵심 지표를 비교합니다.
+                    {t('operator.scenario.comparison.description')}
                   </p>
                 </div>
 
@@ -27548,7 +27826,7 @@ function InternalApp() {
                     setSelectedScenarioIds([])
                   }
                 >
-                  비교 선택 해제
+                  {t('operator.scenario.comparison.clearSelection')}
                 </button>
               </div>
 
@@ -27556,7 +27834,7 @@ function InternalApp() {
                 <table className="scenario-comparison-table">
                   <thead>
                     <tr>
-                      <th>항목</th>
+                      <th>{t('operator.scenario.comparison.item')}</th>
 
                       {selectedScenarios.map(
                         (scenario) => (
@@ -27573,7 +27851,7 @@ function InternalApp() {
 
                   <tbody>
                     <tr>
-                      <td>최적화 목표</td>
+                      <td>{t('operator.scenario.comparison.optimizationObjective')}</td>
 
                       {selectedScenarios.map(
                         (scenario) => (
@@ -27587,7 +27865,7 @@ function InternalApp() {
                     </tr>
 
                     <tr>
-                      <td>총예산</td>
+                      <td>{t('operator.scenario.metrics.totalBudget')}</td>
 
                       {selectedScenarios.map(
                         (scenario) => (
@@ -27595,14 +27873,14 @@ function InternalApp() {
                             {Math.round(
                               scenario.totalBudget
                             ).toLocaleString()}
-                            원
+                            {t('client.common.currency')}
                           </td>
                         )
                       )}
                     </tr>
 
                     <tr>
-                      <td>예상 매출</td>
+                      <td>{t('operator.scenario.metrics.projectedRevenue')}</td>
 
                       {selectedScenarios.map(
                         (scenario) => (
@@ -27611,14 +27889,14 @@ function InternalApp() {
                               scenario.summary
                                 .projectedRevenue
                             ).toLocaleString()}
-                            원
+                            {t('client.common.currency')}
                           </td>
                         )
                       )}
                     </tr>
 
                     <tr>
-                      <td>예상 ROAS</td>
+                      <td>{t('operator.scenario.metrics.projectedRoas')}</td>
 
                       {selectedScenarios.map(
                         (scenario) => (
@@ -27633,7 +27911,7 @@ function InternalApp() {
                     </tr>
 
                     <tr>
-                      <td>예상 CPA</td>
+                      <td>{t('operator.scenario.metrics.projectedCpa')}</td>
 
                       {selectedScenarios.map(
                         (scenario) => (
@@ -27645,7 +27923,7 @@ function InternalApp() {
                               ? `${Math.round(
                                 scenario.summary
                                   .projectedCpa
-                              ).toLocaleString()}원`
+                              ).toLocaleString()}${t('client.common.currency')}`
                               : '-'}
                           </td>
                         )
@@ -27653,7 +27931,7 @@ function InternalApp() {
                     </tr>
 
                     <tr>
-                      <td>예산 조정 허용폭</td>
+                      <td>{t('operator.scenario.comparison.budgetChangeLimit')}</td>
 
                       {selectedScenarios.map(
                         (scenario) => (
@@ -27667,17 +27945,17 @@ function InternalApp() {
                     </tr>
 
                     <tr>
-                      <td>리스크 수준</td>
+                      <td>{t('operator.scenario.comparison.riskLevel')}</td>
 
                       {selectedScenarios.map(
                         (scenario) => (
                           <td key={scenario.id}>
                             {scenario.riskLevel === 'low'
-                              ? '낮음'
+                              ? t('operator.scenario.risk.low')
                               : scenario.riskLevel === 'high'
-                                ? '높음'
+                                ? t('operator.scenario.risk.high')
                                 : scenario.riskLevel === 'medium'
-                                  ? '보통'
+                                  ? t('operator.scenario.risk.medium')
                                   : '-'}
                           </td>
                         )
@@ -27689,13 +27967,13 @@ function InternalApp() {
 
               <div className="scenario-allocation-comparison">
                 <h4>
-                  매체별 최적 예산 비교
+                  {t('operator.scenario.comparison.channelBudgetComparison')}
                 </h4>
 
                 <table className="scenario-comparison-table">
                   <thead>
                     <tr>
-                      <th>매체</th>
+                      <th>{t('operator.scenario.comparison.channel')}</th>
 
                       {selectedScenarios.map(
                         (scenario) => (
@@ -27739,7 +28017,7 @@ function InternalApp() {
                                 {allocation
                                   ? `${Math.round(
                                     allocation.optimizedBudget
-                                  ).toLocaleString()}원`
+                                  ).toLocaleString()}${t('client.common.currency')}`
                                   : '-'}
                               </td>
                             )
@@ -27754,7 +28032,7 @@ function InternalApp() {
               {scenarioComparisonInsight && (
                 <div className="scenario-comparison-insight">
                   <h4>
-                    비교 해석
+                    {t('operator.scenario.comparison.interpretation')}
                   </h4>
 
                   <p>
@@ -27763,7 +28041,7 @@ function InternalApp() {
 
                   <div className="scenario-difference-grid">
                     <div>
-                      <span>예상 매출 차이</span>
+                      <span>{t('operator.scenario.comparison.revenueDifference')}</span>
 
                       <strong>
                         {scenarioComparisonInsight
@@ -27774,12 +28052,12 @@ function InternalApp() {
                           scenarioComparisonInsight
                             .revenueDifference
                         ).toLocaleString()}
-                        원
+                        {t('client.common.currency')}
                       </strong>
                     </div>
 
                     <div>
-                      <span>ROAS 차이</span>
+                      <span>{t('operator.scenario.comparison.roasDifference')}</span>
 
                       <strong>
                         {scenarioComparisonInsight
@@ -27789,12 +28067,12 @@ function InternalApp() {
                         {scenarioComparisonInsight
                           .roasDifference
                           .toFixed(1)}
-                        %p
+                        %
                       </strong>
                     </div>
 
                     <div>
-                      <span>CPA 차이</span>
+                      <span>{t('operator.scenario.comparison.cpaDifference')}</span>
 
                       <strong>
                         {scenarioComparisonInsight
@@ -27806,7 +28084,7 @@ function InternalApp() {
                           }${Math.round(
                             scenarioComparisonInsight
                               .cpaDifference
-                          ).toLocaleString()}원`
+                          ).toLocaleString()}${t('client.common.currency')}`
                           : '-'}
                       </strong>
                     </div>
@@ -27814,7 +28092,7 @@ function InternalApp() {
 
                   <div className="scenario-allocation-differences">
                     <h4>
-                      매체별 예산 차이
+                      {t('operator.scenario.comparison.channelBudgetDifference')}
                     </h4>
 
                     {scenarioComparisonInsight
@@ -27839,7 +28117,7 @@ function InternalApp() {
                               : Math.round(
                                 item.difference
                               ).toLocaleString()}
-                            원
+                            {t('client.common.currency')}
                           </strong>
                         </div>
                       ))}
@@ -27852,12 +28130,11 @@ function InternalApp() {
           {advertiserOptimizationScenarios.length === 0 ? (
             <div className="scenario-empty-state">
               <strong>
-                저장된 시나리오가 없습니다.
+                {t('operator.scenario.empty.title')}
               </strong>
 
               <p>
-                예산 최적화에서 최적화 결과를 저장하면
-                이곳에서 확인할 수 있습니다.
+                {t('operator.scenario.empty.description')}
               </p>
             </div>
           ) : (
@@ -27905,7 +28182,7 @@ function InternalApp() {
                                   )
                                 }
                               >
-                                저장
+                                {t('operator.scenario.actions.save')}
                               </button>
 
                               <button
@@ -27915,7 +28192,7 @@ function InternalApp() {
                                   setEditingScenarioName('')
                                 }}
                               >
-                                취소
+                                {t('operator.scenario.actions.cancel')}
                               </button>
                             </div>
                           ) : (
@@ -27935,7 +28212,7 @@ function InternalApp() {
                                   )
                                 }
                               >
-                                이름 수정
+                                {t('operator.scenario.actions.editName')}
                               </button>
                             </div>
                           )}
@@ -27949,7 +28226,11 @@ function InternalApp() {
                           <span>
                             {new Date(
                               scenario.createdAt
-                            ).toLocaleString()}
+                            ).toLocaleString(
+                              i18n.language === 'en'
+                                ? 'en-US'
+                                : 'ko-KR'
+                            )}
                           </span>
                         </div>
 
@@ -27988,7 +28269,7 @@ function InternalApp() {
                               }}
                             />
 
-                            <span>비교 선택</span>
+                            <span>{t('operator.scenario.actions.compareSelect')}</span>
                           </label>
 
                           <select
@@ -28003,15 +28284,15 @@ function InternalApp() {
                             }
                           >
                             <option value="draft">
-                              초안
+                              {t('operator.scenario.status.draft')}
                             </option>
 
                             <option value="recommended">
-                              추천
+                              {t('operator.scenario.status.recommended')}
                             </option>
 
                             <option value="confirmed">
-                              확정
+                              {t('operator.scenario.status.confirmed')}
                             </option>
                           </select>
 
@@ -28024,8 +28305,8 @@ function InternalApp() {
                             }
                           >
                             {scenario.isFinal
-                              ? '최종 선택 해제'
-                              : '최종 시나리오로 선택'}
+                              ? t('operator.scenario.actions.removeFinal')
+                              : t('operator.scenario.actions.selectFinal')}
                           </button>
 
 
@@ -28041,12 +28322,22 @@ function InternalApp() {
                                     const confirmed =
                                       window.confirm(
                                         isReproposal
-                                          ? `"${scenario.name || getOptimizationObjectiveLabel(
-                                            scenario.objective
-                                          )}" 시나리오를 다시 광고주에게 제안하시겠습니까?`
-                                          : `"${scenario.name || getOptimizationObjectiveLabel(
-                                            scenario.objective
-                                          )}" 시나리오를 광고주 제안으로 생성하시겠습니까?\n\n생성 후 광고주 소통 페이지에서 제안 상태와 후속 업무를 관리할 수 있습니다.`
+                                          ? t(
+                                            'operator.scenario.confirm.reproposal',
+                                            {
+                                              name: scenario.name || getOptimizationObjectiveLabel(
+                                                scenario.objective
+                                              ),
+                                            }
+                                          )
+                                          : t(
+                                            'operator.scenario.confirm.createProposal',
+                                            {
+                                              name: scenario.name || getOptimizationObjectiveLabel(
+                                                scenario.objective
+                                              ),
+                                            }
+                                          )
                                       )
 
                                     if (!confirmed) {
@@ -28059,8 +28350,8 @@ function InternalApp() {
                                   }}
                                 >
                                   {cancelledProposal
-                                    ? '재제안'
-                                    : '광고주 제안 만들기'}
+                                    ? t('operator.scenario.actions.reproposal')
+                                    : t('operator.scenario.actions.createProposal')}
                                 </button>
                               )}
 
@@ -28070,7 +28361,7 @@ function InternalApp() {
                                     type="button"
                                     disabled
                                   >
-                                    광고주 제안 생성됨
+                                    {t('operator.scenario.actions.proposalCreated')}
                                   </button>
 
                                   <button
@@ -28078,9 +28369,14 @@ function InternalApp() {
                                     onClick={() => {
                                       const confirmed =
                                         window.confirm(
-                                          `"${scenario.name || getOptimizationObjectiveLabel(
-                                            scenario.objective
-                                          )}" 광고주 제안을 취소하시겠습니까?`
+                                          t(
+                                            'operator.scenario.confirm.cancelProposal',
+                                            {
+                                              name: scenario.name || getOptimizationObjectiveLabel(
+                                                scenario.objective
+                                              ),
+                                            }
+                                          )
                                         )
 
                                       if (!confirmed) {
@@ -28092,7 +28388,7 @@ function InternalApp() {
                                       )
                                     }}
                                   >
-                                    제안 취소
+                                    {t('operator.scenario.actions.cancelProposal')}
                                   </button>
                                 </>
                               )}
@@ -28112,7 +28408,7 @@ function InternalApp() {
                               )
                             }
                           >
-                            삭제
+                            {t('operator.scenario.actions.delete')}
                           </button>
                         </div>
                       </div>
@@ -28120,20 +28416,20 @@ function InternalApp() {
                       <div className="saved-scenario-metrics">
                         <div>
                           <span>
-                            총예산
+                            {t('operator.scenario.metrics.totalBudget')}
                           </span>
 
                           <strong>
                             {Math.round(
                               scenario.totalBudget
                             ).toLocaleString()}
-                            원
+                            {t('client.common.currency')}
                           </strong>
                         </div>
 
                         <div>
                           <span>
-                            예상 매출
+                            {t('operator.scenario.metrics.projectedRevenue')}
                           </span>
 
                           <strong>
@@ -28141,13 +28437,13 @@ function InternalApp() {
                               scenario.summary
                                 .projectedRevenue
                             ).toLocaleString()}
-                            원
+                            {t('client.common.currency')}
                           </strong>
                         </div>
 
                         <div>
                           <span>
-                            예상 ROAS
+                            {t('operator.scenario.metrics.projectedRoas')}
                           </span>
 
                           <strong>
@@ -28160,7 +28456,7 @@ function InternalApp() {
 
                         <div>
                           <span>
-                            예상 CPA
+                            {t('operator.scenario.metrics.projectedCpa')}
                           </span>
 
                           <strong>
@@ -28171,7 +28467,7 @@ function InternalApp() {
                               ? `${Math.round(
                                 scenario.summary
                                   .projectedCpa
-                              ).toLocaleString()}원`
+                              ).toLocaleString()}${t('client.common.currency')}`
                               : '-'}
                           </strong>
                         </div>
@@ -28179,12 +28475,12 @@ function InternalApp() {
 
                       <div className="scenario-note-section">
                         <label>
-                          메모
+                          {t('operator.scenario.note.label')}
                         </label>
 
                         <textarea
                           rows="2"
-                          placeholder="이 시나리오의 목적이나 참고사항을 입력하세요."
+                          placeholder={t('operator.scenario.note.placeholder')}
                           value={
                             scenarioNotes[
                             scenario.id
@@ -28216,29 +28512,29 @@ function InternalApp() {
           <div className="client-communication-header">
             <div>
               <h2>
-                광고주 소통
+                {t('operator.clientPage.title')}
               </h2>
 
               <p>
-                최종 최적화안을 광고주에게 제안하고
-                검토 진행 상황을 관리합니다.
+                {t('operator.clientPage.subtitle')}
               </p>
             </div>
 
             <span>
-              {clientProposals.length}개 제안
+              {t('operator.clientPage.proposalCount', {
+                count: clientProposals.length,
+              })}
             </span>
           </div>
 
           {clientProposals.length === 0 ? (
             <div className="client-proposal-empty">
               <strong>
-                아직 생성된 광고주 제안이 없습니다.
+                {t('operator.clientPage.emptyTitle')}
               </strong>
 
               <p>
-                시나리오 관리에서 최종 시나리오를
-                선택한 후 광고주 제안을 만들어주세요.
+                {t('operator.clientPage.emptyDescription')}
               </p>
             </div>
           ) : (
@@ -28258,13 +28554,17 @@ function InternalApp() {
                         <div>
                           <strong>
                             {proposal.scenarioName ||
-                              '최적화 제안'}
+                              t('operator.clientPage.fallbackProposal')}
                           </strong>
 
                           <span>
                             {new Date(
                               proposal.createdAt
-                            ).toLocaleString()}
+                            ).toLocaleString(
+                              i18n.resolvedLanguage?.startsWith('en')
+                                ? 'en-US'
+                                : 'ko-KR'
+                            )}
                           </span>
                         </div>
 
@@ -28276,7 +28576,7 @@ function InternalApp() {
 
                         <div className="client-proposal-workflow">
                           <label>
-                            진행 상태
+                            {t('operator.clientPage.progressStatus')}
                           </label>
 
                           <select
@@ -28305,13 +28605,13 @@ function InternalApp() {
 
                         <div className="client-proposal-timeline">
                           {[
-                            ['preparing', '제안 준비'],
-                            ['sent', '제안 완료'],
-                            ['reviewing', '검토 중'],
-                            ['revision_requested', '수정 요청'],
-                            ['approved', '승인'],
-                            ['review_completed', '검토 완료'],
-                          ].map(([status, label]) => (
+                            'preparing',
+                            'sent',
+                            'reviewing',
+                            'revision_requested',
+                            'approved',
+                            'review_completed',
+                          ].map((status) => (
                             <div
                               key={status}
                               className={
@@ -28322,7 +28622,9 @@ function InternalApp() {
                             >
                               <span />
                               <strong>
-                                {label}
+                                {getClientProposalStatusLabel(
+                                  status
+                                )}
                               </strong>
                             </div>
                           ))}
@@ -28332,34 +28634,42 @@ function InternalApp() {
                       <div className="client-proposal-metrics">
                         <div>
                           <span>
-                            총예산
+                            {t('operator.tasks.metrics.totalBudget')}
                           </span>
 
                           <strong>
                             {Math.round(
                               proposal.totalBudget
-                            ).toLocaleString()}
-                            원
+                            ).toLocaleString(
+                              i18n.resolvedLanguage?.startsWith('en')
+                                ? 'en-US'
+                                : 'ko-KR'
+                            )}
+                            {t('client.common.currency')}
                           </strong>
                         </div>
 
                         <div>
                           <span>
-                            예상 매출
+                            {t('operator.tasks.metrics.projectedRevenue')}
                           </span>
 
                           <strong>
                             {Math.round(
                               proposal.summary
                                 .projectedRevenue
-                            ).toLocaleString()}
-                            원
+                            ).toLocaleString(
+                              i18n.resolvedLanguage?.startsWith('en')
+                                ? 'en-US'
+                                : 'ko-KR'
+                            )}
+                            {t('client.common.currency')}
                           </strong>
                         </div>
 
                         <div>
                           <span>
-                            예상 ROAS
+                            {t('operator.tasks.metrics.projectedRoas')}
                           </span>
 
                           <strong>
@@ -28372,7 +28682,7 @@ function InternalApp() {
 
                         <div>
                           <span>
-                            예상 CPA
+                            {t('operator.tasks.metrics.projectedCpa')}
                           </span>
 
                           <strong>
@@ -28383,7 +28693,11 @@ function InternalApp() {
                               ? `${Math.round(
                                 proposal.summary
                                   .projectedCpa
-                              ).toLocaleString()}원`
+                              ).toLocaleString(
+                                i18n.resolvedLanguage?.startsWith('en')
+                                  ? 'en-US'
+                                  : 'ko-KR'
+                              )} ${t('client.common.currency')}`
                               : '-'}
                           </strong>
                         </div>
@@ -28392,7 +28706,7 @@ function InternalApp() {
                       <div className="client-proposal-task">
                         <div>
                           <label>
-                            담당자
+                            {t('operator.tasks.detail.assignee')}
                           </label>
 
                           <input
@@ -28400,7 +28714,7 @@ function InternalApp() {
                             value={
                               proposal.assignee || ''
                             }
-                            placeholder="담당자 이름"
+                            placeholder={t('operator.clientPage.placeholders.assignee')}
                             onChange={(event) =>
                               updateClientProposalTaskLocal(
                                 proposal.id,
@@ -28425,7 +28739,7 @@ function InternalApp() {
 
                         <div>
                           <label>
-                            마감일
+                            {t('operator.tasks.detail.dueDate')}
                           </label>
 
                           <input
@@ -28473,7 +28787,7 @@ function InternalApp() {
 
                         <div>
                           <label>
-                            업무 상태
+                            {t('operator.tasks.detail.taskStatus')}
                           </label>
 
                           <select
@@ -28505,7 +28819,7 @@ function InternalApp() {
                                 proposal.id,
                                 {
                                   taskStatus:
-                                    value,
+                                    event.target.value,
 
                                   updatedAt:
                                     updatedProposal.updatedAt,
@@ -28514,19 +28828,19 @@ function InternalApp() {
                             }}
                           >
                             <option value="waiting">
-                              대기
+                              {t('operator.tasks.status.waiting')}
                             </option>
 
                             <option value="in_progress">
-                              진행 중
+                              {t('operator.tasks.status.inProgress')}
                             </option>
 
                             <option value="reviewing">
-                              내부 검토 중
+                              {t('operator.tasks.status.reviewing')}
                             </option>
 
                             <option value="done">
-                              완료
+                              {t('operator.tasks.status.done')}
                             </option>
                           </select>
                         </div>
@@ -28535,7 +28849,7 @@ function InternalApp() {
                       <div className="client-proposal-feedback">
                         <div>
                           <label>
-                            광고주 코멘트
+                            {t('operator.tasks.detail.clientComment')}
                           </label>
 
                           <textarea
@@ -28543,7 +28857,7 @@ function InternalApp() {
                             value={
                               proposal.clientComment || ''
                             }
-                            placeholder="광고주 문의, 의견, 피드백을 입력하세요."
+                            placeholder={t('operator.clientPage.placeholders.clientComment')}
                             onChange={(event) =>
                               setClientProposals(
                                 (previous) =>
@@ -28578,7 +28892,7 @@ function InternalApp() {
 
                         <div>
                           <label>
-                            내부 메모
+                            {t('operator.tasks.detail.internalNote')}
                           </label>
 
                           <textarea
@@ -28586,7 +28900,7 @@ function InternalApp() {
                             value={
                               proposal.internalNote || ''
                             }
-                            placeholder="담당자 확인사항이나 후속 업무를 기록하세요."
+                            placeholder={t('operator.clientPage.placeholders.internalNote')}
                             onChange={(event) =>
                               setClientProposals(
                                 (previous) =>
@@ -28635,7 +28949,7 @@ function InternalApp() {
                         'revision_requested' && (
                           <div className="client-revision-reason">
                             <label>
-                              수정 요청 사유
+                              {t('operator.tasks.detail.revisionReason')}
                             </label>
 
                             <textarea
@@ -28643,7 +28957,7 @@ function InternalApp() {
                               value={
                                 proposal.revisionReason || ''
                               }
-                              placeholder="광고주가 요청한 수정 내용을 입력하세요."
+                              placeholder={t('operator.clientPage.placeholders.revisionReason')}
                               onChange={(event) =>
                                 setClientProposals(
                                   (previous) =>
@@ -28691,7 +29005,7 @@ function InternalApp() {
                         proposal.history.length > 0 && (
                           <div className="client-proposal-history">
                             <h4>
-                              상태 변경 이력
+                              {t('operator.tasks.history.title')}
                             </h4>
 
                             {proposal.history.map(
@@ -28711,7 +29025,11 @@ function InternalApp() {
                                   <span>
                                     {new Date(
                                       historyItem.createdAt
-                                    ).toLocaleString()}
+                                    ).toLocaleString(
+                                      i18n.resolvedLanguage?.startsWith('en')
+                                        ? 'en-US'
+                                        : 'ko-KR'
+                                    )}
                                   </span>
                                 </div>
                               )
@@ -28733,12 +29051,11 @@ function InternalApp() {
           <div className="task-management-header">
             <div>
               <h2>
-                업무 관리
+                {t('operator.tasks.title')}
               </h2>
 
               <p>
-                광고주 제안과 후속 업무의 담당자,
-                마감일, 진행 상태를 관리합니다.
+                {t('operator.tasks.subtitle')}
               </p>
             </div>
 
@@ -28750,7 +29067,7 @@ function InternalApp() {
                   setTaskTrashOpen(true)
                 }
               >
-                휴지통
+                {t('operator.tasks.trash.title')}
                 {trashedClientTasks.length > 0 && (
                   <span className="task-trash-count">
                     {trashedClientTasks.length}
@@ -28759,42 +29076,44 @@ function InternalApp() {
               </button>
 
               <span className="task-count-badge">
-                {activeClientTaskCount}개 업무
+                {t('operator.tasks.count', {
+                  count: activeClientTaskCount,
+                })}
               </span>
             </div>
           </div>
 
           <div className="task-dashboard-summary">
             <div>
-              <span>대기</span>
+              <span>{t('operator.tasks.summary.waiting')}</span>
               <strong>
                 {taskDashboardSummary.waiting}
               </strong>
             </div>
 
             <div>
-              <span>진행 중</span>
+              <span>{t('operator.tasks.summary.inProgress')}</span>
               <strong>
                 {taskDashboardSummary.inProgress}
               </strong>
             </div>
 
             <div>
-              <span>내부 검토 중</span>
+              <span>{t('operator.tasks.summary.reviewing')}</span>
               <strong>
                 {taskDashboardSummary.reviewing}
               </strong>
             </div>
 
             <div>
-              <span>완료</span>
+              <span>{t('operator.tasks.summary.done')}</span>
               <strong>
                 {taskDashboardSummary.done}
               </strong>
             </div>
 
             <div>
-              <span>지연</span>
+              <span>{t('operator.tasks.summary.overdue')}</span>
               <strong>
                 {taskDashboardSummary.overdue}
               </strong>
@@ -28804,7 +29123,7 @@ function InternalApp() {
           <div className="task-management-filters">
             <div>
               <label>
-                업무 상태
+                {t('operator.tasks.filters.status')}
               </label>
 
               <select
@@ -28816,30 +29135,30 @@ function InternalApp() {
                 }
               >
                 <option value="all">
-                  전체
+                  {t('operator.tasks.filters.all')}
                 </option>
 
                 <option value="waiting">
-                  대기
+                  {t('operator.tasks.status.waiting')}
                 </option>
 
                 <option value="in_progress">
-                  진행 중
+                  {t('operator.tasks.status.inProgress')}
                 </option>
 
                 <option value="reviewing">
-                  내부 검토 중
+                  {t('operator.tasks.status.reviewing')}
                 </option>
 
                 <option value="done">
-                  완료
+                  {t('operator.tasks.status.done')}
                 </option>
               </select>
             </div>
 
             <div>
               <label>
-                담당자
+                {t('operator.tasks.filters.assignee')}
               </label>
 
               <select
@@ -28851,7 +29170,7 @@ function InternalApp() {
                 }
               >
                 <option value="all">
-                  전체
+                  {t('operator.tasks.filters.all')}
                 </option>
 
                 {taskAssignees.map(
@@ -28868,7 +29187,7 @@ function InternalApp() {
             </div>
             <div>
               <label>
-                정렬
+                {t('operator.tasks.filters.sort')}
               </label>
 
               <select
@@ -28880,15 +29199,15 @@ function InternalApp() {
                 }
               >
                 <option value="priority">
-                  긴급 우선
+                  {t('operator.tasks.sort.priority')}
                 </option>
 
                 <option value="dueDate">
-                  마감 임박 우선
+                  {t('operator.tasks.sort.dueDate')}
                 </option>
 
                 <option value="updatedAt">
-                  최근 수정 우선
+                  {t('operator.tasks.sort.updatedAt')}
                 </option>
               </select>
             </div>
@@ -28897,12 +29216,11 @@ function InternalApp() {
           {clientProposals.length === 0 ? (
             <div className="task-empty-state">
               <strong>
-                등록된 업무가 없습니다.
+                {t('operator.tasks.empty.title')}
               </strong>
 
               <p>
-                광고주 제안을 생성하면
-                후속 업무가 이곳에 표시됩니다.
+                {t('operator.tasks.empty.description')}
               </p>
             </div>
           ) : (
@@ -28910,15 +29228,15 @@ function InternalApp() {
               <table className="task-management-table">
                 <thead>
                   <tr>
-                    <th>시나리오</th>
-                    <th>광고주 상태</th>
-                    <th>우선순위</th>
-                    <th>담당자</th>
-                    <th>마감일</th>
-                    <th>업무 상태</th>
-                    <th>주의</th>
-                    <th>다음 조치</th>
-                    <th>관리</th>
+                    <th>{t('operator.tasks.table.scenario')}</th>
+                    <th>{t('operator.tasks.table.clientStatus')}</th>
+                    <th>{t('operator.tasks.table.priority')}</th>
+                    <th>{t('operator.tasks.table.assignee')}</th>
+                    <th>{t('operator.tasks.table.dueDate')}</th>
+                    <th>{t('operator.tasks.table.taskStatus')}</th>
+                    <th>{t('operator.tasks.table.attention')}</th>
+                    <th>{t('operator.tasks.table.nextAction')}</th>
+                    <th>{t('operator.tasks.table.actions')}</th>
                   </tr>
                 </thead>
 
@@ -28974,7 +29292,7 @@ function InternalApp() {
                           <td>
                             <strong>
                               {proposal.scenarioName ||
-                                '최적화 제안'}
+                                t('operator.tasks.fallbackProposal')}
                             </strong>
                           </td>
 
@@ -29023,19 +29341,19 @@ function InternalApp() {
                               }}
                             >
                               <option value="low">
-                                낮음
+                                {t('operator.tasks.priority.low')}
                               </option>
 
                               <option value="normal">
-                                보통
+                                {t('operator.tasks.priority.normal')}
                               </option>
 
                               <option value="high">
-                                높음
+                                {t('operator.tasks.priority.high')}
                               </option>
 
                               <option value="urgent">
-                                긴급
+                                {t('operator.tasks.priority.urgent')}
                               </option>
                             </select>
                           </td>
@@ -29046,7 +29364,7 @@ function InternalApp() {
                               value={
                                 proposal.assignee || ''
                               }
-                              placeholder="담당자"
+                              placeholder={t('operator.tasks.filters.assignee')}
                               onChange={(event) =>
                                 updateClientProposalTaskLocal(
                                   proposal.id,
@@ -29113,14 +29431,14 @@ function InternalApp() {
 
                               {isOverdue && (
                                 <strong className="task-overdue">
-                                  지연
+                                  {t('operator.tasks.due.overdue')}
                                 </strong>
                               )}
 
                               {!isOverdue &&
                                 isDueSoon && (
                                   <strong className="task-due-soon">
-                                    마감 임박
+                                    {t('operator.tasks.due.dueSoon')}
                                   </strong>
                                 )}
                             </div>
@@ -29166,19 +29484,19 @@ function InternalApp() {
                               }}
                             >
                               <option value="waiting">
-                                대기
+                                {t('operator.tasks.status.waiting')}
                               </option>
 
                               <option value="in_progress">
-                                진행 중
+                                {t('operator.tasks.status.inProgress')}
                               </option>
 
                               <option value="reviewing">
-                                내부 검토 중
+                                {t('operator.tasks.status.reviewing')}
                               </option>
 
                               <option value="done">
-                                완료
+                                {t('operator.tasks.status.done')}
                               </option>
                             </select>
                           </td>
@@ -29214,7 +29532,7 @@ function InternalApp() {
                                   )
                                 }
                               >
-                                상세 보기
+                                {t('operator.tasks.actions.viewDetails')}
                               </button>
 
                               {proposal.taskStatus === 'done' && (
@@ -29227,7 +29545,7 @@ function InternalApp() {
                                     )
                                   }
                                 >
-                                  삭제
+                                  {t('common.delete')}
                                 </button>
                               )}
                             </div>
@@ -29248,7 +29566,7 @@ function InternalApp() {
                 <div>
                   <h3>
                     {selectedTaskProposal.scenarioName ||
-                      '최적화 제안'}
+                      t('operator.tasks.fallbackProposal')}
                   </h3>
 
                   <span>
@@ -29266,34 +29584,34 @@ function InternalApp() {
                     )
                   }
                 >
-                  닫기
+                  {t('operator.budget.common.close')}
                 </button>
               </div>
 
               <div className="task-detail-metrics">
                 <div>
-                  <span>총예산</span>
+                  <span>{t('operator.tasks.metrics.totalBudget')}</span>
                   <strong>
                     {Math.round(
                       selectedTaskProposal.totalBudget
                     ).toLocaleString()}
-                    원
+                    {t('client.common.currency')}
                   </strong>
                 </div>
 
                 <div>
-                  <span>예상 매출</span>
+                  <span>{t('operator.tasks.metrics.projectedRevenue')}</span>
                   <strong>
                     {Math.round(
                       selectedTaskProposal.summary
                         .projectedRevenue
                     ).toLocaleString()}
-                    원
+                    {t('client.common.currency')}
                   </strong>
                 </div>
 
                 <div>
-                  <span>예상 ROAS</span>
+                  <span>{t('operator.tasks.metrics.projectedRoas')}</span>
                   <strong>
                     {selectedTaskProposal.summary
                       .projectedRoas
@@ -29303,7 +29621,7 @@ function InternalApp() {
                 </div>
 
                 <div>
-                  <span>예상 CPA</span>
+                  <span>{t('operator.tasks.metrics.projectedCpa')}</span>
                   <strong>
                     {selectedTaskProposal.summary
                       .projectedCpa !== null &&
@@ -29312,7 +29630,7 @@ function InternalApp() {
                       ? `${Math.round(
                         selectedTaskProposal.summary
                           .projectedCpa
-                      ).toLocaleString()}원`
+                      ).toLocaleString()}${t('client.common.currency')}`
                       : '-'}
                   </strong>
                 </div>
@@ -29320,72 +29638,58 @@ function InternalApp() {
 
               <div className="task-detail-grid">
                 <div>
-                  <span>담당자</span>
+                  <span>{t('operator.tasks.detail.assignee')}</span>
                   <strong>
                     {selectedTaskProposal.assignee || '-'}
                   </strong>
                 </div>
 
                 <div>
-                  <span>마감일</span>
+                  <span>{t('operator.tasks.detail.dueDate')}</span>
                   <strong>
                     {selectedTaskProposal.dueDate || '-'}
                   </strong>
                 </div>
 
                 <div>
-                  <span>업무 상태</span>
+                  <span>{t('operator.tasks.detail.taskStatus')}</span>
                   <strong>
-                    {selectedTaskProposal.taskStatus ===
-                      'in_progress'
-                      ? '진행 중'
-                      : selectedTaskProposal.taskStatus ===
-                        'reviewing'
-                        ? '내부 검토 중'
-                        : selectedTaskProposal.taskStatus ===
-                          'done'
-                          ? '완료'
-                          : '대기'}
+                    {getTaskStatusLabel(
+                      selectedTaskProposal.taskStatus
+                    )}
                   </strong>
                 </div>
 
                 <div>
-                  <span>우선순위</span>
+                  <span>{t('operator.tasks.detail.priority')}</span>
                   <strong>
-                    {selectedTaskProposal.priority ===
-                      'urgent'
-                      ? '긴급'
-                      : selectedTaskProposal.priority ===
-                        'high'
-                        ? '높음'
-                        : selectedTaskProposal.priority ===
-                          'low'
-                          ? '낮음'
-                          : '보통'}
+                    {getTaskPriorityLabel(
+                      selectedTaskProposal.priority
+                    )}
                   </strong>
                 </div>
               </div>
 
               <div className="task-detail-text">
                 <div>
-                  <h4>광고주 코멘트</h4>
+                  <h4>{t('operator.tasks.detail.clientComment')}</h4>
                   <p>
                     {selectedTaskProposal.clientComment ||
-                      '등록된 광고주 코멘트가 없습니다.'}
+                      t('operator.tasks.detail.noClientComment')}
                   </p>
                 </div>
 
                 <div>
-                  <h4>내부 메모</h4>
+                  <h4>{t('operator.tasks.detail.internalNote')}</h4>
                   <p>
                     {selectedTaskProposal.internalNote ||
-                      '등록된 내부 메모가 없습니다.'}
+                      t('operator.tasks.detail.noInternalNote')}
                   </p>
                 </div>
 
                 {selectedTaskProposal.revisionReason && (
                   <div className="task-detail-revision-reason">
-                    <h4>수정 요청 사유</h4>
+                    <h4>{t('operator.tasks.detail.revisionReason')}</h4>
                     <p>
                       {selectedTaskProposal.revisionReason}
                     </p>
@@ -29396,16 +29700,16 @@ function InternalApp() {
                   <div className="revision-change-summary">
                     <div className="revision-change-header">
                       <div>
-                        <h4>수정 전 · 후 비교</h4>
+                        <h4>{t('operator.tasks.revision.beforeAfter')}</h4>
                         <p>
-                          수정 요청 반영에 따른 예산 및 예상 성과 변화입니다.
+                          {t('operator.tasks.revision.beforeAfterDescription')}
                         </p>
                       </div>
                     </div>
 
                     <div className="revision-summary-grid">
                       <div className="revision-summary-item">
-                        <span>총예산</span>
+                        <span>{t('operator.tasks.metrics.totalBudget')}</span>
 
                         <div className="revision-summary-values">
                           <span>
@@ -29415,8 +29719,12 @@ function InternalApp() {
                                   .previousRevision
                                   .totalBudget
                               ) || 0
-                            ).toLocaleString()}
-                            원
+                            ).toLocaleString(
+                              i18n.language === 'en'
+                                ? 'en-US'
+                                : 'ko-KR'
+                            )}
+                            {t('client.common.currency')}
                           </span>
 
                           <span>→</span>
@@ -29426,14 +29734,18 @@ function InternalApp() {
                               Number(
                                 selectedTaskProposal.totalBudget
                               ) || 0
-                            ).toLocaleString()}
-                            원
+                            ).toLocaleString(
+                              i18n.language === 'en'
+                                ? 'en-US'
+                                : 'ko-KR'
+                            )}
+                            {t('client.common.currency')}
                           </strong>
                         </div>
                       </div>
 
                       <div className="revision-summary-item">
-                        <span>예상 매출</span>
+                        <span>{t('operator.tasks.metrics.projectedRevenue')}</span>
 
                         <div className="revision-summary-values">
                           <span>
@@ -29444,8 +29756,12 @@ function InternalApp() {
                                   .summary
                                   ?.projectedRevenue
                               ) || 0
-                            ).toLocaleString()}
-                            원
+                            ).toLocaleString(
+                              i18n.language === 'en'
+                                ? 'en-US'
+                                : 'ko-KR'
+                            )}
+                            {t('client.common.currency')}
                           </span>
 
                           <span>→</span>
@@ -29457,14 +29773,18 @@ function InternalApp() {
                                   .summary
                                   ?.projectedRevenue
                               ) || 0
-                            ).toLocaleString()}
-                            원
+                            ).toLocaleString(
+                              i18n.language === 'en'
+                                ? 'en-US'
+                                : 'ko-KR'
+                            )}
+                            {t('client.common.currency')}
                           </strong>
                         </div>
                       </div>
 
                       <div className="revision-summary-item">
-                        <span>예상 ROAS</span>
+                        <span>{t('operator.tasks.metrics.projectedRoas')}</span>
 
                         <div className="revision-summary-values">
                           <span>
@@ -29491,7 +29811,7 @@ function InternalApp() {
                       </div>
 
                       <div className="revision-summary-item">
-                        <span>예상 CPA</span>
+                        <span>{t('operator.tasks.metrics.projectedCpa')}</span>
 
                         <div className="revision-summary-values">
                           <span>
@@ -29504,7 +29824,11 @@ function InternalApp() {
                                   .previousRevision
                                   .summary
                                   .projectedCpa
-                              ).toLocaleString()}원`
+                              ).toLocaleString(
+                              i18n.language === 'en'
+                                ? 'en-US'
+                                : 'ko-KR'
+                            )}${t('client.common.currency')}`
                               : '-'}
                           </span>
 
@@ -29518,7 +29842,11 @@ function InternalApp() {
                                 selectedTaskProposal
                                   .summary
                                   .projectedCpa
-                              ).toLocaleString()}원`
+                              ).toLocaleString(
+                              i18n.language === 'en'
+                                ? 'en-US'
+                                : 'ko-KR'
+                            )}${t('client.common.currency')}`
                               : '-'}
                           </strong>
                         </div>
@@ -29526,15 +29854,15 @@ function InternalApp() {
                     </div>
 
                     <div className="revision-budget-comparison">
-                      <h4>매체별 예산 변경</h4>
+                      <h4>{t('operator.tasks.revision.channelBudgetChanges')}</h4>
 
                       <div className="revision-budget-table">
                         <div className="revision-budget-table-header">
-                          <span>매체</span>
-                          <span>수정 전</span>
+                          <span>{t('operator.tasks.revision.channel')}</span>
+                          <span>{t('operator.tasks.revision.before')}</span>
                           <span></span>
-                          <span>수정 후</span>
-                          <span>증감</span>
+                          <span>{t('operator.tasks.revision.after')}</span>
+                          <span>{t('operator.tasks.revision.change')}</span>
                         </div>
 
                         {(selectedTaskProposal.allocations || []).map(
@@ -29582,8 +29910,12 @@ function InternalApp() {
                                 <span>
                                   {Math.round(
                                     previousBudget
-                                  ).toLocaleString()}
-                                  원
+                                  ).toLocaleString(
+                              i18n.language === 'en'
+                                ? 'en-US'
+                                : 'ko-KR'
+                            )}
+                                  {t('client.common.currency')}
                                 </span>
 
                                 <span className="revision-budget-arrow">
@@ -29593,8 +29925,12 @@ function InternalApp() {
                                 <strong>
                                   {Math.round(
                                     currentBudget
-                                  ).toLocaleString()}
-                                  원
+                                  ).toLocaleString(
+                              i18n.language === 'en'
+                                ? 'en-US'
+                                : 'ko-KR'
+                            )}
+                                  {t('client.common.currency')}
                                 </strong>
 
                                 <span
@@ -29614,9 +29950,12 @@ function InternalApp() {
 
                                   {Math.round(
                                     difference
-                                  ).toLocaleString()}
-                                  원
-
+                                  ).toLocaleString(
+                              i18n.language === 'en'
+                                ? 'en-US'
+                                : 'ko-KR'
+                            )}
+                                  {t('client.common.currency')}
                                   {changeRate !== null && (
                                     <>
                                       {' '}
@@ -29654,7 +29993,7 @@ function InternalApp() {
                         )
                       }
                     >
-                      수정 작업 시작
+                      {t('operator.tasks.revision.start')}
                     </button>
                   </div>
                 )}
@@ -29665,7 +30004,7 @@ function InternalApp() {
                 'in_progress' && (
                   <div className="task-detail-revision">
                     <h4>
-                      수정안 작성
+                      {t('operator.tasks.revision.editorTitle')}
                     </h4>
 
                     <div className="revision-edit-mode">
@@ -29678,7 +30017,7 @@ function InternalApp() {
                           revisionEditMode === 'scenario'
                         }
                       >
-                        저장 시나리오 적용
+                        {t('operator.tasks.revision.useSavedScenario')}
                       </button>
 
                       <button
@@ -29706,15 +30045,14 @@ function InternalApp() {
                           revisionEditMode === 'manual'
                         }
                       >
-                        직접 예산 편집
+                        {t('operator.tasks.revision.editBudgetManually')}
                       </button>
                     </div>
 
                     {revisionEditMode === 'scenario' && (
                       <>
                         <p>
-                          저장된 다른 최적화 시나리오를
-                          수정안으로 선택할 수 있습니다.
+                          {t('operator.tasks.revision.savedScenarioHelp')}
                         </p>
 
                         <select
@@ -29726,7 +30064,7 @@ function InternalApp() {
                           }
                         >
                           <option value="">
-                            시나리오 선택
+                            {t('operator.tasks.revision.selectScenario')}
                           </option>
 
                           {savedOptimizationScenarios
@@ -29753,12 +30091,12 @@ function InternalApp() {
                         {revisionScenario && (
                           <div className="revision-scenario-comparison">
                             <h4>
-                              현재 제안 vs 수정안
+                              {t('operator.tasks.revision.currentVsRevision')}
                             </h4>
 
                             <div className="task-detail-grid">
                               <div>
-                                <span>총예산</span>
+                                <span>{t('operator.tasks.metrics.totalBudget')}</span>
                                 <strong>
                                   {Math.round(
                                     selectedTaskProposal.totalBudget ??
@@ -29771,35 +30109,51 @@ function InternalApp() {
                                           ),
                                         0
                                       )
-                                  ).toLocaleString()}
-                                  원
+                                  ).toLocaleString(
+                              i18n.language === 'en'
+                                ? 'en-US'
+                                : 'ko-KR'
+                            )}
+                                  {t('client.common.currency')}
                                   {' → '}
                                   {Math.round(
                                     revisionScenario.totalBudget || 0
-                                  ).toLocaleString()}
-                                  원
+                                  ).toLocaleString(
+                              i18n.language === 'en'
+                                ? 'en-US'
+                                : 'ko-KR'
+                            )}
+                                  {t('client.common.currency')}
                                 </strong>
                               </div>
 
                               <div>
-                                <span>예상 매출</span>
+                                <span>{t('operator.tasks.metrics.projectedRevenue')}</span>
                                 <strong>
                                   {Math.round(
                                     selectedTaskProposal.summary
                                       ?.projectedRevenue || 0
-                                  ).toLocaleString()}
-                                  원
+                                  ).toLocaleString(
+                              i18n.language === 'en'
+                                ? 'en-US'
+                                : 'ko-KR'
+                            )}
+                                  {t('client.common.currency')}
                                   {' → '}
                                   {Math.round(
                                     revisionScenario.summary
                                       ?.projectedRevenue || 0
-                                  ).toLocaleString()}
-                                  원
+                                  ).toLocaleString(
+                              i18n.language === 'en'
+                                ? 'en-US'
+                                : 'ko-KR'
+                            )}
+                                  {t('client.common.currency')}
                                 </strong>
                               </div>
 
                               <div>
-                                <span>예상 ROAS</span>
+                                <span>{t('operator.tasks.metrics.projectedRoas')}</span>
                                 <strong>
                                   {Number(
                                     selectedTaskProposal.summary
@@ -29816,14 +30170,18 @@ function InternalApp() {
                               </div>
 
                               <div>
-                                <span>예상 CPA</span>
+                                <span>{t('operator.tasks.metrics.projectedCpa')}</span>
                                 <strong>
                                   {selectedTaskProposal.summary
                                     ?.projectedCpa != null
                                     ? `${Math.round(
                                       selectedTaskProposal.summary
                                         .projectedCpa
-                                    ).toLocaleString()}원`
+                                    ).toLocaleString(
+                              i18n.language === 'en'
+                                ? 'en-US'
+                                : 'ko-KR'
+                            )}${t('client.common.currency')}`
                                     : '-'}
                                   {' → '}
                                   {revisionScenario.summary
@@ -29831,7 +30189,11 @@ function InternalApp() {
                                     ? `${Math.round(
                                       revisionScenario.summary
                                         .projectedCpa
-                                    ).toLocaleString()}원`
+                                    ).toLocaleString(
+                              i18n.language === 'en'
+                                ? 'en-US'
+                                : 'ko-KR'
+                            )}${t('client.common.currency')}`
                                     : '-'}
                                 </strong>
                               </div>
@@ -29844,7 +30206,7 @@ function InternalApp() {
                     {revisionEditMode === 'manual' && (
                       <div className="manual-revision-editor">
                         <h4>
-                          매체별 예산 직접 편집
+                          {t('operator.tasks.revision.manualBudgetTitle')}
                         </h4>
 
                         <div className="manual-budget-list">
@@ -29884,13 +30246,17 @@ function InternalApp() {
                                     </strong>
 
                                     <div className="manual-budget-current">
-                                      <span>현재 제안</span>
+                                      <span>{t('operator.tasks.revision.currentProposal')}</span>
 
                                       <strong>
                                         {Math.round(
                                           currentBudget
-                                        ).toLocaleString()}
-                                        원
+                                        ).toLocaleString(
+                              i18n.language === 'en'
+                                ? 'en-US'
+                                : 'ko-KR'
+                            )}
+                                        {t('client.common.currency')}
                                       </strong>
                                     </div>
 
@@ -29899,7 +30265,7 @@ function InternalApp() {
                                     </span>
 
                                     <div className="manual-budget-input">
-                                      <span>수정 예산</span>
+                                      <span>{t('operator.tasks.revision.revisedBudget')}</span>
 
                                       <input
                                         type="number"
@@ -29924,7 +30290,7 @@ function InternalApp() {
                                     </div>
 
                                     <div className="manual-budget-change">
-                                      <span>변화율</span>
+                                      <span>{t('operator.tasks.revision.changeRate')}</span>
 
                                       <strong>
                                         {changeRate >= 0
@@ -29942,37 +30308,45 @@ function InternalApp() {
                         {manualRevisionProjection && (
                           <div className="manual-performance-preview">
                             <h4>
-                              수정 후 예상 성과
+                              {t('operator.tasks.revision.projectedAfterRevision')}
                             </h4>
 
                             <div className="task-detail-grid">
                               <div>
-                                <span>총예산</span>
+                                <span>{t('operator.tasks.metrics.totalBudget')}</span>
 
                                 <strong>
                                   {Math.round(
                                     manualRevisionProjection
                                       .totalBudget
-                                  ).toLocaleString()}
-                                  원
+                                  ).toLocaleString(
+                              i18n.language === 'en'
+                                ? 'en-US'
+                                : 'ko-KR'
+                            )}
+                                  {t('client.common.currency')}
                                 </strong>
                               </div>
 
                               <div>
-                                <span>예상 매출</span>
+                                <span>{t('operator.tasks.metrics.projectedRevenue')}</span>
 
                                 <strong>
                                   {Math.round(
                                     manualRevisionProjection
                                       .summary
                                       .projectedRevenue
-                                  ).toLocaleString()}
-                                  원
+                                  ).toLocaleString(
+                              i18n.language === 'en'
+                                ? 'en-US'
+                                : 'ko-KR'
+                            )}
+                                  {t('client.common.currency')}
                                 </strong>
                               </div>
 
                               <div>
-                                <span>예상 ROAS</span>
+                                <span>{t('operator.tasks.metrics.projectedRoas')}</span>
 
                                 <strong>
                                   {Number(
@@ -29985,7 +30359,7 @@ function InternalApp() {
                               </div>
 
                               <div>
-                                <span>예상 CPA</span>
+                                <span>{t('operator.tasks.metrics.projectedCpa')}</span>
 
                                 <strong>
                                   {manualRevisionProjection
@@ -29995,7 +30369,11 @@ function InternalApp() {
                                       manualRevisionProjection
                                         .summary
                                         .projectedCpa
-                                    ).toLocaleString()}원`
+                                    ).toLocaleString(
+                              i18n.language === 'en'
+                                ? 'en-US'
+                                : 'ko-KR'
+                            )}${t('client.common.currency')}`
                                     : '-'}
                                 </strong>
                               </div>
@@ -30013,22 +30391,22 @@ function InternalApp() {
                             )
                           }
                         >
-                          직접 수정안 적용
+                          {t('operator.tasks.revision.applyManual')}
                         </button>
                       </div>
                     )}
 
                     <div className="revision-allocation-comparison">
                       <h4>
-                        매체별 예산 비교
+                        {t('operator.tasks.revision.channelBudgetComparison')}
                       </h4>
 
                       <table>
                         <thead>
                           <tr>
-                            <th>매체</th>
-                            <th>현재 제안</th>
-                            <th>수정안</th>
+                            <th>{t('operator.tasks.revision.channel')}</th>
+                            <th>{t('operator.tasks.revision.currentProposal')}</th>
+                            <th>{t('operator.tasks.revision.revision')}</th>
                           </tr>
                         </thead>
 
@@ -30057,16 +30435,24 @@ function InternalApp() {
                                     {Math.round(
                                       currentAllocation
                                         ?.optimizedBudget || 0
-                                    ).toLocaleString()}
-                                    원
+                                    ).toLocaleString(
+                              i18n.language === 'en'
+                                ? 'en-US'
+                                : 'ko-KR'
+                            )}
+                                    {t('client.common.currency')}
                                   </td>
 
                                   <td>
                                     {Math.round(
                                       newAllocation
                                         .optimizedBudget || 0
-                                    ).toLocaleString()}
-                                    원
+                                    ).toLocaleString(
+                              i18n.language === 'en'
+                                ? 'en-US'
+                                : 'ko-KR'
+                            )}
+                                    {t('client.common.currency')}
                                   </td>
                                 </tr>
                               )
@@ -30086,7 +30472,7 @@ function InternalApp() {
                           )
                         }
                       >
-                        이 시나리오를 수정안으로 적용
+                        {t('operator.tasks.revision.applyScenario')}
                       </button>
                     </div>
 
@@ -30107,7 +30493,7 @@ function InternalApp() {
                         )
                       }
                     >
-                      광고주에게 재공유
+                      {t('operator.tasks.revision.reshareWithClient')}
                     </button>
                   </div>
                 )}
@@ -30121,7 +30507,7 @@ function InternalApp() {
                 0 && (
                   <div className="task-detail-history">
                     <h4>
-                      상태 변경 이력
+                      {t('operator.tasks.history.title')}
                     </h4>
 
                     {selectedTaskProposal.history.map(
@@ -30140,7 +30526,11 @@ function InternalApp() {
                           <span>
                             {new Date(
                               historyItem.createdAt
-                            ).toLocaleString()}
+                            ).toLocaleString(
+                              i18n.language === 'en'
+                                ? 'en-US'
+                                : 'ko-KR'
+                            )}
                           </span>
                         </div>
                       )
@@ -30155,11 +30545,10 @@ function InternalApp() {
               <div className="task-trash-modal">
                 <div className="task-trash-modal-header">
                   <div>
-                    <h3>휴지통</h3>
+                    <h3>{t('operator.tasks.trash.title')}</h3>
 
                     <p>
-                      삭제된 업무를 확인하고 복원하거나
-                      영구 삭제할 수 있습니다.
+                      {t('operator.tasks.trash.description')}
                     </p>
                   </div>
 
@@ -30170,17 +30559,19 @@ function InternalApp() {
                       setTaskTrashOpen(false)
                     }
                   >
-                    닫기
+                    {t('operator.budget.common.close')}
                   </button>
                 </div>
 
                 <div className="task-trash-modal-summary">
-                  삭제된 업무 {trashedClientTasks.length}개
+                  {t('operator.tasks.trash.count', {
+                    count: trashedClientTasks.length,
+                  })}
                 </div>
 
                 {trashedClientTasks.length === 0 ? (
                   <div className="task-trash-empty">
-                    휴지통이 비어 있습니다.
+                    {t('operator.tasks.trash.empty')}
                   </div>
                 ) : (
                   <div className="task-trash-list">
@@ -30193,22 +30584,26 @@ function InternalApp() {
                           <div className="task-trash-item-info">
                             <strong>
                               {proposal.scenarioName ||
-                                '최적화 제안'}
+                                t('operator.tasks.fallbackProposal')}
                             </strong>
 
                             <span>
-                              광고주 상태:{' '}
+                              {t('operator.tasks.trash.clientStatus')}:{' '}
                               {getClientProposalStatusLabel(
                                 proposal.status
                               )}
                             </span>
 
                             <span>
-                              삭제일:{' '}
+                              {t('operator.tasks.trash.deletedAt')}:{' '}
                               {proposal.trashedAt
                                 ? new Date(
                                   proposal.trashedAt
-                                ).toLocaleString()
+                                ).toLocaleString(
+                              i18n.language === 'en'
+                                ? 'en-US'
+                                : 'ko-KR'
+                            )
                                 : '-'}
                             </span>
                           </div>
@@ -30222,7 +30617,7 @@ function InternalApp() {
                                 )
                               }
                             >
-                              복원
+                              {t('operator.tasks.trash.restore')}
                             </button>
 
                             <button
@@ -30234,7 +30629,7 @@ function InternalApp() {
                                 )
                               }
                             >
-                              영구 삭제
+                              {t('operator.tasks.trash.permanentDelete')}
                             </button>
                           </div>
                         </div>
@@ -30254,7 +30649,7 @@ function InternalApp() {
                       emptyClientTaskTrash
                     }
                   >
-                    휴지통 비우기
+                    {t('operator.tasks.trash.emptyTrash')}
                   </button>
                 </div>
               </div>
@@ -30272,12 +30667,11 @@ function InternalApp() {
             <div className="media-data-modal-header">
               <div>
                 <h2>
-                  매체 데이터 연동
+                  {t('operator.mediaConnections.title')}
                 </h2>
 
                 <p>
-                  광고 계정을 연결하여 성과 데이터를
-                  자동으로 가져옵니다.
+                  {t('operator.mediaConnections.description')}
                 </p>
               </div>
 
@@ -30287,7 +30681,7 @@ function InternalApp() {
                   setMediaDataPanelOpen(false)
                 }
               >
-                닫기
+                {t('operator.mediaConnections.close')}
               </button>
             </div>
 
@@ -30302,7 +30696,7 @@ function InternalApp() {
                   {metaConnection?.status === 'connected' && (
                     <span>
                       {metaConnection.accountName ||
-                        'Meta 광고 계정'}
+                        t('operator.mediaConnections.metaDefaultAccount')}
                     </span>
                   )}
                 </div>
@@ -30314,8 +30708,8 @@ function InternalApp() {
                   }
                 >
                   {metaConnection?.status === 'connected'
-                    ? '연결됨'
-                    : '계정 연결'}
+                    ? t('operator.mediaConnections.connected')
+                    : t('operator.mediaConnections.connectAccount')}
                 </button>
               </div>
 
@@ -30333,7 +30727,7 @@ function InternalApp() {
                     setGoogleConnectOpen(true)
                   }
                 >
-                  계정 연결
+                  {t('operator.mediaConnections.connectAccount')}
                 </button>
               </div>
 
@@ -30351,7 +30745,7 @@ function InternalApp() {
                     setTiktokConnectOpen(true)
                   }
                 >
-                  계정 연결
+                  {t('operator.mediaConnections.connectAccount')}
                 </button>
               </div>
 
@@ -30380,7 +30774,7 @@ function InternalApp() {
                     return (
                       <div className="media-connection-actions">
                         <span className="media-connected-badge">
-                          연결됨
+                          {t('operator.mediaConnections.connected')}
                         </span>
 
                         <button
@@ -30389,7 +30783,7 @@ function InternalApp() {
                           onClick={async () => {
                             const confirmed =
                               window.confirm(
-                                'Naver Ads 연결을 끊으시겠습니까?\n저장된 API 인증정보는 제거됩니다.'
+                                t('operator.mediaConnections.naver.confirmDisconnect')
                               )
 
                             if (!confirmed) {
@@ -30428,14 +30822,14 @@ function InternalApp() {
                               ) {
                                 throw new Error(
                                   result.message ||
-                                  '연결 해제 실패'
+                                  t('operator.mediaConnections.naver.disconnectFailed')
                                 )
                               }
 
                               await loadAdConnectionsFromServer()
 
                               alert(
-                                'Naver Ads 연결이 해제되었습니다.'
+                                t('operator.mediaConnections.naver.disconnected')
                               )
 
                             } catch (error) {
@@ -30445,12 +30839,12 @@ function InternalApp() {
                               )
 
                               alert(
-                                'Naver Ads 연결 해제 중 오류가 발생했습니다.'
+                                t('operator.mediaConnections.naver.disconnectError')
                               )
                             }
                           }}
                         >
-                          연결 끊기
+                          {t('operator.mediaConnections.disconnect')}
                         </button>
                       </div>
                     )
@@ -30463,7 +30857,7 @@ function InternalApp() {
                         setNaverConnectOpen(true)
                       }
                     >
-                      계정 연결
+                      {t('operator.mediaConnections.connectAccount')}
                     </button>
                   )
                 })()}
@@ -30473,7 +30867,7 @@ function InternalApp() {
 
             {adConnections.length === 0 ? (
               <div className="media-data-empty">
-                아직 연결된 광고 계정이 없습니다.
+                {t('operator.mediaConnections.empty')}
               </div>
             ) : (
               <div className="media-connected-list">
@@ -30496,7 +30890,7 @@ function InternalApp() {
 
                       <small>
                         {connection.status === 'connected'
-                          ? '연결됨'
+                          ? t('operator.mediaConnections.connected')
                           : connection.status}
                       </small>
                     </div>
@@ -30514,11 +30908,10 @@ function InternalApp() {
           <div className="media-data-modal">
             <div className="media-data-modal-header">
               <div>
-                <h2>Meta Ads 연결</h2>
+                <h2>{t('operator.mediaConnections.meta.title')}</h2>
 
                 <p>
-                  Meta 광고 데이터를 가져오기 위한
-                  API 정보를 입력해주세요.
+                  {t('operator.mediaConnections.meta.description')}
                 </p>
               </div>
 
@@ -30528,19 +30921,19 @@ function InternalApp() {
                   setMetaConnectOpen(false)
                 }
               >
-                닫기
+                {t('operator.mediaConnections.close')}
               </button>
             </div>
 
             <div className="meta-connect-form">
               <label>
-                API 주소
+                {t('operator.mediaConnections.fields.apiUrl')}
               </label>
 
               <input
                 type="text"
                 value={metaApiUrl}
-                placeholder="예: https://graph.facebook.com/..."
+                placeholder={t('operator.mediaConnections.meta.apiPlaceholder')}
                 onChange={(event) =>
                   setMetaApiUrl(
                     event.target.value
@@ -30555,7 +30948,7 @@ function InternalApp() {
               <input
                 type="password"
                 value={metaAccessToken}
-                placeholder="Meta Access Token을 입력하세요."
+                placeholder={t('operator.mediaConnections.meta.tokenPlaceholder')}
                 onChange={(event) =>
                   setMetaAccessToken(
                     event.target.value
@@ -30564,13 +30957,13 @@ function InternalApp() {
               />
 
               <label>
-                광고 계정 ID
+                {t('operator.mediaConnections.fields.adAccountId')}
               </label>
 
               <input
                 type="text"
                 value={metaAccountId}
-                placeholder="예: act_123456789"
+                placeholder={t('operator.mediaConnections.meta.accountPlaceholder')}
                 onChange={(event) =>
                   setMetaAccountId(
                     event.target.value
@@ -30586,7 +30979,7 @@ function InternalApp() {
                   setMetaConnectOpen(false)
                 }
               >
-                취소
+                {t('operator.mediaConnections.cancel')}
               </button>
 
               <button
@@ -30608,7 +31001,7 @@ function InternalApp() {
                   )
                 }}
               >
-                연결 테스트
+                {t('operator.mediaConnections.testConnection')}
               </button>
             </div>
           </div>
@@ -30620,11 +31013,10 @@ function InternalApp() {
           <div className="media-data-modal">
             <div className="media-data-modal-header">
               <div>
-                <h2>Naver Ads 연결</h2>
+                <h2>{t('operator.mediaConnections.naver.title')}</h2>
 
                 <p>
-                  네이버 검색광고 API 인증 정보를
-                  입력해주세요.
+                  {t('operator.mediaConnections.naver.description')}
                 </p>
               </div>
 
@@ -30634,13 +31026,13 @@ function InternalApp() {
                   setNaverConnectOpen(false)
                 }
               >
-                닫기
+                {t('operator.mediaConnections.close')}
               </button>
             </div>
 
             <div className="meta-connect-form">
               <label>
-                API 주소
+                {t('operator.mediaConnections.fields.apiUrl')}
               </label>
 
               <input
@@ -30707,7 +31099,7 @@ function InternalApp() {
                   setNaverConnectOpen(false)
                 }
               >
-                취소
+                {t('operator.mediaConnections.cancel')}
               </button>
 
               <button
@@ -30855,11 +31247,13 @@ function InternalApp() {
                       )
 
                       alert(
-                        `네이버 광고 API 연결 및 저장 성공${result.campaignCount !== null &&
-                          result.campaignCount !== undefined
-                          ? `\n캠페인 ${result.campaignCount}개 확인`
-                          : ''
-                        }`
+                        t('operator.mediaConnections.naver.connectedSuccess', {
+                          count:
+                            result.campaignCount !== null &&
+                            result.campaignCount !== undefined
+                              ? result.campaignCount
+                              : 0,
+                        })
                       )
                       await loadAdConnectionsFromServer()
                       setNaverConnectOpen(false)
@@ -30869,7 +31263,7 @@ function InternalApp() {
 
                     alert(
                       result.message ||
-                      '네이버 광고 API 연결에 실패했습니다.'
+                      t('operator.mediaConnections.naver.connectFailed')
                     )
 
                   } catch (error) {
@@ -30879,12 +31273,12 @@ function InternalApp() {
                     )
 
                     alert(
-                      '네이버 광고 API 연결 테스트 중 오류가 발생했습니다.'
+                      t('operator.mediaConnections.naver.testError')
                     )
                   }
                 }}
               >
-                연결 테스트
+                {t('operator.mediaConnections.testConnection')}
               </button>
             </div>
           </div>
@@ -30896,11 +31290,10 @@ function InternalApp() {
           <div className="media-data-modal">
             <div className="media-data-modal-header">
               <div>
-                <h2>Google Ads 연결</h2>
+                <h2>{t('operator.mediaConnections.google.title')}</h2>
 
                 <p>
-                  Google Ads 데이터를 가져오기 위한
-                  API 정보를 입력해주세요.
+                  {t('operator.mediaConnections.google.description')}
                 </p>
               </div>
 
@@ -30910,19 +31303,19 @@ function InternalApp() {
                   setGoogleConnectOpen(false)
                 }
               >
-                닫기
+                {t('operator.mediaConnections.close')}
               </button>
             </div>
 
             <div className="meta-connect-form">
               <label>
-                API 주소
+                {t('operator.mediaConnections.fields.apiUrl')}
               </label>
 
               <input
                 type="text"
                 value={googleApiUrl}
-                placeholder="예: https://googleads.googleapis.com/..."
+                placeholder={t('operator.mediaConnections.google.apiPlaceholder')}
                 onChange={(event) =>
                   setGoogleApiUrl(
                     event.target.value
@@ -30937,7 +31330,7 @@ function InternalApp() {
               <input
                 type="password"
                 value={googleAccessToken}
-                placeholder="Google Ads 인증 정보를 입력하세요."
+                placeholder={t('operator.mediaConnections.google.tokenPlaceholder')}
                 onChange={(event) =>
                   setGoogleAccessToken(
                     event.target.value
@@ -30952,7 +31345,7 @@ function InternalApp() {
               <input
                 type="text"
                 value={googleAccountId}
-                placeholder="예: 123-456-7890"
+                placeholder={t('operator.mediaConnections.google.customerPlaceholder')}
                 onChange={(event) =>
                   setGoogleAccountId(
                     event.target.value
@@ -30968,7 +31361,7 @@ function InternalApp() {
                   setGoogleConnectOpen(false)
                 }
               >
-                취소
+                {t('operator.mediaConnections.cancel')}
               </button>
 
               <button
@@ -30990,7 +31383,7 @@ function InternalApp() {
                   )
                 }}
               >
-                연결 테스트
+                {t('operator.mediaConnections.testConnection')}
               </button>
             </div>
           </div>
@@ -31002,11 +31395,10 @@ function InternalApp() {
           <div className="media-data-modal">
             <div className="media-data-modal-header">
               <div>
-                <h2>TikTok Ads 연결</h2>
+                <h2>{t('operator.mediaConnections.tiktok.title')}</h2>
 
                 <p>
-                  TikTok 광고 데이터를 가져오기 위한
-                  API 정보를 입력해주세요.
+                  {t('operator.mediaConnections.tiktok.description')}
                 </p>
               </div>
 
@@ -31016,19 +31408,19 @@ function InternalApp() {
                   setTiktokConnectOpen(false)
                 }
               >
-                닫기
+                {t('operator.mediaConnections.close')}
               </button>
             </div>
 
             <div className="meta-connect-form">
               <label>
-                API 주소
+                {t('operator.mediaConnections.fields.apiUrl')}
               </label>
 
               <input
                 type="text"
                 value={tiktokApiUrl}
-                placeholder="예: https://business-api.tiktok.com/..."
+                placeholder={t('operator.mediaConnections.tiktok.apiPlaceholder')}
                 onChange={(event) =>
                   setTiktokApiUrl(
                     event.target.value
@@ -31074,7 +31466,7 @@ function InternalApp() {
                   setTiktokConnectOpen(false)
                 }
               >
-                취소
+                {t('operator.mediaConnections.cancel')}
               </button>
 
               <button
@@ -31096,7 +31488,7 @@ function InternalApp() {
                   )
                 }}
               >
-                연결 테스트
+                {t('operator.mediaConnections.testConnection')}
               </button>
             </div>
           </div>
@@ -31110,12 +31502,11 @@ function InternalApp() {
             <div className="client-hub-header">
               <div>
                 <h2>
-                  광고주 커뮤니케이션 허브
+                  {t('operator.clientHub.title')}
                 </h2>
 
                 <span>
-                  제안 · 승인 · 업무 · 대화를
-                  한 곳에서 관리합니다.
+                  {t('operator.clientHub.subtitle')}
                 </span>
               </div>
 
@@ -31138,17 +31529,20 @@ function InternalApp() {
               <aside className="client-hub-sidebar">
                 <div className="client-hub-sidebar-header">
                   <strong>
-                    광고주 제안
+                    {t('operator.clientHub.proposalsTitle')}
                   </strong>
 
                   <span>
-                    {
-                      clientProposals.filter(
-                        (proposal) =>
-                          proposal.status !== 'cancelled'
-                      ).length
-                    }
-                    개
+                    {t(
+                      'operator.clientHub.proposalCount',
+                      {
+                        count:
+                          clientProposals.filter(
+                            (proposal) =>
+                              proposal.status !== 'cancelled'
+                          ).length,
+                      }
+                    )}
                   </span>
                 </div>
 
@@ -31157,8 +31551,7 @@ function InternalApp() {
                     proposal.status !== 'cancelled'
                 ).length === 0 ? (
                   <div className="client-hub-empty">
-                    아직 생성된 광고주 제안이
-                    없습니다.
+                    {t('operator.clientHub.emptyProposal')}
                   </div>
                 ) : (
                   <div className="client-hub-proposal-list">
@@ -31187,7 +31580,7 @@ function InternalApp() {
                             <strong>
                               {proposal.scenarioName ||
                                 proposal.name ||
-                                '최적화 제안'}
+                                t('operator.clientHub.fallbackProposal')}
                             </strong>
 
                             <span>
@@ -31214,7 +31607,7 @@ function InternalApp() {
                         <h3>
                           {selectedHubProposal.scenarioName ||
                             selectedHubProposal.name ||
-                            '최적화 제안'}
+                            t('operator.clientHub.fallbackProposal')}
                         </h3>
 
                         <span>
@@ -31229,12 +31622,11 @@ function InternalApp() {
                       {clientHubTimeline.length === 0 ? (
                         <div className="client-hub-placeholder">
                           <strong>
-                            아직 대화나 활동이 없습니다.
+                            {t('operator.clientHub.conversation.emptyTitle')}
                           </strong>
 
                           <p>
-                            메시지를 보내거나 제안 상태가
-                            변경되면 여기에 기록됩니다.
+                            {t('operator.clientHub.conversation.emptyDescription')}
                           </p>
                         </div>
                       ) : (
@@ -31260,30 +31652,39 @@ function InternalApp() {
                                   >
                                     <div className="client-hub-message-meta">
                                       <strong>
-                                        {messageItem.senderName ||
-                                          (messageItem.senderType ===
+                                        {messageItem.senderName
+                                          ? translateClientHubSenderName(
+                                            messageItem.senderName
+                                          )
+                                          : messageItem.senderType ===
                                             'client'
-                                            ? '광고주'
-                                            : '운영 담당자')}
+                                            ? t('operator.clientHub.conversation.advertiser')
+                                            : t('operator.clientHub.conversation.operator')}
                                       </strong>
 
                                       <span>
                                         {new Date(
                                           messageItem.createdAt
-                                        ).toLocaleString()}
+                                        ).toLocaleString(
+                                          i18n.language === 'en'
+                                            ? 'en-US'
+                                            : 'ko-KR'
+                                        )}
                                       </span>
                                     </div>
 
                                     <div className="client-hub-message-content">
                                       <p>
-                                        {messageItem.message}
+                                        {translateClientHubSystemMessage(
+                                          messageItem.message
+                                        )}
                                       </p>
 
                                       {messageItem.senderType === 'internal' && (
                                         <div className="client-hub-message-read-status">
                                           {messageItem.isRead
-                                            ? '읽음'
-                                            : '안읽음'}
+                                            ? t('operator.clientHub.conversation.read')
+                                            : t('operator.clientHub.conversation.unread')}
                                         </div>
                                       )}
 
@@ -31294,8 +31695,11 @@ function InternalApp() {
                                           rel="noopener noreferrer"
                                           className="client-hub-proposal-link"
                                         >
-                                          {messageItem.actionLabel ||
-                                            '제안 확인하기'}
+                                          {messageItem.actionLabel
+                                            ? translateClientHubActionLabel(
+                                              messageItem.actionLabel
+                                            )
+                                            : t('operator.clientHub.conversation.viewProposal')}
                                         </a>
                                       )}
                                     </div>
@@ -31316,14 +31720,21 @@ function InternalApp() {
                                     className="client-hub-status-event"
                                   >
                                     <span>
-                                      {viewedEvent.message ||
-                                        '광고주가 제안을 열람했습니다.'}
+                                      {viewedEvent.message
+                                        ? translateClientHubSystemMessage(
+                                          viewedEvent.message
+                                        )
+                                        : t('operator.clientHub.systemMessages.viewedProposal')}
                                     </span>
 
                                     <small>
                                       {new Date(
                                         viewedEvent.createdAt
-                                      ).toLocaleString()}
+                                      ).toLocaleString(
+                                          i18n.language === 'en'
+                                            ? 'en-US'
+                                            : 'ko-KR'
+                                        )}
                                     </small>
                                   </div>
                                 )
@@ -31350,7 +31761,11 @@ function InternalApp() {
                                     <small>
                                       {new Date(
                                         historyItem.createdAt
-                                      ).toLocaleString()}
+                                      ).toLocaleString(
+                                          i18n.language === 'en'
+                                            ? 'en-US'
+                                            : 'ko-KR'
+                                        )}
                                     </small>
                                   </div>
                                 )
@@ -31367,7 +31782,7 @@ function InternalApp() {
                       <textarea
                         rows="3"
                         value={clientHubMessage}
-                        placeholder="광고주에게 전달할 메시지를 입력하세요."
+                        placeholder={t('operator.clientHub.conversation.messagePlaceholder')}
                         onChange={(event) =>
                           setClientHubMessage(
                             event.target.value
@@ -31391,7 +31806,7 @@ function InternalApp() {
 
                       <div className="client-hub-composer-footer">
                         <span>
-                          Enter 전송 · Shift + Enter 줄바꿈
+                          {t('operator.clientHub.conversation.composerHint')}
                         </span>
 
                         <button
@@ -31403,15 +31818,14 @@ function InternalApp() {
                             sendClientHubMessage
                           }
                         >
-                          메시지 보내기
+                          {t('operator.clientHub.conversation.sendMessage')}
                         </button>
                       </div>
                     </div>
                   </>
                 ) : (
                   <div className="client-hub-empty-main">
-                    광고주 제안을 생성하면
-                    여기에서 소통할 수 있습니다.
+                    {t('operator.clientHub.conversation.emptyMain')}
                   </div>
                 )}
               </main>
@@ -31429,7 +31843,7 @@ function InternalApp() {
                   <>
                     <div className="client-hub-action-item">
                       <span>
-                        광고주 상태
+                        {t('operator.clientHub.workflow.advertiserStatus')}
                       </span>
 
                       <strong>
@@ -31441,42 +31855,42 @@ function InternalApp() {
 
                     <div className="client-hub-action-item">
                       <span>
-                        담당자
+                        {t('operator.clientHub.workflow.assignee')}
                       </span>
 
                       <strong>
                         {selectedHubProposal.assignee ||
-                          '미지정'}
+                          t('operator.clientHub.workflow.unassigned')}
                       </strong>
                     </div>
 
                     <div className="client-hub-action-item">
                       <span>
-                        마감일
+                        {t('operator.clientHub.workflow.dueDate')}
                       </span>
 
                       <strong>
                         {selectedHubProposal.dueDate ||
-                          '미지정'}
+                          t('operator.clientHub.workflow.unassigned')}
                       </strong>
                     </div>
 
                     <div className="client-hub-action-item">
                       <span>
-                        업무 상태
+                        {t('operator.clientHub.workflow.taskStatus')}
                       </span>
 
                       <strong>
                         {selectedHubProposal.taskStatus ===
                           'in_progress'
-                          ? '진행 중'
+                          ? t('operator.clientHub.workflow.inProgress')
                           : selectedHubProposal.taskStatus ===
                             'reviewing'
-                            ? '내부 검토 중'
+                            ? t('operator.clientHub.workflow.internalReview')
                             : selectedHubProposal.taskStatus ===
                               'done'
-                              ? '완료'
-                              : '대기'}
+                              ? t('operator.clientHub.workflow.done')
+                              : t('operator.clientHub.workflow.waiting')}
                       </strong>
                     </div>
 
@@ -31484,58 +31898,70 @@ function InternalApp() {
 
                     <div className="client-hub-action-item">
                       <span>
-                        공유 상태
+                        {t('operator.clientHub.workflow.shareStatus')}
                       </span>
 
                       <strong>
                         {selectedHubProposal.shareStatus ===
                           'shared'
-                          ? '공유 완료'
-                          : '미공유'}
+                          ? t('operator.clientHub.workflow.shared')
+                          : t('operator.clientHub.workflow.notShared')}
                       </strong>
 
                       {selectedHubProposal.sharedAt && (
                         <small>
                           {new Date(
                             selectedHubProposal.sharedAt
-                          ).toLocaleString()}
+                          ).toLocaleString(
+                                          i18n.language === 'en'
+                                            ? 'en-US'
+                                            : 'ko-KR'
+                                        )}
                         </small>
                       )}
                     </div>
 
                     <div className="client-hub-action-item">
                       <span>
-                        광고주 열람
+                        {t('operator.clientHub.workflow.advertiserView')}
                       </span>
 
                       <strong>
                         {selectedHubProposal.firstViewedAt
-                          ? '열람 완료'
-                          : '미열람'}
+                          ? t('operator.clientHub.workflow.viewed')
+                          : t('operator.clientHub.workflow.notViewed')}
                       </strong>
 
                       {selectedHubProposal.firstViewedAt && (
                         <>
                           <small>
-                            최초 열람:{' '}
+                            {t('operator.clientHub.workflow.firstViewed')} {' '}
                             {new Date(
                               selectedHubProposal.firstViewedAt
-                            ).toLocaleString()}
+                            ).toLocaleString(
+                                          i18n.language === 'en'
+                                            ? 'en-US'
+                                            : 'ko-KR'
+                                        )}
                           </small>
 
                           <small>
-                            최근 열람:{' '}
+                            {t('operator.clientHub.workflow.lastViewed')} {' '}
                             {new Date(
                               selectedHubProposal.lastViewedAt ||
                               selectedHubProposal.firstViewedAt
-                            ).toLocaleString()}
+                            ).toLocaleString(
+                                          i18n.language === 'en'
+                                            ? 'en-US'
+                                            : 'ko-KR'
+                                        )}
                           </small>
 
                           <small>
-                            열람 횟수:{' '}
+                            {t('operator.clientHub.workflow.viewCount')} {' '}
                             {selectedHubProposal.viewCount ||
                               1}
-                            회
+                            {t('operator.clientHub.workflow.timesUnit')}
                           </small>
                         </>
                       )}
@@ -31544,7 +31970,7 @@ function InternalApp() {
 
                     <div className="client-hub-progress">
                       <h4>
-                        광고주 진행상황
+                        {t('operator.clientHub.progress.title')}
                       </h4>
 
                       {(() => {
@@ -31556,31 +31982,31 @@ function InternalApp() {
                         const steps = [
                           {
                             key: 'sent',
-                            label: '제안 완료',
+                            label: t('operator.clientHub.progress.proposalReady'),
                             completed:
                               progress.sent,
                           },
                           {
                             key: 'shared',
-                            label: '공유',
+                            label: t('operator.clientHub.progress.shared'),
                             completed:
                               progress.shared,
                           },
                           {
                             key: 'viewed',
-                            label: '열람',
+                            label: t('operator.clientHub.progress.viewed'),
                             completed:
                               progress.viewed,
                           },
                           {
                             key: 'reviewing',
-                            label: '검토',
+                            label: t('operator.clientHub.progress.reviewing'),
                             completed:
                               progress.reviewing,
                           },
                           {
                             key: 'approved',
-                            label: '승인',
+                            label: t('operator.clientHub.progress.approved'),
                             completed:
                               progress.approved,
                           },
@@ -31642,7 +32068,7 @@ function InternalApp() {
 
                     <div className="client-hub-next-action">
                       <span>
-                        다음 조치
+                        {t('operator.clientHub.workflow.nextAction')}
                       </span>
 
                       <strong>
@@ -31717,7 +32143,7 @@ function InternalApp() {
                                     'sent',
 
                                   message:
-                                    '광고주 제안 준비가 완료되었습니다.',
+                                    t('operator.clientHub.systemMessages.proposalReady'),
 
                                   actorType:
                                     'operator',
@@ -31728,7 +32154,7 @@ function InternalApp() {
                               )
                             }}
                           >
-                            제안 완료 처리
+                            {t('operator.clientHub.actions.markProposalReady')}
                           </button>
                         </div>
                       )}
@@ -31746,7 +32172,7 @@ function InternalApp() {
                               )
                             }
                           >
-                            광고주에게 공유
+                            {t('operator.clientHub.actions.shareWithAdvertiser')}
                           </button>
                         </div>
                       )}
@@ -31760,7 +32186,7 @@ function InternalApp() {
                               onClick={() => {
                                 const confirmed =
                                   window.confirm(
-                                    '이 제안에 수정 요청을 등록하시겠습니까?'
+                                    t('operator.clientHub.confirm.requestRevision')
                                   )
 
                                 if (!confirmed) {
@@ -31772,7 +32198,7 @@ function InternalApp() {
                                 )
                               }}
                             >
-                              수정 요청
+                              {t('operator.clientHub.actions.requestRevision')}
                             </button>
 
                             <button
@@ -31780,7 +32206,7 @@ function InternalApp() {
                               onClick={() => {
                                 const confirmed =
                                   window.confirm(
-                                    '이 제안을 승인하시겠습니까?'
+                                    t('operator.clientHub.confirm.approve')
                                   )
 
                                 if (!confirmed) {
@@ -31792,7 +32218,7 @@ function InternalApp() {
                                 )
                               }}
                             >
-                              승인
+                              {t('operator.clientHub.actions.approve')}
                             </button>
                           </>
                         )}
@@ -31800,7 +32226,7 @@ function InternalApp() {
                   </>
                 ) : (
                   <p>
-                    선택된 제안이 없습니다.
+                    {t('operator.clientHub.workflow.noSelection')}
                   </p>
                 )}
               </aside>
@@ -31815,6 +32241,97 @@ function InternalApp() {
 }
 
 function ClientMessagesPage() {
+  const { t, i18n } =
+    useTranslation()
+
+  const clientLocale =
+    i18n.resolvedLanguage?.startsWith('en')
+      ? 'en-US'
+      : 'ko-KR'
+
+  function translateClientMessageText(message) {
+    const messageKeyMap = {
+      '광고주가 제안을 열람했습니다.':
+        'viewedProposal',
+      '광고주가 제안을 최초 열람했습니다.':
+        'viewedProposalFirst',
+      '광고주가 제안을 다시 열람했습니다.':
+        'viewedProposalAgain',
+      '광고주가 제안을 재열람했습니다.':
+        'viewedProposalAgain',
+      '광고주 제안 준비가 완료되었습니다.':
+        'proposalReady',
+      '광고주에게 제안이 공유되었습니다.':
+        'proposalShared',
+      '광고주가 제안을 승인했습니다.':
+        'proposalApproved',
+      '광고주가 수정 요청을 등록했습니다.':
+        'revisionRequested',
+      '수정안을 광고주에게 재공유했습니다.':
+        'revisionReshared',
+      '광고주 제안이 취소되었습니다.':
+        'proposalCancelled',
+      '새로운 광고 예산 최적화 제안이 공유되었습니다. 아래 버튼에서 제안을 확인해주세요.':
+        'newProposalShared',
+      '수정된 광고 예산 최적화 제안이 다시 공유되었습니다. 광고주 요청사항을 반영하여 예산 배분 및 예상 성과를 업데이트했습니다.':
+        'updatedProposalShared',
+    }
+
+    const key =
+      messageKeyMap[message]
+
+    return key
+      ? t(`client.messages.systemMessages.${key}`)
+      : message
+  }
+
+  function translateClientMessageActionLabel(label) {
+    if (
+      label === '제안 확인하기'
+    ) {
+      return t(
+        'client.messages.actions.viewProposal'
+      )
+    }
+
+    if (
+      label === '수정된 제안 확인하기'
+    ) {
+      return t(
+        'client.messages.actions.viewUpdatedProposal'
+      )
+    }
+
+    return label
+  }
+
+  function translateClientMessageSenderName(
+    name,
+    isClient
+  ) {
+    if (name === '광고주') {
+      return t(
+        'client.messages.senders.client'
+      )
+    }
+
+    if (name === '운영 담당자') {
+      return t(
+        'client.messages.senders.accountManager'
+      )
+    }
+
+    if (!name) {
+      return isClient
+        ? t('client.messages.senders.me')
+        : t(
+          'client.messages.senders.accountManager'
+        )
+    }
+
+    return name
+  }
+
   const clientId =
     localStorage.getItem(
       'adscope_client_id'
@@ -31839,6 +32356,121 @@ function ClientMessagesPage() {
 
   const [sendingMessage, setSendingMessage] =
     useState(false)
+
+  const [
+    selectedProposalId,
+    setSelectedProposalId,
+  ] = useState('')
+
+  const sortedProposals =
+    useMemo(
+      () =>
+        [...proposals].sort(
+          (a, b) =>
+            new Date(
+              b.updatedAt ||
+              b.createdAt ||
+              0
+            ) -
+            new Date(
+              a.updatedAt ||
+              a.createdAt ||
+              0
+            )
+        ),
+      [proposals]
+    )
+
+  const selectedProposal =
+    sortedProposals.find(
+      (proposal) =>
+        proposal.id ===
+        selectedProposalId
+    ) ||
+    sortedProposals[0] ||
+    null
+
+  const selectedMessages =
+    useMemo(
+      () =>
+        selectedProposal
+          ? messages.filter(
+            (message) =>
+              message.proposalId ===
+              selectedProposal.id
+          )
+          : [],
+      [
+        messages,
+        selectedProposal,
+      ]
+    )
+
+  const proposalViewUrl =
+    selectedProposal?.shareUrl ||
+    selectedMessages.find(
+      (message) =>
+        message.actionUrl
+    )?.actionUrl ||
+    null
+
+  function getClientMessageProposalStatusLabel(
+    status
+  ) {
+    const statusKeyMap = {
+      preparing: 'preparing',
+      sent: 'sent',
+      reviewing: 'reviewing',
+      revision_requested:
+        'revisionRequested',
+      approved: 'approved',
+      review_completed:
+        'reviewCompleted',
+      cancelled: 'cancelled',
+    }
+
+    return t(
+      `client.messages.proposalStatus.${
+        statusKeyMap[status] ||
+        'preparing'
+      }`
+    )
+  }
+
+  function formatClientMessageCurrency(
+    value
+  ) {
+    return `${Math.round(
+      Number(value) || 0
+    ).toLocaleString(
+      clientLocale
+    )} ${t(
+      'client.common.currency'
+    )}`
+  }
+
+  function formatClientMessageDate(
+    value
+  ) {
+    if (!value) {
+      return t(
+        'client.messages.modal.notAvailable'
+      )
+    }
+
+    return new Date(
+      value
+    ).toLocaleString(
+      clientLocale,
+      {
+        year: 'numeric',
+        month: 'numeric',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit',
+      }
+    )
+  }
 
   useEffect(() => {
     if (!clientId) {
@@ -31974,7 +32606,9 @@ function ClientMessagesPage() {
                     proposalName:
                       proposal.scenarioName ||
                       proposal.name ||
-                      '광고 제안',
+                      t(
+                        'client.messages.defaultProposalName'
+                      ),
                   })
                 )
               }
@@ -32043,41 +32677,32 @@ function ClientMessagesPage() {
       return
     }
 
-    if (proposals.length === 0) {
+    const targetProposal =
+      selectedProposal ||
+      sortedProposals[0]
+
+    if (!targetProposal) {
       alert(
-        '메시지를 연결할 광고 제안이 없습니다.'
+        t(
+          'client.messages.errors.noProposal'
+        )
       )
       return
     }
-
-    const latestProposal =
-      [...proposals].sort(
-        (a, b) =>
-          new Date(
-            b.updatedAt ||
-            b.createdAt ||
-            0
-          ) -
-          new Date(
-            a.updatedAt ||
-            a.createdAt ||
-            0
-          )
-      )[0]
 
     const messagePayload = {
       id:
         `message_${Date.now()}`,
 
       proposalId:
-        latestProposal.id,
+        targetProposal.id,
 
       senderType:
         'client',
 
       senderName:
         clientName ||
-        '광고주',
+        t('client.messages.senders.client'),
 
       message:
         trimmedMessage,
@@ -32097,7 +32722,7 @@ function ClientMessagesPage() {
 
       const response =
         await clientFetch(
-          `${API_BASE_URL}/client-proposals/${latestProposal.id}/messages`,
+          `${API_BASE_URL}/client-proposals/${targetProposal.id}/messages`,
           {
             method: 'POST',
             headers: {
@@ -32131,8 +32756,14 @@ function ClientMessagesPage() {
 
       if (result.status !== 'saved') {
         throw new Error(
-          result.message ||
-          '메시지 저장 실패'
+          i18n.language === 'en'
+            ? t(
+              'client.messages.errors.saveFailed'
+            )
+            : result.message ||
+              t(
+                'client.messages.errors.saveFailed'
+              )
         )
       }
 
@@ -32143,9 +32774,11 @@ function ClientMessagesPage() {
           {
             ...messagePayload,
             proposalName:
-              latestProposal.scenarioName ||
-              latestProposal.name ||
-              '광고 제안',
+              targetProposal.scenarioName ||
+              targetProposal.name ||
+              t(
+                'client.messages.defaultProposalName'
+              ),
           },
         ]
       )
@@ -32159,7 +32792,9 @@ function ClientMessagesPage() {
       )
 
       alert(
-        '메시지 전송 중 오류가 발생했습니다.'
+        t(
+          'client.messages.errors.sendFailed'
+        )
       )
 
     } finally {
@@ -32169,181 +32804,424 @@ function ClientMessagesPage() {
 
   return (
     <div className="client-portal-page">
-
       <ClientPortalHeader
         activePage="messages"
       />
 
-      <main className="client-portal-content">
+      <div className="client-hub-overlay client-message-client-overlay">
+        <div className="client-hub-modal client-message-client-modal">
 
-        <div className="client-dashboard-heading">
-          <div>
-            <h2>메시지</h2>
+          <div className="client-hub-header">
+            <div>
+              <h2>
+                {t(
+                  'client.messages.title'
+                )}
+              </h2>
 
-            <p>
-              담당자가 전달한 제안 및
-              커뮤니케이션 내용을 확인할 수 있습니다.
-            </p>
-          </div>
-        </div>
-
-        <section className="client-message-list">
-
-          {loading ? (
-            <div className="client-proposal-empty">
-              메시지를 불러오는 중입니다.
+              <span>
+                {t(
+                  'client.messages.modal.subtitle'
+                )}
+              </span>
             </div>
 
-          ) : messages.length === 0 ? (
-            <div className="client-proposal-empty">
-              아직 등록된 메시지가 없습니다.
-            </div>
-
-          ) : (
-            messages.map((message) => {
-              const isClient =
-                message.senderType === 'client'
-
-              return (
-                <div
-                  key={message.id}
-                  className={
-                    isClient
-                      ? 'client-chat-row client-chat-row-self'
-                      : 'client-chat-row client-chat-row-internal'
-                  }
-                >
-                  {!isClient && (
-                    <div className="client-chat-avatar">
-                      A
-                    </div>
-                  )}
-
-                  <div className="client-chat-content">
-
-                    <div className="client-chat-sender">
-                      {isClient
-                        ? message.senderName ||
-                        '나'
-                        : message.senderName ||
-                        '운영 담당자'}
-                    </div>
-
-                    <div className="client-chat-bubble">
-                      <p>
-                        {message.message}
-                      </p>
-
-                      {message.actionUrl && (
-                        <button
-                          type="button"
-                          className="client-chat-action"
-                          onClick={() => {
-                            window.location.href =
-                              message.actionUrl
-                          }}
-                        >
-                          {message.actionLabel ||
-                            '제안 확인하기'}
-                        </button>
-                      )}
-                    </div>
-
-                    <div className="client-chat-time">
-                      <span>
-                        {message.createdAt
-                          ? new Date(
-                            message.createdAt
-                          ).toLocaleString(
-                            'ko-KR',
-                            {
-                              month: 'numeric',
-                              day: 'numeric',
-                              hour: 'numeric',
-                              minute: '2-digit',
-                            }
-                          )
-                          : ''}
-                      </span>
-
-                      {message.senderType === 'client' && (
-                        <span>
-                          · {message.isRead
-                            ? '읽음'
-                            : '안읽음'}
-                        </span>
-                      )}
-                    </div>
-
-                  </div>
-                </div>
-              )
-            })
-          )}
-
-        </section>
-
-        <section className="client-message-compose">
-
-          <h3>
-            담당자에게 메시지 보내기
-          </h3>
-
-          <textarea
-            value={newMessage}
-            placeholder="문의사항이나 제안에 대한 의견을 입력해주세요."
-            onChange={(event) =>
-              setNewMessage(
-                event.target.value
-              )
-            }
-            onKeyDown={(event) => {
-              if (
-                event.key === 'Enter' &&
-                !event.shiftKey
-              ) {
-                event.preventDefault()
-
-                if (
-                  !sendingMessage &&
-                  newMessage.trim()
-                ) {
-                  sendClientMessage()
-                }
-              }
-            }}
-            rows={4}
-          />
-
-          <div className="client-message-compose-actions">
             <button
               type="button"
-              disabled={
-                sendingMessage ||
-                !newMessage.trim()
-              }
+              className="client-message-modal-close"
+              aria-label={t(
+                'client.messages.modal.close'
+              )}
               onClick={() => {
-                console.log(
-                  'CLIENT MESSAGE BUTTON CLICKED'
-                )
-
-                sendClientMessage()
+                window.location.href =
+                  '/client/dashboard'
               }}
             >
-              {sendingMessage
-                ? '전송 중...'
-                : '메시지 보내기'}
+              ✕
             </button>
           </div>
 
-        </section>
+          <div className="client-hub-layout">
 
-      </main>
+            <aside className="client-hub-sidebar">
+              <div className="client-hub-sidebar-header">
+                <strong>
+                  {t(
+                    'client.messages.modal.proposals'
+                  )}
+                </strong>
+
+                <span>
+                  {t(
+                    'client.messages.modal.proposalCount',
+                    {
+                      count:
+                        sortedProposals.length,
+                    }
+                  )}
+                </span>
+              </div>
+
+              {sortedProposals.length ===
+                0 ? (
+                <div className="client-hub-empty">
+                  {t(
+                    'client.proposals.empty'
+                  )}
+                </div>
+              ) : (
+                <div className="client-hub-proposal-list">
+                  {sortedProposals.map(
+                    (proposal) => (
+                      <button
+                        key={proposal.id}
+                        type="button"
+                        className={
+                          selectedProposal?.id ===
+                            proposal.id
+                            ? 'client-hub-proposal-item active'
+                            : 'client-hub-proposal-item'
+                        }
+                        onClick={() =>
+                          setSelectedProposalId(
+                            proposal.id
+                          )
+                        }
+                      >
+                        <strong>
+                          {proposal.scenarioName ||
+                            proposal.name ||
+                            t(
+                              'client.messages.defaultProposalName'
+                            )}
+                        </strong>
+
+                        <span>
+                          {getClientMessageProposalStatusLabel(
+                            proposal.status
+                          )}
+                        </span>
+                      </button>
+                    )
+                  )}
+                </div>
+              )}
+            </aside>
+
+            <main className="client-hub-main">
+              {selectedProposal ? (
+                <>
+                  <div className="client-hub-conversation-header">
+                    <div>
+                      <h3>
+                        {selectedProposal.scenarioName ||
+                          selectedProposal.name ||
+                          t(
+                            'client.messages.defaultProposalName'
+                          )}
+                      </h3>
+
+                      <span>
+                        {getClientMessageProposalStatusLabel(
+                          selectedProposal.status
+                        )}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="client-hub-conversation">
+                    {loading ? (
+                      <div className="client-hub-placeholder">
+                        <p>
+                          {t(
+                            'client.messages.loading'
+                          )}
+                        </p>
+                      </div>
+                    ) : selectedMessages.length ===
+                      0 ? (
+                      <div className="client-hub-placeholder">
+                        <strong>
+                          {t(
+                            'client.messages.modal.emptyConversationTitle'
+                          )}
+                        </strong>
+
+                        <p>
+                          {t(
+                            'client.messages.modal.emptyConversationDescription'
+                          )}
+                        </p>
+                      </div>
+                    ) : (
+                      <div className="client-hub-message-list">
+                        {selectedMessages.map(
+                          (message) => {
+                            const isClient =
+                              message.senderType ===
+                              'client'
+
+                            return (
+                              <div
+                                key={message.id}
+                                className={
+                                  isClient
+                                    ? 'client-hub-message client-message-self'
+                                    : 'client-hub-message client-message-manager'
+                                }
+                              >
+                                <div className="client-hub-message-meta">
+                                  <strong>
+                                    {translateClientMessageSenderName(
+                                      message.senderName,
+                                      isClient
+                                    )}
+                                  </strong>
+
+                                  <span>
+                                    {formatClientMessageDate(
+                                      message.createdAt
+                                    )}
+                                  </span>
+                                </div>
+
+                                <div className="client-hub-message-content">
+                                  <p>
+                                    {translateClientMessageText(
+                                      message.message
+                                    )}
+                                  </p>
+
+                                  {isClient && (
+                                    <div className="client-hub-message-read-status">
+                                      {message.isRead
+                                        ? t(
+                                          'client.messages.readStatus.read'
+                                        )
+                                        : t(
+                                          'client.messages.readStatus.unread'
+                                        )}
+                                    </div>
+                                  )}
+
+                                  {message.actionUrl && (
+                                    <a
+                                      href={message.actionUrl}
+                                      className="client-hub-proposal-link"
+                                    >
+                                      {translateClientMessageActionLabel(
+                                        message.actionLabel ||
+                                        '제안 확인하기'
+                                      )}
+                                    </a>
+                                  )}
+                                </div>
+                              </div>
+                            )
+                          }
+                        )}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="client-hub-message-composer client-message-client-composer">
+                    <textarea
+                      value={newMessage}
+                      placeholder={t(
+                        'client.messages.compose.placeholder'
+                      )}
+                      onChange={(event) =>
+                        setNewMessage(
+                          event.target.value
+                        )
+                      }
+                      onKeyDown={(event) => {
+                        if (
+                          event.key ===
+                          'Enter' &&
+                          !event.shiftKey
+                        ) {
+                          event.preventDefault()
+
+                          if (
+                            !sendingMessage &&
+                            newMessage.trim()
+                          ) {
+                            sendClientMessage()
+                          }
+                        }
+                      }}
+                      rows={2}
+                    />
+
+                    <div className="client-hub-composer-footer">
+                      <span>
+                        {t(
+                          'client.messages.modal.sendHint'
+                        )}
+                      </span>
+
+                      <button
+                        type="button"
+                        disabled={
+                          sendingMessage ||
+                          !newMessage.trim()
+                        }
+                        onClick={
+                          sendClientMessage
+                        }
+                      >
+                        {sendingMessage
+                          ? t(
+                            'client.messages.compose.sending'
+                          )
+                          : t(
+                            'client.messages.compose.send'
+                          )}
+                      </button>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <div className="client-hub-placeholder client-message-no-proposal">
+                  <strong>
+                    {t(
+                      'client.messages.modal.noProposalTitle'
+                    )}
+                  </strong>
+
+                  <p>
+                    {t(
+                      'client.messages.modal.noProposalDescription'
+                    )}
+                  </p>
+                </div>
+              )}
+            </main>
+
+            <aside className="client-hub-actions">
+              <h3>
+                {t(
+                  'client.messages.modal.proposalDetails'
+                )}
+              </h3>
+
+              {selectedProposal ? (
+                <>
+                  <div className="client-hub-action-item">
+                    <span>
+                      {t(
+                        'client.messages.modal.status'
+                      )}
+                    </span>
+
+                    <strong>
+                      {getClientMessageProposalStatusLabel(
+                        selectedProposal.status
+                      )}
+                    </strong>
+                  </div>
+
+                  <div className="client-hub-action-item">
+                    <span>
+                      {t(
+                        'client.proposals.totalBudget'
+                      )}
+                    </span>
+
+                    <strong>
+                      {formatClientMessageCurrency(
+                        selectedProposal.totalBudget
+                      )}
+                    </strong>
+                  </div>
+
+                  <div className="client-hub-action-item">
+                    <span>
+                      {t(
+                        'client.proposals.projectedRoas'
+                      )}
+                    </span>
+
+                    <strong>
+                      {Number(
+                        selectedProposal
+                          ?.summary
+                          ?.projectedRoas ||
+                        0
+                      ).toFixed(1)}
+                      %
+                    </strong>
+                  </div>
+
+                  <div className="client-hub-action-item">
+                    <span>
+                      {t(
+                        'client.messages.modal.lastUpdated'
+                      )}
+                    </span>
+
+                    <strong>
+                      {formatClientMessageDate(
+                        selectedProposal.updatedAt ||
+                        selectedProposal.createdAt
+                      )}
+                    </strong>
+                  </div>
+
+                  <button
+                    type="button"
+                    className="client-message-view-proposal-button"
+                    disabled={
+                      !proposalViewUrl
+                    }
+                    onClick={() => {
+                      if (
+                        proposalViewUrl
+                      ) {
+                        window.location.href =
+                          proposalViewUrl
+                      }
+                    }}
+                  >
+                    {t(
+                      'client.proposals.viewProposal'
+                    )}
+                  </button>
+                </>
+              ) : (
+                <div className="client-hub-placeholder">
+                  {t(
+                    'client.messages.modal.noProposalSelected'
+                  )}
+                </div>
+              )}
+            </aside>
+
+          </div>
+        </div>
+      </div>
     </div>
   )
 }
 
 function ClientPerformancePage() {
+  const { t, i18n } =
+    useTranslation()
+
+  const clientLocale =
+    i18n.resolvedLanguage?.startsWith('en')
+      ? 'en-US'
+      : 'ko-KR'
+
+  function formatClientCurrency(value) {
+    return `${Math.round(
+      Number(value) || 0
+    ).toLocaleString(clientLocale)} ${t(
+      'client.common.currency'
+    )}`
+  }
+
   const clientId =
     localStorage.getItem(
       'adscope_client_id'
@@ -33132,7 +34010,9 @@ function ClientPerformancePage() {
     if (value === null) {
       return (
         <span className="performance-change neutral">
-          비교 데이터 없음
+          {t(
+            'client.performance.comparison.noData'
+          )}
         </span>
       )
     }
@@ -33209,34 +34089,66 @@ function ClientPerformancePage() {
 
   function getRoasInsight(row) {
     if (!row) {
-      return '분석할 데이터가 없습니다.'
+      return t(
+        'client.performance.insights.noAnalysisData'
+      )
     }
 
-    return `${row.channel}의 ${row.campaign} 캠페인이 가장 높은 광고 효율을 기록했습니다.`
+    return t(
+      'client.performance.insights.highestRoasDescription',
+      {
+        channel: row.channel,
+        campaign: row.campaign,
+      }
+    )
   }
 
   function getRevenueInsight(row) {
     if (!row) {
-      return '분석할 데이터가 없습니다.'
+      return t(
+        'client.performance.insights.noAnalysisData'
+      )
     }
 
-    return `${row.channel}의 ${row.campaign} 캠페인이 선택 기간 내 가장 많은 매출을 만들었습니다.`
+    return t(
+      'client.performance.insights.highestRevenueDescription',
+      {
+        channel: row.channel,
+        campaign: row.campaign,
+      }
+    )
   }
 
   function getCpaInsight(row) {
     if (!row) {
-      return '분석할 데이터가 없습니다.'
+      return t(
+        'client.performance.insights.noAnalysisData'
+      )
     }
 
-    return `${row.channel}의 ${row.campaign} 캠페인이 가장 낮은 전환당 비용을 기록했습니다.`
+    return t(
+      'client.performance.insights.lowestCpaDescription',
+      {
+        channel: row.channel,
+        campaign: row.campaign,
+      }
+    )
   }
 
   function getImprovementInsight(row) {
     if (!row) {
-      return '분석할 데이터가 없습니다.'
+      return t(
+        'client.performance.insights.noAnalysisData'
+      )
     }
 
-    return `${row.channel}의 ${row.campaign} 캠페인은 현재 ROAS가 가장 낮아 예산 또는 소재 점검이 필요합니다.`
+    return t(
+      'client.performance.insights.improvementDescription',
+      {
+        channel: row.channel,
+        campaign: row.campaign,
+      }
+    )
   }
 
   return (
@@ -33250,13 +34162,21 @@ function ClientPerformancePage() {
           <div>
             <h2>
               {clientBrand
-                ? `${clientBrand} 성과 분석`
-                : '성과 분석'}
+                ? t(
+                  'client.performance.brandTitle',
+                  {
+                    brand: clientBrand,
+                  }
+                )
+                : t(
+                  'client.performance.title'
+                )}
             </h2>
 
             <p>
-              광고 성과를 매체와 캠페인 기준으로
-              확인할 수 있습니다.
+              {t(
+                'client.performance.description'
+              )}
             </p>
           </div>
         </section>
@@ -33264,7 +34184,9 @@ function ClientPerformancePage() {
         <section className="client-performance-filters">
           <div>
             <label>
-              기간
+              {t(
+                'client.performance.filters.period'
+              )}
             </label>
 
             <select
@@ -33276,26 +34198,36 @@ function ClientPerformancePage() {
               }
             >
               <option value="7d">
-                최근 7일
+                {t(
+                  'client.performance.filters.last7Days'
+                )}
               </option>
 
               <option value="30d">
-                최근 30일
+                {t(
+                  'client.performance.filters.last30Days'
+                )}
               </option>
 
               <option value="90d">
-                최근 90일
+                {t(
+                  'client.performance.filters.last90Days'
+                )}
               </option>
 
               <option value="all">
-                전체 기간
+                {t(
+                  'client.performance.filters.allTime'
+                )}
               </option>
             </select>
           </div>
 
           <div>
             <label>
-              매체
+              {t(
+                'client.performance.filters.channel'
+              )}
             </label>
 
             <select
@@ -33307,12 +34239,14 @@ function ClientPerformancePage() {
               }
             >
               <option value="전체">
-                전체 매체
+                {t(
+                  'client.performance.filters.allChannels'
+                )}
               </option>
 
               {[
                 ...new Set(
-                  mockAds.map(
+                  clientPerformanceData.map(
                     (row) =>
                       row.channel
                   )
@@ -33331,12 +34265,15 @@ function ClientPerformancePage() {
 
         <section className="client-dashboard-metrics">
           <div>
-            <span>광고비</span>
+            <span>
+              {t(
+                'client.performance.metrics.adSpend'
+              )}
+            </span>
             <strong>
-              {Math.round(
+              {formatClientCurrency(
                 totalSpend
-              ).toLocaleString()}
-              원
+              )}
             </strong>
             <PerformanceChange
               value={spendChange}
@@ -33344,12 +34281,15 @@ function ClientPerformancePage() {
           </div>
 
           <div>
-            <span>매출</span>
+            <span>
+              {t(
+                'client.performance.metrics.revenue'
+              )}
+            </span>
             <strong>
-              {Math.round(
+              {formatClientCurrency(
                 totalRevenue
-              ).toLocaleString()}
-              원
+              )}
             </strong>
             <PerformanceChange
               value={revenueChange}
@@ -33357,7 +34297,11 @@ function ClientPerformancePage() {
           </div>
 
           <div>
-            <span>ROAS</span>
+            <span>
+              {t(
+                'client.performance.metrics.roas'
+              )}
+            </span>
             <strong>
               {roas.toFixed(1)}%
             </strong>
@@ -33367,12 +34311,15 @@ function ClientPerformancePage() {
           </div>
 
           <div>
-            <span>CPA</span>
+            <span>
+              {t(
+                'client.performance.metrics.cpa'
+              )}
+            </span>
             <strong>
-              {Math.round(
+              {formatClientCurrency(
                 cpa
-              ).toLocaleString()}
-              원
+              )}
             </strong>
             <PerformanceChange
               value={cpaChange}
@@ -33381,7 +34328,11 @@ function ClientPerformancePage() {
           </div>
 
           <div>
-            <span>CTR</span>
+            <span>
+              {t(
+                'client.performance.metrics.ctr'
+              )}
+            </span>
             <strong>
               {ctr.toFixed(2)}%
             </strong>
@@ -33394,10 +34345,16 @@ function ClientPerformancePage() {
         <section className="client-performance-insights">
           <div className="client-performance-insights-header">
             <div>
-              <h3>성과 인사이트</h3>
+              <h3>
+                {t(
+                  'client.performance.insights.title'
+                )}
+              </h3>
 
               <span>
-                선택한 기간과 매체 기준
+                {t(
+                  'client.performance.insights.basis'
+                )}
               </span>
             </div>
           </div>
@@ -33406,7 +34363,9 @@ function ClientPerformancePage() {
 
             <div className="client-performance-insight-card">
               <span>
-                최고 ROAS
+                {t(
+                  'client.performance.insights.highestRoas'
+                )}
               </span>
 
               <strong>
@@ -33418,7 +34377,9 @@ function ClientPerformancePage() {
               <p>
                 {bestRoasCampaign
                   ? `ROAS ${bestRoasCampaign.roas.toFixed(1)}%`
-                  : '데이터 없음'}
+                  : t(
+                    'client.performance.insights.noData'
+                  )}
               </p>
               <small>
                 {getRoasInsight(
@@ -33430,7 +34391,9 @@ function ClientPerformancePage() {
 
             <div className="client-performance-insight-card">
               <span>
-                최고 매출
+                {t(
+                  'client.performance.insights.highestRevenue'
+                )}
               </span>
 
               <strong>
@@ -33441,10 +34404,18 @@ function ClientPerformancePage() {
 
               <p>
                 {bestRevenueCampaign
-                  ? `매출 ${Math.round(
-                    bestRevenueCampaign.revenue
-                  ).toLocaleString()}원`
-                  : '데이터 없음'}
+                  ? t(
+                    'client.performance.insights.revenueValue',
+                    {
+                      value:
+                        formatClientCurrency(
+                          bestRevenueCampaign.revenue
+                        ),
+                    }
+                  )
+                  : t(
+                    'client.performance.insights.noData'
+                  )}
               </p>
               <small>
                 {getRevenueInsight(
@@ -33456,7 +34427,9 @@ function ClientPerformancePage() {
 
             <div className="client-performance-insight-card">
               <span>
-                최저 CPA
+                {t(
+                  'client.performance.insights.lowestCpa'
+                )}
               </span>
 
               <strong>
@@ -33467,10 +34440,12 @@ function ClientPerformancePage() {
 
               <p>
                 {bestCpaCampaign
-                  ? `CPA ${Math.round(
+                  ? `CPA ${formatClientCurrency(
                     bestCpaCampaign.cpa
-                  ).toLocaleString()}원`
-                  : '데이터 없음'}
+                  )}`
+                  : t(
+                    'client.performance.insights.noData'
+                  )}
               </p>
               <small>
                 {getCpaInsight(
@@ -33482,7 +34457,9 @@ function ClientPerformancePage() {
 
             <div className="client-performance-insight-card">
               <span>
-                개선 필요
+                {t(
+                  'client.performance.insights.needsImprovement'
+                )}
               </span>
 
               <strong>
@@ -33494,7 +34471,9 @@ function ClientPerformancePage() {
               <p>
                 {improvementCampaign
                   ? `ROAS ${improvementCampaign.roas.toFixed(1)}%`
-                  : '데이터 없음'}
+                  : t(
+                    'client.performance.insights.noData'
+                  )}
               </p>
               <small>
                 {getImprovementInsight(
@@ -33510,11 +34489,15 @@ function ClientPerformancePage() {
           <div className="client-dashboard-card-header">
             <div>
               <h3>
-                광고비 · 매출 추이
+                {t(
+                  'client.performance.charts.spendRevenueTitle'
+                )}
               </h3>
 
               <span>
-                선택한 기간과 매체 기준
+                {t(
+                  'client.performance.charts.basis'
+                )}
               </span>
             </div>
           </div>
@@ -33522,7 +34505,9 @@ function ClientPerformancePage() {
           <div className="client-performance-chart">
             {dailyPerformanceData.length === 0 ? (
               <div className="client-proposal-empty">
-                표시할 성과 데이터가 없습니다.
+                {t(
+                  'client.performance.charts.noPerformanceData'
+                )}
               </div>
             ) : (
               <ResponsiveContainer
@@ -33559,9 +34544,9 @@ function ClientPerformancePage() {
 
                   <Tooltip
                     formatter={(value) =>
-                      `${Math.round(
+                      formatClientCurrency(
                         value
-                      ).toLocaleString()}원`
+                      )
                     }
                   />
 
@@ -33570,7 +34555,9 @@ function ClientPerformancePage() {
                   <Line
                     type="monotone"
                     dataKey="spend"
-                    name="광고비"
+                    name={t(
+                      'client.performance.metrics.adSpend'
+                    )}
                     stroke="#64748b"
                     strokeWidth={2}
                     dot={false}
@@ -33579,7 +34566,9 @@ function ClientPerformancePage() {
                   <Line
                     type="monotone"
                     dataKey="revenue"
-                    name="매출"
+                    name={t(
+                      'client.performance.metrics.revenue'
+                    )}
                     stroke="#6366f1"
                     strokeWidth={2}
                     dot={false}
@@ -33594,11 +34583,15 @@ function ClientPerformancePage() {
           <div className="client-dashboard-card-header">
             <div>
               <h3>
-                ROAS 추이
+                {t(
+                  'client.performance.charts.roasTrendTitle'
+                )}
               </h3>
 
               <span>
-                일별 광고비 대비 매출 효율
+                {t(
+                  'client.performance.charts.roasTrendDescription'
+                )}
               </span>
             </div>
           </div>
@@ -33606,7 +34599,9 @@ function ClientPerformancePage() {
           <div className="client-performance-chart">
             {dailyRoasData.length === 0 ? (
               <div className="client-proposal-empty">
-                표시할 성과 데이터가 없습니다.
+                {t(
+                  'client.performance.charts.noPerformanceData'
+                )}
               </div>
             ) : (
               <ResponsiveContainer
@@ -33662,18 +34657,38 @@ function ClientPerformancePage() {
 
         <section className="client-performance-section">
           <div className="client-dashboard-card-header">
-            <h3>매체별 성과</h3>
+            <h3>
+              {t(
+                'client.performance.tables.channelPerformance'
+              )}
+            </h3>
           </div>
 
           <div className="client-performance-table-wrap">
             <table className="client-performance-table">
               <thead>
                 <tr>
-                  <th>매체</th>
-                  <th>광고비</th>
-                  <th>매출</th>
+                  <th>
+                    {t(
+                      'client.performance.metrics.channel'
+                    )}
+                  </th>
+                  <th>
+                    {t(
+                      'client.performance.metrics.adSpend'
+                    )}
+                  </th>
+                  <th>
+                    {t(
+                      'client.performance.metrics.revenue'
+                    )}
+                  </th>
                   <th>ROAS</th>
-                  <th>전환</th>
+                  <th>
+                    {t(
+                      'client.performance.metrics.conversions'
+                    )}
+                  </th>
                 </tr>
               </thead>
 
@@ -33694,17 +34709,15 @@ function ClientPerformancePage() {
                         </td>
 
                         <td>
-                          {Math.round(
+                          {formatClientCurrency(
                             row.spend
-                          ).toLocaleString()}
-                          원
+                          )}
                         </td>
 
                         <td>
-                          {Math.round(
+                          {formatClientCurrency(
                             row.revenue
-                          ).toLocaleString()}
-                          원
+                          )}
                         </td>
 
                         <td>
@@ -33729,10 +34742,16 @@ function ClientPerformancePage() {
         <section className="client-performance-section">
           <div className="client-dashboard-card-header">
             <div>
-              <h3>캠페인별 성과</h3>
+              <h3>
+                {t(
+                  'client.performance.tables.campaignPerformance'
+                )}
+              </h3>
 
               <span>
-                선택한 기간과 매체 기준
+                {t(
+                  'client.performance.tables.basis'
+                )}
               </span>
             </div>
 
@@ -33746,23 +34765,33 @@ function ClientPerformancePage() {
               }
             >
               <option value="roas_desc">
-                ROAS 높은 순
+                {t(
+                  'client.performance.sort.highestRoas'
+                )}
               </option>
 
               <option value="spend_desc">
-                광고비 높은 순
+                {t(
+                  'client.performance.sort.highestSpend'
+                )}
               </option>
 
               <option value="revenue_desc">
-                매출 높은 순
+                {t(
+                  'client.performance.sort.highestRevenue'
+                )}
               </option>
 
               <option value="cpa_asc">
-                CPA 낮은 순
+                {t(
+                  'client.performance.sort.lowestCpa'
+                )}
               </option>
 
               <option value="conversions_desc">
-                전환 높은 순
+                {t(
+                  'client.performance.sort.highestConversions'
+                )}
               </option>
             </select>
           </div>
@@ -33771,14 +34800,34 @@ function ClientPerformancePage() {
             <table className="client-performance-table">
               <thead>
                 <tr>
-                  <th>매체</th>
-                  <th>캠페인</th>
-                  <th>광고비</th>
-                  <th>매출</th>
+                  <th>
+                    {t(
+                      'client.performance.metrics.channel'
+                    )}
+                  </th>
+                  <th>
+                    {t(
+                      'client.performance.metrics.campaign'
+                    )}
+                  </th>
+                  <th>
+                    {t(
+                      'client.performance.metrics.adSpend'
+                    )}
+                  </th>
+                  <th>
+                    {t(
+                      'client.performance.metrics.revenue'
+                    )}
+                  </th>
                   <th>ROAS</th>
                   <th>CPA</th>
                   <th>CTR</th>
-                  <th>전환</th>
+                  <th>
+                    {t(
+                      'client.performance.metrics.conversions'
+                    )}
+                  </th>
                 </tr>
               </thead>
 
@@ -33830,17 +34879,15 @@ function ClientPerformancePage() {
                         </td>
 
                         <td>
-                          {Math.round(
+                          {formatClientCurrency(
                             row.spend
-                          ).toLocaleString()}
-                          원
+                          )}
                         </td>
 
                         <td>
-                          {Math.round(
+                          {formatClientCurrency(
                             row.revenue
-                          ).toLocaleString()}
-                          원
+                          )}
                         </td>
 
                         <td>
@@ -33851,10 +34898,9 @@ function ClientPerformancePage() {
                         </td>
 
                         <td>
-                          {Math.round(
+                          {formatClientCurrency(
                             campaignCpa
-                          ).toLocaleString()}
-                          원
+                          )}
                         </td>
 
                         <td>
@@ -33881,7 +34927,9 @@ function ClientPerformancePage() {
             <div className="client-dashboard-card-header">
               <div>
                 <h3>
-                  캠페인 상세
+                  {t(
+                    'client.performance.detail.title'
+                  )}
                 </h3>
 
                 <span>
@@ -33897,33 +34945,45 @@ function ClientPerformancePage() {
                   setSelectedCampaignKey(null)
                 }
               >
-                닫기
+                {t(
+                  'client.performance.detail.close'
+                )}
               </button>
             </div>
 
             <div className="client-campaign-detail-metrics">
               <div>
-                <span>광고비</span>
+                <span>
+                  {t(
+                    'client.performance.metrics.adSpend'
+                  )}
+                </span>
                 <strong>
-                  {Math.round(
+                  {formatClientCurrency(
                     selectedCampaign.spend
-                  ).toLocaleString()}
-                  원
+                  )}
                 </strong>
               </div>
 
               <div>
-                <span>매출</span>
+                <span>
+                  {t(
+                    'client.performance.metrics.revenue'
+                  )}
+                </span>
                 <strong>
-                  {Math.round(
+                  {formatClientCurrency(
                     selectedCampaign.revenue
-                  ).toLocaleString()}
-                  원
+                  )}
                 </strong>
               </div>
 
               <div>
-                <span>ROAS</span>
+                <span>
+                  {t(
+                    'client.performance.metrics.roas'
+                  )}
+                </span>
                 <strong>
                   {selectedCampaign.roas.toFixed(1)}
                   %
@@ -33931,17 +34991,24 @@ function ClientPerformancePage() {
               </div>
 
               <div>
-                <span>CPA</span>
+                <span>
+                  {t(
+                    'client.performance.metrics.cpa'
+                  )}
+                </span>
                 <strong>
-                  {Math.round(
+                  {formatClientCurrency(
                     selectedCampaign.cpa
-                  ).toLocaleString()}
-                  원
+                  )}
                 </strong>
               </div>
 
               <div>
-                <span>CTR</span>
+                <span>
+                  {t(
+                    'client.performance.metrics.ctr'
+                  )}
+                </span>
                 <strong>
                   {selectedCampaign.ctr.toFixed(2)}
                   %
@@ -33949,7 +35016,11 @@ function ClientPerformancePage() {
               </div>
 
               <div>
-                <span>전환</span>
+                <span>
+                  {t(
+                    'client.performance.metrics.conversions'
+                  )}
+                </span>
                 <strong>
                   {selectedCampaign.conversions.toLocaleString()}
                 </strong>
@@ -33984,14 +35055,18 @@ function ClientPerformancePage() {
                   <Line
                     type="monotone"
                     dataKey="spend"
-                    name="광고비"
+                    name={t(
+                      'client.performance.metrics.adSpend'
+                    )}
                     dot={false}
                   />
 
                   <Line
                     type="monotone"
                     dataKey="revenue"
-                    name="매출"
+                    name={t(
+                      'client.performance.metrics.revenue'
+                    )}
                     dot={false}
                   />
                 </LineChart>
@@ -34000,30 +35075,54 @@ function ClientPerformancePage() {
             <div className="client-campaign-content-section">
               <div className="client-dashboard-card-header">
                 <div>
-                  <h3>소재별 성과</h3>
+                  <h3>
+                    {t(
+                      'client.performance.detail.creativePerformance'
+                    )}
+                  </h3>
 
                   <span>
-                    ROAS 높은 순
+                    {t(
+                      'client.performance.sort.highestRoas'
+                    )}
                   </span>
                 </div>
               </div>
 
               {selectedCampaignContentData.length === 0 ? (
                 <div className="client-proposal-empty">
-                  소재 성과 데이터가 없습니다.
+                  {t(
+                    'client.performance.detail.noCreativeData'
+                  )}
                 </div>
               ) : (
                 <div className="client-performance-table-wrap">
                   <table className="client-performance-table">
                     <thead>
                       <tr>
-                        <th>소재</th>
-                        <th>광고비</th>
-                        <th>매출</th>
+                        <th>
+                          {t(
+                            'client.performance.metrics.creative'
+                          )}
+                        </th>
+                        <th>
+                          {t(
+                            'client.performance.metrics.adSpend'
+                          )}
+                        </th>
+                        <th>
+                          {t(
+                            'client.performance.metrics.revenue'
+                          )}
+                        </th>
                         <th>ROAS</th>
                         <th>CPA</th>
                         <th>CTR</th>
-                        <th>전환</th>
+                        <th>
+                          {t(
+                            'client.performance.metrics.conversions'
+                          )}
+                        </th>
                       </tr>
                     </thead>
 
@@ -34036,17 +35135,15 @@ function ClientPerformancePage() {
                             </td>
 
                             <td>
-                              {Math.round(
+                              {formatClientCurrency(
                                 row.spend
-                              ).toLocaleString()}
-                              원
+                              )}
                             </td>
 
                             <td>
-                              {Math.round(
+                              {formatClientCurrency(
                                 row.revenue
-                              ).toLocaleString()}
-                              원
+                              )}
                             </td>
 
                             <td>
@@ -34054,10 +35151,9 @@ function ClientPerformancePage() {
                             </td>
 
                             <td>
-                              {Math.round(
+                              {formatClientCurrency(
                                 row.cpa
-                              ).toLocaleString()}
-                              원
+                              )}
                             </td>
 
                             <td>
@@ -34087,25 +35183,23 @@ function ClientPerformancePage() {
 }
 
 function OperatorSignupPage() {
+  const { t, i18n } =
+    useTranslation()
+
   const [name, setName] =
     useState('')
-
   const [email, setEmail] =
     useState('')
-
   const [password, setPassword] =
     useState('')
-
   const [
     passwordConfirm,
     setPasswordConfirm,
   ] = useState('')
-
   const [
     signupError,
     setSignupError,
   ] = useState('')
-
   const [
     isSigningUp,
     setIsSigningUp,
@@ -34114,23 +35208,21 @@ function OperatorSignupPage() {
   async function handleOperatorSignup() {
     if (!email.trim() || !password) {
       setSignupError(
-        '이메일과 비밀번호를 입력해주세요.'
+        t('operator.auth.errors.emailPasswordRequired')
       )
       return
     }
 
     if (password.length < 8) {
       setSignupError(
-        '비밀번호는 8자 이상이어야 합니다.'
+        t('operator.auth.errors.passwordLength')
       )
       return
     }
 
-    if (
-      password !== passwordConfirm
-    ) {
+    if (password !== passwordConfirm) {
       setSignupError(
-        '비밀번호가 일치하지 않습니다.'
+        t('operator.auth.errors.passwordMismatch')
       )
       return
     }
@@ -34148,10 +35240,8 @@ function OperatorSignupPage() {
               'application/json',
           },
           body: JSON.stringify({
-            name:
-              name.trim() || null,
-            email:
-              email.trim(),
+            name: name.trim() || null,
+            email: email.trim(),
             password,
           }),
         }
@@ -34163,13 +35253,14 @@ function OperatorSignupPage() {
         )
       }
 
-      const result =
-        await response.json()
+      const result = await response.json()
 
       if (result.status !== 'ok') {
         setSignupError(
-          result.message ||
-          '회원가입에 실패했습니다.'
+          i18n.language === 'en'
+            ? t('operator.auth.errors.signupFailed')
+            : result.message ||
+              t('operator.auth.errors.signupFailed')
         )
         return
       }
@@ -34183,7 +35274,7 @@ function OperatorSignupPage() {
       )
 
       setSignupError(
-        '회원가입 중 오류가 발생했습니다.'
+        t('operator.auth.errors.signupError')
       )
     } finally {
       setIsSigningUp(false)
@@ -34193,20 +35284,54 @@ function OperatorSignupPage() {
   return (
     <div className="client-login-page">
       <div className="client-login-card">
+        <div className="operator-auth-topbar">
+          <div className="client-login-brand">
+            <h1>AdScope</h1>
+            <span>Operator Portal</span>
+          </div>
 
-        <div className="client-login-brand">
-          <h1>AdScope</h1>
-          <span>Operator Portal</span>
+          <div
+            className="operator-auth-language-switcher"
+            aria-label="Language"
+          >
+            <button
+              type="button"
+              className={
+                i18n.language === 'ko'
+                  ? 'active'
+                  : ''
+              }
+              onClick={() =>
+                i18n.changeLanguage('ko')
+              }
+              title={t('operator.auth.koreanLanguage')}
+            >
+              KO
+            </button>
+            <span>/</span>
+            <button
+              type="button"
+              className={
+                i18n.language === 'en'
+                  ? 'active'
+                  : ''
+              }
+              onClick={() =>
+                i18n.changeLanguage('en')
+              }
+              title={t('operator.auth.englishLanguage')}
+            >
+              EN
+            </button>
+          </div>
         </div>
 
         <div className="client-login-heading">
           <h2>
-            광고 운영자 로그인
+            {t('operator.auth.signup.title')}
           </h2>
-
           <p>
-            광고 성과와 최적화 대시보드를 확인하려면
-            로그인해주세요.
+            {t('operator.auth.signup.description')}
           </p>
         </div>
 
@@ -34214,93 +35339,107 @@ function OperatorSignupPage() {
           className="client-login-form"
           onSubmit={(event) => {
             event.preventDefault()
-            handleOperatorLogin()
+            handleOperatorSignup()
           }}
         >
           <label>
-            이메일
+            {t('operator.auth.name')}
           </label>
+          <input
+            type="text"
+            value={name}
+            placeholder={t('operator.auth.namePlaceholder')}
+            onChange={(event) =>
+              setName(event.target.value)
+            }
+          />
 
+          <label>
+            {t('operator.auth.email')}
+          </label>
           <input
             type="email"
             value={email}
             placeholder="operator@example.com"
             onChange={(event) =>
-              setEmail(
-                event.target.value
-              )
+              setEmail(event.target.value)
             }
             required
           />
 
           <label>
-            비밀번호
+            {t('operator.auth.password')}
           </label>
-
           <input
             type="password"
             value={password}
-            placeholder="비밀번호를 입력하세요"
+            placeholder={t('operator.auth.passwordPlaceholder')}
             onChange={(event) =>
-              setPassword(
-                event.target.value
-              )
+              setPassword(event.target.value)
             }
             required
           />
 
-          {loginError && (
+          <label>
+            {t('operator.auth.passwordConfirm')}
+          </label>
+          <input
+            type="password"
+            value={passwordConfirm}
+            placeholder={t('operator.auth.passwordConfirmPlaceholder')}
+            onChange={(event) =>
+              setPasswordConfirm(event.target.value)
+            }
+            required
+          />
+
+          {signupError && (
             <div className="operator-login-error">
-              {loginError}
+              {signupError}
             </div>
           )}
 
           <button
             type="submit"
-            disabled={isLoggingIn}
+            disabled={isSigningUp}
           >
-            {isLoggingIn
-              ? '로그인 중...'
-              : '로그인'}
+            {isSigningUp
+              ? t('operator.auth.signup.submitting')
+              : t('operator.auth.signup.submit')}
           </button>
         </form>
 
         <p className="client-login-help">
-          운영자 계정이 없나요?
-
+          {t('operator.auth.signup.haveAccount')}
+          {' '}
           <button
             type="button"
             className="operator-signup-text-button"
             onClick={() => {
               window.location.href =
-                '/operator/signup'
+                '/operator/login'
             }}
           >
-            회원가입
+            {t('operator.auth.login.submit')}
           </button>
         </p>
-
       </div>
     </div>
   )
 }
 
 function OperatorLoginPage() {
-  const [
-    email,
-    setEmail,
-  ] = useState('')
+  const { t, i18n } =
+    useTranslation()
 
-  const [
-    password,
-    setPassword,
-  ] = useState('')
-
+  const [email, setEmail] =
+    useState('')
+  const [password, setPassword] =
+    useState('')
   const [
     loginError,
     setLoginError,
   ] = useState('')
-
   const [
     isLoggingIn,
     setIsLoggingIn,
@@ -34309,7 +35448,7 @@ function OperatorLoginPage() {
   async function handleOperatorLogin() {
     if (!email.trim() || !password) {
       setLoginError(
-        '이메일과 비밀번호를 입력해주세요.'
+        t('operator.auth.errors.emailPasswordRequired')
       )
       return
     }
@@ -34339,17 +35478,17 @@ function OperatorLoginPage() {
         )
       }
 
-      const result =
-        await response.json()
+      const result = await response.json()
 
       if (
-        result.status !==
-        'authenticated' ||
+        result.status !== 'authenticated' ||
         !result.accessToken
       ) {
         setLoginError(
-          result.message ||
-          '로그인에 실패했습니다.'
+          i18n.language === 'en'
+            ? t('operator.auth.errors.loginFailed')
+            : result.message ||
+              t('operator.auth.errors.loginFailed')
         )
         return
       }
@@ -34358,12 +35497,9 @@ function OperatorLoginPage() {
         'adscope_operator_access_token',
         result.accessToken
       )
-
       localStorage.setItem(
         'adscope_operator_user',
-        JSON.stringify(
-          result.user || {}
-        )
+        JSON.stringify(result.user || {})
       )
 
       window.location.href = '/'
@@ -34374,7 +35510,7 @@ function OperatorLoginPage() {
       )
 
       setLoginError(
-        '로그인 중 오류가 발생했습니다.'
+        t('operator.auth.errors.loginError')
       )
     } finally {
       setIsLoggingIn(false)
@@ -34384,20 +35520,54 @@ function OperatorLoginPage() {
   return (
     <div className="client-login-page">
       <div className="client-login-card">
+        <div className="operator-auth-topbar">
+          <div className="client-login-brand">
+            <h1>AdScope</h1>
+            <span>Operator Portal</span>
+          </div>
 
-        <div className="client-login-brand">
-          <h1>AdScope</h1>
-          <span>Operator Portal</span>
+          <div
+            className="operator-auth-language-switcher"
+            aria-label="Language"
+          >
+            <button
+              type="button"
+              className={
+                i18n.language === 'ko'
+                  ? 'active'
+                  : ''
+              }
+              onClick={() =>
+                i18n.changeLanguage('ko')
+              }
+              title={t('operator.auth.koreanLanguage')}
+            >
+              KO
+            </button>
+            <span>/</span>
+            <button
+              type="button"
+              className={
+                i18n.language === 'en'
+                  ? 'active'
+                  : ''
+              }
+              onClick={() =>
+                i18n.changeLanguage('en')
+              }
+              title={t('operator.auth.englishLanguage')}
+            >
+              EN
+            </button>
+          </div>
         </div>
 
         <div className="client-login-heading">
           <h2>
-            광고 운영자 로그인
+            {t('operator.auth.login.title')}
           </h2>
-
           <p>
-            광고 성과와 최적화 대시보드를 확인하려면
-            로그인해주세요.
+            {t('operator.auth.login.description')}
           </p>
         </div>
 
@@ -34409,33 +35579,27 @@ function OperatorLoginPage() {
           }}
         >
           <label>
-            이메일
+            {t('operator.auth.email')}
           </label>
-
           <input
             type="email"
             value={email}
             placeholder="operator@example.com"
             onChange={(event) =>
-              setEmail(
-                event.target.value
-              )
+              setEmail(event.target.value)
             }
             required
           />
 
           <label>
-            비밀번호
+            {t('operator.auth.password')}
           </label>
-
           <input
             type="password"
             value={password}
-            placeholder="비밀번호를 입력하세요"
+            placeholder={t('operator.auth.passwordPlaceholder')}
             onChange={(event) =>
-              setPassword(
-                event.target.value
-              )
+              setPassword(event.target.value)
             }
             required
           />
@@ -34451,14 +35615,14 @@ function OperatorLoginPage() {
             disabled={isLoggingIn}
           >
             {isLoggingIn
-              ? '로그인 중...'
-              : '로그인'}
+              ? t('operator.auth.login.submitting')
+              : t('operator.auth.login.submit')}
           </button>
         </form>
 
         <p className="client-login-help">
-          계정이 없나요?
-
+          {t('operator.auth.login.noAccount')}
+          {' '}
           <button
             type="button"
             className="operator-signup-link"
@@ -34467,16 +35631,18 @@ function OperatorLoginPage() {
                 '/operator/signup'
             }}
           >
-            회원가입
+            {t('operator.auth.signup.submit')}
           </button>
         </p>
-
       </div>
     </div>
   )
 }
 
 function OperatorProtectedApp() {
+  const { t } =
+    useTranslation()
+
   const [
     authStatus,
     setAuthStatus,
@@ -34512,38 +35678,28 @@ function OperatorProtectedApp() {
           )
         }
 
-        const result =
-          await response.json()
+        const result = await response.json()
 
         if (
-          result.status !==
-          'authenticated'
+          result.status !== 'authenticated'
         ) {
           localStorage.removeItem(
             'adscope_operator_access_token'
           )
-
           localStorage.removeItem(
             'adscope_operator_user'
           )
-
-
           window.location.href =
             '/operator/login'
-
           return
         }
 
         localStorage.setItem(
           'adscope_operator_user',
-          JSON.stringify(
-            result.user || {}
-          )
+          JSON.stringify(result.user || {})
         )
 
-        setAuthStatus(
-          'authenticated'
-        )
+        setAuthStatus('authenticated')
       } catch (error) {
         console.error(
           'OPERATOR AUTH CHECK FAILED',
@@ -34553,11 +35709,9 @@ function OperatorProtectedApp() {
         localStorage.removeItem(
           'adscope_operator_access_token'
         )
-
         localStorage.removeItem(
           'adscope_operator_user'
         )
-
         window.location.href =
           '/operator/login'
       }
@@ -34566,12 +35720,10 @@ function OperatorProtectedApp() {
     verifyOperator()
   }, [])
 
-  if (
-    authStatus === 'checking'
-  ) {
+  if (authStatus === 'checking') {
     return (
       <div className="operator-auth-loading">
-        로그인 확인 중...
+        {t('operator.auth.checking')}
       </div>
     )
   }

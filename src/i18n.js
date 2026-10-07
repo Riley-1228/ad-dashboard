@@ -5,7 +5,27 @@ import ko from './locales/ko.json'
 import en from './locales/en.json'
 
 const savedLanguage =
-  localStorage.getItem('adscope_language') || 'ko'
+  localStorage.getItem('adscope_language')
+
+const validSavedLanguage =
+  ['ko', 'en'].includes(savedLanguage)
+    ? savedLanguage
+    : null
+
+const browserLanguage =
+  (
+    navigator.languages?.[0] ||
+    navigator.language ||
+    'en'
+  ).toLowerCase()
+
+const initialLanguage =
+  validSavedLanguage ||
+  (
+    browserLanguage.startsWith('ko')
+      ? 'ko'
+      : 'en'
+  )
 
 i18n
   .use(initReactI18next)
@@ -19,7 +39,7 @@ i18n
       },
     },
 
-    lng: savedLanguage,
+    lng: initialLanguage,
 
     // 영어 번역이 아직 없는 곳은
     // 한국어로 표시

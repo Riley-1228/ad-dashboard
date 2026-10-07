@@ -11,7 +11,6 @@
     "loading": "Loading...",
     "logout": "Log Out"
   },
-
   "nav": {
     "home": "Home",
     "performance": "Performance",
@@ -20,7 +19,6 @@
     "alerts": "Alerts",
     "optimization": "Optimization"
   },
-
   "fields": {
     "date": "Date",
     "brand": "Brand",
@@ -39,7 +37,6 @@
     "cvr": "CVR",
     "roas": "ROAS"
   },
-
   "client": {
     "login": {
       "title": "Advertiser Login",
@@ -48,9 +45,11 @@
       "password": "Password",
       "passwordPlaceholder": "Enter your password",
       "submit": "Log In",
-      "help": "Please contact your account manager for account-related inquiries."
+      "help": "Please contact your account manager for account-related inquiries.",
+      "failed": "Login failed.",
+      "error": "An error occurred while logging in.",
+      "language": "Language selection"
     },
-
     "dashboard": {
       "title": "Advertising Performance Dashboard",
       "brandTitle": "{{brand}} Advertising Performance Dashboard",
@@ -59,14 +58,1608 @@
       "totalSpend": "Total Ad Spend",
       "revenue": "Revenue",
       "recentProposal": "Recent Proposal",
-      "recentMessage": "Recent Message"
+      "recentMessage": "Recent Message",
+      "proposalLoading": "Loading proposal information...",
+      "viewProposal": "View Proposal",
+      "noProposal": "No proposals have been shared yet.",
+      "accountManager": "Account Manager",
+      "newProposalMessage": "A new advertising budget optimization proposal has been shared.",
+      "viewMessage": "View Message",
+      "statusDescription": {
+        "reviewing": "This proposal requires your review.",
+        "revisionRequested": "A revision request has been submitted for this proposal.",
+        "approved": "This proposal has been approved.",
+        "other": "Please check the current proposal status."
+      }
+    },
+    "common": {
+      "currency": " KRW",
+      "defaultProposalTitle": "Advertising Budget Optimization Proposal"
+    },
+    "proposals": {
+      "title": "Proposals & Approvals",
+      "description": "Review advertising budget optimization proposals shared with you.",
+      "loading": "Loading proposal information...",
+      "empty": "No proposals have been shared with you yet.",
+      "totalBudget": "Total Budget",
+      "projectedRevenue": "Projected Revenue",
+      "projectedRoas": "Projected ROAS",
+      "projectedCpa": "Projected CPA",
+      "viewProposal": "View Proposal",
+      "shared": {
+        "loading": "Loading proposal...",
+        "unavailableTitle": "This proposal is unavailable.",
+        "preparing": "Preparing proposal information...",
+        "loadUnavailable": "The shared proposal could not be loaded.",
+        "loadFailed": "Failed to load the shared proposal.",
+        "eyebrow": "Advertising Budget Optimization Proposal",
+        "defaultTitle": "Optimization Proposal",
+        "description": "This budget optimization proposal is based on advertising performance data.",
+        "channelBudgetTitle": "Optimized Budget by Channel",
+        "channelBudgetDescription": "Recommended allocation compared with the current budget",
+        "channel": "Channel",
+        "currentBudget": "Current Budget",
+        "proposedBudget": "Proposed Budget",
+        "changeRate": "Change",
+        "reviewAndRespond": "Review & Respond",
+        "reviewDescription": "Review the proposal, then leave feedback or approve it.",
+        "feedbackAndRevision": "Feedback & Revision Request",
+        "revisionPlaceholder": "e.g. Reduce the Meta budget slightly and increase the Google budget.",
+        "requestRevision": "Request Revision",
+        "approveProposal": "Approve Proposal",
+        "enterRevisionReason": "Please enter a reason for the revision request.",
+        "confirmApprove": "Approve this proposal?",
+        "confirmRevision": "Submit this revision request?",
+        "actionFailed": "Failed to process the client response.",
+        "actionError": "An error occurred while processing the request.",
+        "revisionSubmitted": "Your revision request has been submitted.",
+        "revisionSubmittedDescription": "Your account manager will review the request and prepare an updated proposal.",
+        "approvedTitle": "Proposal approved.",
+        "approvedDescription": "Thank you for your approval.",
+        "checkingStatus": "Checking the current proposal status."
+      }
+    },
+    "performance": {
+      "title": "Performance Analysis",
+      "brandTitle": "{{brand}} Performance Analysis",
+      "description": "View advertising performance by channel and campaign.",
+      "filters": {
+        "period": "Period",
+        "channel": "Channel",
+        "last7Days": "Last 7 Days",
+        "last30Days": "Last 30 Days",
+        "last90Days": "Last 90 Days",
+        "allTime": "All Time",
+        "allChannels": "All Channels"
+      },
+      "metrics": {
+        "channel": "Channel",
+        "campaign": "Campaign",
+        "creative": "Creative",
+        "adSpend": "Ad Spend",
+        "revenue": "Revenue",
+        "roas": "ROAS",
+        "cpa": "CPA",
+        "ctr": "CTR",
+        "conversions": "Conversions"
+      },
+      "comparison": {
+        "noData": "No comparison data"
+      },
+      "insights": {
+        "title": "Performance Insights",
+        "basis": "Based on the selected period and channel",
+        "highestRoas": "Highest ROAS",
+        "highestRevenue": "Highest Revenue",
+        "lowestCpa": "Lowest CPA",
+        "needsImprovement": "Needs Improvement",
+        "noData": "No data",
+        "noAnalysisData": "No data available for analysis.",
+        "revenueValue": "Revenue {{value}}",
+        "highestRoasDescription": "The {{campaign}} campaign on {{channel}} recorded the highest advertising efficiency.",
+        "highestRevenueDescription": "The {{campaign}} campaign on {{channel}} generated the most revenue during the selected period.",
+        "lowestCpaDescription": "The {{campaign}} campaign on {{channel}} recorded the lowest cost per conversion.",
+        "improvementDescription": "The {{campaign}} campaign on {{channel}} currently has the lowest ROAS and may require a budget or creative review."
+      },
+      "charts": {
+        "spendRevenueTitle": "Ad Spend & Revenue Trend",
+        "basis": "Based on the selected period and channel",
+        "noPerformanceData": "No performance data available.",
+        "roasTrendTitle": "ROAS Trend",
+        "roasTrendDescription": "Daily revenue efficiency relative to ad spend"
+      },
+      "tables": {
+        "channelPerformance": "Channel Performance",
+        "campaignPerformance": "Campaign Performance",
+        "basis": "Based on the selected period and channel"
+      },
+      "sort": {
+        "highestRoas": "Highest ROAS",
+        "highestSpend": "Highest Ad Spend",
+        "highestRevenue": "Highest Revenue",
+        "lowestCpa": "Lowest CPA",
+        "highestConversions": "Highest Conversions"
+      },
+      "detail": {
+        "title": "Campaign Details",
+        "close": "Close",
+        "creativePerformance": "Creative Performance",
+        "noCreativeData": "No creative performance data available."
+      }
+    },
+    "messages": {
+      "title": "Messages",
+      "description": "Review proposals and communications shared by your account manager.",
+      "loading": "Loading messages...",
+      "empty": "No messages yet.",
+      "defaultProposalName": "Advertising Proposal",
+      "senders": {
+        "me": "Me",
+        "client": "Client",
+        "accountManager": "Account Manager"
+      },
+      "actions": {
+        "viewProposal": "View Proposal",
+        "viewUpdatedProposal": "View Updated Proposal"
+      },
+      "readStatus": {
+        "read": "Read",
+        "unread": "Unread"
+      },
+      "compose": {
+        "title": "Message Your Account Manager",
+        "placeholder": "Enter a question or feedback about the proposal.",
+        "sending": "Sending...",
+        "send": "Send Message"
+      },
+      "errors": {
+        "noProposal": "There is no advertising proposal to attach this message to.",
+        "saveFailed": "Failed to save the message.",
+        "sendFailed": "An error occurred while sending the message."
+      },
+      "systemMessages": {
+        "viewedProposal": "The client viewed the proposal.",
+        "viewedProposalFirst": "The client viewed the proposal for the first time.",
+        "viewedProposalAgain": "The client viewed the proposal again.",
+        "proposalReady": "The client proposal is ready.",
+        "proposalShared": "The proposal was shared with the client.",
+        "proposalApproved": "The client approved the proposal.",
+        "revisionRequested": "The client submitted a revision request.",
+        "revisionReshared": "The revised proposal was reshared with the client.",
+        "proposalCancelled": "The client proposal was cancelled.",
+        "newProposalShared": "A new advertising budget optimization proposal has been shared. Use the button below to review it.",
+        "updatedProposalShared": "The revised advertising budget optimization proposal has been shared again. The budget allocation and projected performance were updated based on the client request."
+      },
+      "modal": {
+        "subtitle": "Review conversations and proposal status in one place.",
+        "close": "Close messages",
+        "proposals": "Proposals",
+        "proposalCount": "{{count}} proposals",
+        "emptyConversationTitle": "No conversation yet.",
+        "emptyConversationDescription": "Messages related to this proposal will appear here.",
+        "sendHint": "Enter to send · Shift + Enter for a new line",
+        "noProposalTitle": "No proposal available.",
+        "noProposalDescription": "You can start messaging once a proposal has been shared.",
+        "proposalDetails": "Proposal Details",
+        "status": "Proposal Status",
+        "lastUpdated": "Last Updated",
+        "noProposalSelected": "Select a proposal.",
+        "notAvailable": "Not assigned",
+        "proposalCount_one": "{{count}} proposal",
+        "proposalCount_other": "{{count}} proposals"
+      },
+      "proposalStatus": {
+        "preparing": "Preparing",
+        "sent": "Sent",
+        "reviewing": "Under Review",
+        "revisionRequested": "Revision Requested",
+        "approved": "Approved",
+        "reviewCompleted": "Review Completed",
+        "cancelled": "Cancelled"
+      }
     }
   },
-
   "proposalStatus": {
     "reviewing": "Review Required",
     "revision_requested": "Revision Requested",
     "approved": "Approved",
     "preparing": "Preparing"
+  },
+  "operator": {
+    "brand": {
+      "subtitle": "Multi-channel Ad Analytics"
+    },
+    "nav": {
+      "dashboard": "Dashboard",
+      "performance": "Performance Analytics",
+      "budget": "Budget Optimization",
+      "scenario": "Scenario Management",
+      "communication": "Client Communication",
+      "alerts": "Anomaly Alerts",
+      "tasks": "Task Management"
+    },
+    "topbar": {
+      "currentAdvertiser": "Current Advertiser",
+      "loadingAdvertisers": "Loading advertisers...",
+      "noAdvertisers": "No advertisers",
+      "manageAdvertisers": "Manage Advertisers",
+      "importPlatformData": "Import Platform Data",
+      "saveDashboard": "Save Dashboard",
+      "logout": "Log Out"
+    },
+    "filters": {
+      "brand": "Brand",
+      "allBrands": "All Brands",
+      "period": "Period",
+      "last7Days": "Last 7 Days",
+      "last30Days": "Last 30 Days",
+      "last90Days": "Last 90 Days",
+      "allPeriod": "All Time",
+      "dataSource": "Data Source",
+      "mockData": "Mock Data",
+      "naverData": "Naver Live Data",
+      "channel": "Channel",
+      "allChannels": "All Channels",
+      "campaign": "Campaign",
+      "allCampaigns": "All Campaigns",
+      "product": "Product",
+      "allProducts": "All Products",
+      "reset": "Reset Filters"
+    },
+    "sync": {
+      "syncing": "Syncing",
+      "latest": "Up to Date",
+      "historicalComplete": "Historical Data Collection Complete",
+      "historicalData": "Historical Data",
+      "dataManagement": "Data Management",
+      "naverDataManagement": "Naver Data Management",
+      "collectionComplete": "Collection Complete",
+      "resyncSelectedPeriod": "Resync Selected Period",
+      "resyncSelectedPeriodDescription": "Reload the currently selected date range from Naver.",
+      "daysUnit": "days",
+      "messages": {
+        "latestSyncFailed": "Failed to sync the latest Naver data.",
+        "backfillStatusFailed": "Unable to check the backfill status.",
+        "backfillStartFailed": "Failed to create the historical backfill job.",
+        "backfillUnavailable": "Historical data collection could not be started.",
+        "backfillRetryFailed": "Failed to retry the backfill.",
+        "backfillProcessFailed": "Failed to process the Naver historical backfill.",
+        "backfillError": "An error occurred while collecting historical data.",
+        "selectDateRange": "Select a start date and end date to sync.",
+        "invalidDateRange": "The start date cannot be later than the end date.",
+        "syncFailed": "Failed to sync Naver data.",
+        "syncComplete": "Naver data sync completed.\nPeriod: {{startDate}} ~ {{endDate}}\nSuccessful: {{successfulDays}} days\nFailed: {{failedDays}} days\nSaved: {{totalSaved}} rows",
+        "syncError": "Naver data sync failed: {{message}}",
+        "unknownError": "Unknown error"
+      }
+    },
+    "advertiserManager": {
+      "title": "Manage Advertisers",
+      "description": "Add advertisers or edit existing advertiser information.",
+      "addAdvertiser": "Add Advertiser",
+      "loading": "Loading advertisers...",
+      "empty": "No advertisers have been added.",
+      "active": "Active",
+      "inactive": "Inactive",
+      "companyName": "Company",
+      "contact": "Contact",
+      "email": "Email",
+      "phone": "Phone",
+      "edit": "Edit",
+      "restore": "Restore",
+      "deactivate": "Deactivate",
+      "delete": "Delete",
+      "editAdvertiser": "Edit Advertiser",
+      "advertiserName": "Advertiser Name *",
+      "companyNameLabel": "Company Name",
+      "contactName": "Contact Name",
+      "contactEmail": "Contact Email",
+      "contactPhone": "Contact Phone",
+      "advertiserNamePlaceholder": "Enter advertiser name.",
+      "companyNamePlaceholder": "Enter company name.",
+      "contactNamePlaceholder": "Enter contact name.",
+      "cancel": "Cancel",
+      "saveChanges": "Save Changes",
+      "messages": {
+        "nameRequired": "Enter an advertiser name.",
+        "noSelection": "No advertiser is selected for editing.",
+        "createFailed": "Failed to add the advertiser.",
+        "updateFailed": "Failed to update the advertiser.",
+        "notFound": "The advertiser could not be found.",
+        "statusChangeFailed": "Failed to change the advertiser status.",
+        "statusChangeError": "The advertiser status could not be changed.",
+        "deleteBlocked": "This advertiser cannot be deleted because connected data exists.",
+        "deleteFailed": "Failed to delete the advertiser.",
+        "reloadFailed": "Failed to refresh the advertiser list.",
+        "loadFailed": "Failed to load the advertiser list."
+      },
+      "confirm": {
+        "deactivate": "Deactivate {{name}}?",
+        "deletePermanently": "Permanently delete “{{name}}”?\n\nDeleted advertisers cannot be restored."
+      }
+    },
+    "dashboard": {
+      "fields": {
+        "title": "Data Fields",
+        "dragHint": "Drag fields to add them.",
+        "dimensions": "Dimensions",
+        "metrics": "Metrics"
+      },
+      "builder": {
+        "title": "Self-Service Chart Builder",
+        "reset": "Reset Builder",
+        "xAxis": "X-Axis",
+        "yAxis": "Y-Axis",
+        "groupColor": "Group / Color",
+        "filter": "Filter",
+        "dropDimension": "Drop a dimension here",
+        "dropMetric": "Drop metrics here",
+        "tooltip": "Tooltip",
+        "tooltipAuto": "Shown automatically in the chart",
+        "size": "Size",
+        "comingSoon": "Coming soon"
+      },
+      "chartTypes": {
+        "line": "Line Chart",
+        "bar": "Bar Chart",
+        "scatter": "Scatter Plot",
+        "donut": "Donut Chart",
+        "kpi": "KPI Card",
+        "table": "Data Table"
+      },
+      "preview": {
+        "emptyTitle": "Chart Preview",
+        "autoTitle": "{{metrics}} by {{dimension}}",
+        "groupedBy": "Grouped by {{field}}",
+        "noGroup": "No Group",
+        "addXAxisPrompt": "Add a field to the X-axis."
+      },
+      "settings": {
+        "title": "Chart Settings",
+        "chartInfo": "Chart Info",
+        "chartTitle": "Chart Title",
+        "chartTitlePlaceholder": "e.g. Ad Spend Trend by Channel",
+        "chartDescription": "Chart Description",
+        "chartDescriptionPlaceholder": "Enter a chart description.",
+        "dataSettings": "Data Settings",
+        "sort": "Sort",
+        "sortDefault": "Default Order",
+        "sortDesc": "Highest First",
+        "sortAsc": "Lowest First",
+        "top5": "Top 5",
+        "top10": "Top 10",
+        "top20": "Top 20",
+        "aggregation": "Aggregation",
+        "sum": "Sum",
+        "average": "Average",
+        "maximum": "Maximum",
+        "minimum": "Minimum",
+        "displayFormat": "Display Format",
+        "numberDisplay": "Number Format",
+        "auto": "Auto",
+        "fullNumber": "Full Number",
+        "compact": "Compact",
+        "currency": "KRW (₩)",
+        "percent": "Percent",
+        "showLegend": "Show Legend",
+        "showXAxis": "Show X-Axis",
+        "showYAxis": "Show Y-Axis"
+      },
+      "actions": {
+        "cancelEdit": "Cancel Edit",
+        "finishEdit": "Finish Editing",
+        "addToDashboard": "Add to Dashboard"
+      },
+      "saved": {
+        "title": "My Dashboard",
+        "chartCount_one": "{{count}} chart",
+        "chartCount_other": "{{count}} charts",
+        "cardSize": "Card Size",
+        "smallCard": "Small",
+        "defaultCard": "Default",
+        "largeCard": "Large",
+        "columns": "Columns",
+        "oneColumn": "1 Column",
+        "twoColumns": "2 Columns",
+        "threeColumns": "3 Columns",
+        "autoArrange": "Auto Arrange",
+        "resetDashboard": "Reset Dashboard",
+        "empty": "No charts have been added yet.",
+        "groupLabel": "{{field}} Group",
+        "editSettings": "Edit Settings",
+        "moveChart": "Move Chart",
+        "chartType": "Chart Type",
+        "duplicateTitle": "{{title}} Copy"
+      },
+      "validation": {
+        "xDimensionOnly": "Only dimension fields can be added to the X-axis.",
+        "yMetricOnly": "Only numeric metrics can be added to the Y-axis.",
+        "groupDimensionOnly": "Only dimension fields can be used for grouping.",
+        "filterDimensionOnly": "Only dimension fields can be used as filters.",
+        "setXAxisFirst": "Set the X-axis first.",
+        "addYMetric": "Add a metric to the Y-axis.",
+        "chartUpdated": "The chart has been updated.",
+        "savedKpiOneMetric": "A KPI card requires exactly one Y-axis metric.",
+        "savedDonutXAxis": "A donut chart requires an X-axis dimension.",
+        "savedDonutOneMetric": "A donut chart requires exactly one Y-axis metric.",
+        "savedTableXAxis": "A data table requires an X-axis dimension.",
+        "savedTableYMetric": "A data table requires at least one Y-axis metric.",
+        "savedScatterTwoMetrics": "A scatter plot requires two Y-axis metrics.",
+        "kpiOneMetric": "Add exactly one metric to the Y-axis for a KPI card.",
+        "donutXAxis": "Add a dimension field to the X-axis for a donut chart.",
+        "donutOneMetric": "Add exactly one metric to the Y-axis for a donut chart.",
+        "yNumericMetric": "Add a numeric metric to the Y-axis.",
+        "scatterTwoMetrics": "Add two numeric metrics to the Y-axis for a scatter plot."
+      },
+      "messages": {
+        "saved": "The dashboard has been saved.",
+        "resetConfirm": "Reset the dashboard?\nAll saved charts will be deleted."
+      }
+    },
+    "performance": {
+      "tabs": {
+        "summary": "Summary",
+        "channel": "Channel",
+        "campaign": "Campaign",
+        "product": "Product",
+        "content": "Content"
+      },
+      "common": {
+        "currentFilter": "Based on current filters",
+        "close": "Close",
+        "noData": "No data"
+      },
+      "comparison": {
+        "title": "Period Performance Comparison",
+        "current": "Current",
+        "previous": "Previous",
+        "noComparisonData": "No comparison data",
+        "vsPrevious": "vs. previous period"
+      },
+      "insights": {
+        "title": "Performance Insights",
+        "subtitle": "Automated analysis based on current filters",
+        "bestRoas": "Highest ROAS",
+        "bestRevenue": "Highest Revenue",
+        "lowestCpa": "Lowest CPA",
+        "needsImprovement": "Needs Improvement",
+        "bestRoasDescription": "The campaign with the highest advertising efficiency.",
+        "bestRevenueDescription": "The campaign generating the most revenue in the current period.",
+        "lowestCpaDescription": "The campaign with the lowest cost per conversion.",
+        "needsImprovementDescription": "The campaign with the lowest ROAS and a need for budget or creative review.",
+        "revenueValue": "Revenue ₩{{value}}",
+        "cpaValue": "CPA ₩{{value}}"
+      },
+      "trend": {
+        "spendRevenueTitle": "Ad Spend & Revenue Trend",
+        "filteredPeriod": "Based on current filters and period",
+        "roasTitle": "ROAS Trend",
+        "roasSubtitle": "Daily revenue efficiency relative to ad spend"
+      },
+      "changes": {
+        "title": "Performance Changes",
+        "subtitle": "Compared with the previous equivalent period"
+      },
+      "sort": {
+        "roasDesc": "Highest ROAS",
+        "spendDesc": "Highest Ad Spend",
+        "revenueDesc": "Highest Revenue",
+        "cpaAsc": "Lowest CPA",
+        "conversionsDesc": "Most Conversions"
+      },
+      "summary": {
+        "lowestRoas": "Lowest ROAS"
+      },
+      "rankings": {
+        "channel": "Channel Performance Ranking",
+        "campaign": "Campaign Performance Ranking",
+        "product": "Product Performance Ranking",
+        "content": "Content Performance Ranking"
+      },
+      "table": {
+        "rank": "Rank",
+        "channel": "Channel",
+        "campaign": "Campaign",
+        "product": "Product",
+        "content": "Content",
+        "creative": "Creative",
+        "spendShare": "Spend Share",
+        "revenueShare": "Revenue Share",
+        "contributionGap": "Contribution Gap",
+        "diagnosis": "Diagnosis"
+      },
+      "detail": {
+        "channel": "Channel Details",
+        "campaign": "Campaign Details",
+        "product": "Product Details",
+        "content": "Content Details",
+        "campaignPerformance": "Performance by Campaign",
+        "creativePerformance": "Performance by Creative",
+        "channelCampaignPerformance": "Performance by Channel & Campaign",
+        "channelCampaignProductPerformance": "Performance by Channel, Campaign & Product"
+      },
+      "empty": {
+        "performanceData": "No performance data to display.",
+        "dailyData": "No daily data to display.",
+        "creativePerformance": "No creative performance data.",
+        "campaignPerformance": "No campaign performance data.",
+        "detailPerformance": "No detailed performance data."
+      },
+      "units": {
+        "currencySuffix": " KRW",
+        "countSuffix": ""
+      },
+      "diagnosis": {
+        "status": {
+          "excellent": "High Efficiency",
+          "normal": "Normal",
+          "needsReview": "Needs Review"
+        },
+        "reason": {
+          "average": "Overall performance is around the average level.",
+          "efficient": "ROAS is high, CPA is low, and revenue contribution is at or above spend share.",
+          "needsReview": "ROAS is low, CPA is high, and revenue contribution is below spend share.",
+          "roasBelowChannelAverage": "ROAS is below the overall channel average.",
+          "cpaAboveChannelAverage": "CPA is above the overall channel average.",
+          "roasBelowCampaignAverage": "ROAS is below the campaign average.",
+          "cpaAboveCampaignAverage": "CPA is above the campaign average.",
+          "roasBelowProductAverage": "ROAS is below the product average.",
+          "cpaAboveProductAverage": "CPA is above the product average.",
+          "roasBelowContentAverage": "ROAS is below the content average.",
+          "cpaAboveContentAverage": "CPA is above the content average.",
+          "revenueShareBelowSpendShare": "Revenue contribution is below spend share."
+        }
+      },
+      "alerts": {
+        "categories": {
+          "channel": "Channel",
+          "campaign": "Campaign",
+          "product": "Product"
+        },
+        "roasDown": "{{name}} ROAS decreased by {{change}}% versus the previous period.",
+        "cpaUp": "{{name}} CPA increased by {{change}}% versus the previous period.",
+        "roasUp": "{{name}} ROAS increased by {{change}}% versus the previous period.",
+        "conversionsUp": "{{name}} conversions increased by {{change}}% versus the previous period."
+      }
+    },
+    "budget": {
+      "header": {
+        "title": "Budget Optimization",
+        "description": "Reallocate campaign budgets based on actual advertising performance.",
+        "shadowOnly": "Recommendation Only"
+      },
+      "modes": {
+        "naverCampaign": "Naver Campaign Budgets",
+        "campaign": "Campaign Budgets",
+        "channel": "Channel Budget Allocation",
+        "scaling": "Budget Scaling Analysis"
+      },
+      "common": {
+        "campaign": "Campaign",
+        "channel": "Channel",
+        "currentBudget": "Current Budget",
+        "recommendedBudget": "Recommended Budget",
+        "optimizedBudget": "Optimized Budget",
+        "adjustment": "Adjustment",
+        "changeRate": "Change Rate",
+        "recommendedAction": "Recommended Action",
+        "rationale": "Rationale",
+        "optimizationReason": "Optimization Rationale",
+        "expectedRevenue": "Projected Revenue",
+        "expectedRoas": "Projected ROAS",
+        "expectedCpa": "Projected CPA",
+        "currentRoas": "Current ROAS",
+        "currentRevenue": "Current Total Revenue",
+        "projectedRevenue": "Projected Total Revenue",
+        "currentTotalBudget": "Current Total Budget",
+        "optimizedTotalBudget": "Optimized Total Budget",
+        "revenueChange": "Projected Revenue Change",
+        "roasChange": "ROAS Change",
+        "close": "Close",
+        "reason": "Reason",
+        "status": "Status",
+        "waiting": "Pending",
+        "current": "Current",
+        "notDetected": "Not Detected in Range",
+        "analysisWaiting": "Analysis Pending",
+        "days": " days",
+        "campaigns": "",
+        "currency": " KRW",
+        "inputTotalBudget": "Input Total Budget",
+        "recommendedAllocationTotal": "Recommended Allocation Total",
+        "unallocatedDifference": "Unallocated Difference"
+      },
+      "campaign": {
+        "objective": "Optimization Objective",
+        "maximizeRevenue": "Maximize Projected Revenue",
+        "responseCurveBased": "Based on Campaign Response Curves",
+        "changeLimit": "Budget Change Limit",
+        "executionMode": "Execution Mode",
+        "recommendationOnly": "Preview Recommendations Only",
+        "mockNoImpact": "Mock testing only · No impact on live media budgets",
+        "naverNoChange": "Live Naver budgets will not be changed",
+        "calculating": "Calculating campaign optimization...",
+        "run": "Run Campaign Budget Optimization",
+        "preparing": "Preparing Data",
+        "pending": "Campaign Optimization Pending",
+        "conversionValidStart": "Conversion Valid Start Date",
+        "validData": "Valid Data Available",
+        "minimumData": "Minimum Required Data",
+        "additionalNeeded": "Additional Data Needed",
+        "currentTotalDailyBudget": "Current Total Daily Budget",
+        "recommendedTotalDailyBudget": "Recommended Total Daily Budget",
+        "expectedLift": "Expected Lift",
+        "eligible": "Eligible for Optimization",
+        "recommendationTitle": "Campaign Budget Recommendations",
+        "recommendationDescription": "Review the recommended budget adjustment and rationale for each campaign.",
+        "sourceMock": "Based on Mock Data",
+        "sourceNaver": "Based on Live Naver Data",
+        "hold": "Hold",
+        "reviewHold": "Hold for Review",
+        "keepCurrent": "Keep Current",
+        "increase": "Increase",
+        "decrease": "Decrease",
+        "reasonHold": "Maintaining the current budget is recommended.",
+        "reasonSlopeSensitive": "The response-curve slope is highly sensitive, so keep the current budget and review additional evidence.",
+        "reasonSafetyReview": "The campaign was flagged for safety review, so the current budget is retained.",
+        "reasonNoValidationGain": "Validation data did not show sufficient improvement, so the current budget is retained.",
+        "reasonInsufficientHistory": "There is not enough historical data, so the current budget is retained.",
+        "reasonSafetyGate": "The current budget is retained by the Safety Gate.",
+        "reasonIncrease": "The model optimization recommends a {{change}}% increase from the current budget.",
+        "reasonDecrease": "The model optimization recommends a {{change}}% decrease from the current budget.",
+        "modelDetails": "View Model Details",
+        "preSafetyCandidate": "Pre-Safety Candidate",
+        "safetyDecision": "Safety Decision",
+        "rawDiagnostics": "Raw Diagnostics:"
+      },
+      "scaling": {
+        "title": "Budget Scaling Analysis",
+        "description": "Compare projected performance and efficiency across budget increase and decrease scenarios from the current baseline.",
+        "currentTargetDailyBudget": "Current Target Daily Budget",
+        "scenarioCount": "Analysis Scenarios",
+        "allowedRange": "Allowed Budget Adjustment Range",
+        "analyzing": "Analyzing budget scenarios...",
+        "run": "Run Budget Scaling Analysis",
+        "currentOperatingBudget": "Current Operating Budget",
+        "eligibleCampaignBasis": "Based on eligible campaigns",
+        "increaseRange": "Potential Increase Range",
+        "waitingTraining": "Waiting for training data",
+        "slowdownStart": "Efficiency Slowdown Starts",
+        "basedOnCurrentRange": "Based on current analysis range",
+        "scenarioComparison": "Budget Scenario Comparison",
+        "change": "Change",
+        "dailyBudget": "Daily Budget",
+        "incrementalRevenue": "Incremental Revenue",
+        "marginalRoas": "Marginal ROAS",
+        "efficiencyAssessment": "Efficiency Assessment",
+        "analysisStatus": "Analysis Status",
+        "infeasible": "Infeasible under current constraints",
+        "efficiencyMaintained": "Efficiency Maintained",
+        "efficiencySlowdown": "Efficiency Slowdown",
+        "analysisComplete": "Analysis Complete",
+        "insufficientTraining": "Insufficient Training Data",
+        "insufficientTrainingDays": "Insufficient Training Data · {{valid}}/{{minimum}} days",
+        "responseCurveTitle": "Budget · Projected Revenue Response Curve",
+        "responseCurveDescription": "Shows projected revenue changes as budget moves above or below the current level.",
+        "responseCurveWaiting": "The budget-revenue response curve will appear when sufficient valid training data is available.",
+        "currentBudget": "Current Budget",
+        "relativeBudget": "{{change}}% vs. Current",
+        "marginalTitle": "Marginal ROAS by Budget Increase",
+        "marginalDescription": "Projected incremental revenue efficiency per additional KRW of budget.",
+        "marginalWaiting": "Marginal ROAS by budget increase will appear when sufficient valid training data is available.",
+        "budgetRange": "+{{change}}% Budget Range vs. Current",
+        "efficiencyThreshold": "Efficiency Threshold {{value}}%",
+        "insightWaitingTitle": "Analysis Pending",
+        "insightWaitingMessage": "Efficiency changes by budget increase will be analyzed once sufficient valid training data is available.",
+        "noBaselineTitle": "No Current-Budget Baseline",
+        "noBaselineMessage": "Efficiency changes cannot be calculated without a current-budget scenario baseline.",
+        "noExpansionTitle": "Insufficient Increase Scenarios",
+        "noExpansionMessage": "Analysis results for scenarios above the current budget are required.",
+        "slowdownDetectedTitle": "Efficiency Slowdown Detected",
+        "slowdownMessage": "Incremental budget efficiency remains relatively stable through about +{{safe}}%, while marginal ROAS declines rapidly from around +{{slowdown}}%.",
+        "earlySlowdownMessage": "Marginal efficiency begins to deteriorate from the initial increase above the current budget.",
+        "expansionAvailableTitle": "Additional Budget Expansion Potential",
+        "expansionAvailableMessage": "No clear marginal-efficiency drop was detected up to +{{change}}% within the analyzed range.",
+        "currentLevel": "Current Level",
+        "notDetectedWithinRange": "Not Detected in Range"
+      },
+      "channel": {
+        "totalBudget": "Total Budget to Optimize",
+        "objective": "Optimization Objective",
+        "maximizeRevenue": "Maximize Projected Revenue",
+        "maximizeConversions": "Maximize Projected Conversions",
+        "maximizeRevenueWithRoas": "Maximize Revenue Above Target ROAS",
+        "maximizeConversionsWithCpa": "Maximize Conversions Below Target CPA",
+        "riskAdjustedRevenue": "Maximize Risk-Adjusted Revenue",
+        "targetRoas": "Target ROAS",
+        "targetCpa": "Target CPA",
+        "riskTolerance": "Risk Tolerance",
+        "riskLow": "Low",
+        "riskMedium": "Medium",
+        "riskHigh": "High",
+        "changeRange": "Allowed Budget Adjustment Range",
+        "feasible": "This budget is feasible for optimization.",
+        "feasibleRange": "Feasible total budget range for the selected period:",
+        "noValidRange": "There is not enough performance data to calculate a valid optimization budget range.",
+        "checkConstraints": "Check channel data coverage or budget constraints.",
+        "outOfRange": "The current total budget is outside the feasible optimization range.",
+        "orValidation": "OR Model Validation",
+        "variables": "{{count}} variables",
+        "constraints": "{{count}} constraints",
+        "previewComplete": "V2 Optimization Preview Complete",
+        "shadowSafety": "Safety-Gated Shadow Recommendation",
+        "shadowAvailable": "Shadow Recommendation Available",
+        "currentDailyBudget": "Current Daily Budget",
+        "recommendedDailyBudget": "Recommended Daily Budget",
+        "currentExpectedDailyRevenue": "Current Projected Daily Revenue",
+        "recommendedExpectedDailyRevenue": "Recommended Projected Daily Revenue",
+        "expectedLift": "Expected Lift",
+        "modeledCampaigns": "Modeled Campaigns",
+        "total": "Total",
+        "calculating": "Calculating recommended budgets...",
+        "calculate": "Calculate Channel Budget Recommendations",
+        "scenarioNamePlaceholder": "Scenario Name",
+        "saveCurrentResult": "Save Current Result",
+        "comparingRisk": "Calculating risk scenarios...",
+        "compareRisk": "Compare Low · Medium · High",
+        "totalBudgetPlaceholder": "e.g. 10000000",
+        "targetCpaPlaceholder": "e.g. 30000",
+        "totalLabel": "Total {{count}}",
+        "defaultScenarioName": "{{objective}} Scenario"
+      },
+      "policy": {
+        "title": "Campaign Budget Range Settings",
+        "mockDescription": "Calculate campaign-level budget ranges from the selected Mock data and current top filters.",
+        "naverDescription": "Set minimum and maximum optimizable budgets using live Naver daily budgets as the baseline.",
+        "recalculateMock": "Recalculate Mock",
+        "refresh": "Refresh",
+        "totalCampaigns": "Total Campaigns",
+        "eligible": "Eligible",
+        "excluded": "Excluded",
+        "targetCurrentDailyBudget": "Eligible Current Total Daily Budget",
+        "configured": "Policies Configured",
+        "bulkDraft": "Bulk Draft",
+        "mockRatioDescription": "Percentages are based on the average daily budget in the selected Mock data.",
+        "naverRatioDescription": "Specify percentages relative to the current Naver daily budget.",
+        "minimumBudget": "Minimum Budget",
+        "maximumBudget": "Maximum Budget",
+        "applyAll": "Apply to All Campaigns",
+        "mockConstraintDescription": "Minimum and maximum budgets are Mock-only business constraints and do not affect live media budgets.",
+        "naverConstraintDescription": "Minimum and maximum budgets are business constraints applied separately from the budget change limit. Saving here does not change live Naver budgets.",
+        "loading": "Loading campaign budget information...",
+        "noMockCampaigns": "No Mock campaigns match the current top-filter conditions.",
+        "noNaverCampaigns": "No synchronized Naver campaign budgets are available.",
+        "currentBudgetX0": "Current Budget x₀",
+        "minimumBudgetL": "Minimum Budget L",
+        "maximumBudgetU": "Maximum Budget U",
+        "policyStatus": "Policy Status",
+        "statusExcluded": "Excluded",
+        "statusMockReady": "Mock Ready",
+        "statusSaved": "Saved",
+        "statusUnset": "Not Set",
+        "saving": "Saving Budget Policies...",
+        "save": "Save Budget Policies",
+        "minPercentPlaceholder": "e.g. 50",
+        "maxPercentPlaceholder": "e.g. 150"
+      },
+      "source": {
+        "pending": "Channel Optimization Pending",
+        "cannotCalculate": "Recommended budgets cannot be calculated yet.",
+        "connectedData": "Connected Platform Data",
+        "dataDays": "Data Days",
+        "startDate": "Start Date",
+        "latestDate": "Latest Date",
+        "revenueDays": "Revenue Days",
+        "cumulativeSpend": "Cumulative Ad Spend",
+        "cumulativeRevenue": "Cumulative Revenue",
+        "complete": "Channel Optimization Complete",
+        "recommendation": "Channel Budget Recommendations",
+        "shadowDescription": "Shadow Preview results that passed the V2 Response Curve and Safety Gate.",
+        "allocationResult": "Channel Budget Allocation Results"
+      },
+      "infeasible": {
+        "title": "Optimization is infeasible with the current settings.",
+        "cpaMessage": "No allocation can satisfy the target CPA of {{target}} KRW together with the current total budget and channel budget constraints.",
+        "roasMessage": "No allocation can satisfy the target ROAS together with the current total budget and channel budget constraints.",
+        "genericMessage": "No optimal solution satisfies both the current target and budget constraints.",
+        "cpaAction": "Relax the target CPA or widen the allowed budget adjustment range and try again.",
+        "roasAction": "Relax the target ROAS or widen the allowed budget adjustment range and try again.",
+        "genericAction": "Adjust the target value or budget constraints, then run the optimization again."
+      },
+      "risk": {
+        "diagnosticsTitle": "Risk Optimization Diagnostics",
+        "diagnosticsDescription": "Dynamic risk limits calculated from the current data.",
+        "minimumRisk": "Minimum Required Risk",
+        "minimumRiskDescription": "Minimum risk required to satisfy the current target budget",
+        "allowedRisk": "Selected Risk Limit",
+        "allowedRiskDescription": "Risk Budget calculated automatically from the selected risk level",
+        "realizedRisk": "Realized Risk",
+        "realizedRiskDescription": "Risk actually used by the final Gurobi solution",
+        "revenueOptimalRisk": "Revenue-Optimal Risk",
+        "revenueOptimalRiskDescription": "Minimum risk required to maximize revenue without a risk constraint",
+        "interpretation": "Interpretation",
+        "belowRevenueOptimal": "The current setting constrains risk below the revenue-optimal level. Allowing more risk may create additional revenue upside.",
+        "nearRevenueOptimal": "The current setting is close to the risk level required to maximize revenue.",
+        "channelContribution": "Risk Contribution by Channel",
+        "relativeToCurrent": "Based on change from current budget",
+        "budgetChangeRate": "Budget Change Rate",
+        "volatility": "Performance Volatility",
+        "riskContribution": "Risk Contribution",
+        "resultInterpretation": "Optimization Result Interpretation",
+        "autoExplanation": "Automated OR Model Explanation",
+        "recommendedActions": "Recommended Actions",
+        "basedOnResult": "Based on optimization results",
+        "scenarioComparison": "Risk Scenario Comparison",
+        "levels": "Low · Medium · High",
+        "item": "Metric",
+        "actualRisk": "Realized Risk",
+        "allowedRiskShort": "Risk Limit",
+        "revenueScore": "Revenue Score",
+        "roasScore": "ROAS Score",
+        "cpaScore": "CPA Score",
+        "riskScore": "Risk Score",
+        "recommendationScore": "Overall Recommendation Score",
+        "revenueObjective": "Revenue Objective Value",
+        "recommendedScenario": "Recommended Scenario:",
+        "recommendationRationale": "Recommendation Rationale",
+        "cautions": "Considerations",
+        "low": "Low",
+        "medium": "Medium",
+        "high": "High"
+      },
+      "allocation": {
+        "title": "Gurobi Optimal Budget Allocation",
+        "selectedPeriod": "For the selected period",
+        "adjustmentAmount": "Adjustment Amount",
+        "adjustmentRate": "Adjustment Rate",
+        "recommendation": "Recommendation",
+        "defaultReason": "The budget was calculated from the optimization result."
+      },
+      "dynamic": {
+        "recommendationIncrease": "Increase",
+        "recommendationDecrease": "Decrease",
+        "recommendationHold": "Hold",
+        "revenueIncreaseHigh": "Marginal revenue efficiency is {{difference}}% above the channel average, indicating strong incremental revenue contribution from additional budget.",
+        "revenueIncreasePortfolio": "Considering the total-budget constraint and marginal efficiency across channels, additional allocation was favorable for maximizing total revenue.",
+        "revenueDecreaseLow": "Marginal revenue efficiency is {{difference}}% below the channel average, so reallocating some budget to higher-efficiency channels was preferable.",
+        "revenueDecreasePortfolio": "Other channels offered stronger incremental revenue contribution under the total-budget constraint, resulting in a relative decrease.",
+        "revenueHold": "At the current budget level, marginal revenue efficiency and opportunity cost across channels indicate that holding the current level is optimal.",
+        "roasIncrease": "Within the target ROAS constraint, marginal revenue efficiency was {{difference}}% versus the channel average, so additional allocation was selected.",
+        "roasDecrease": "While maintaining the target ROAS, the budget range with marginal revenue efficiency of {{difference}}% versus the channel average was relatively reduced.",
+        "roasHold": "Considering both the target ROAS constraint and marginal revenue efficiency, the current budget level was calculated as the optimal balance point.",
+        "conversionIncreaseHigh": "Marginal conversion efficiency is {{difference}}% above the channel average, so additional budget is expected to generate more conversions.",
+        "conversionIncreasePortfolio": "Considering the total-budget constraint and conversion efficiency across channels, additional allocation was favorable for maximizing total conversions.",
+        "conversionDecreaseLow": "Marginal conversion efficiency is {{difference}}% below the channel average, so budget was shifted toward channels with higher conversion efficiency.",
+        "conversionDecreasePortfolio": "Other channels offered stronger incremental conversion contribution for maximizing total conversions, resulting in a relative decrease.",
+        "conversionHold": "Marginal conversion efficiency is close to the overall portfolio benchmark, so maintaining the current budget level was optimal.",
+        "cpaIncrease": "Within the target CPA constraint, marginal conversion efficiency is {{difference}}% {{position}} the channel average, and the additional allocation was calculated to improve total conversions.",
+        "cpaDecrease": "While maintaining the target CPA, marginal conversion efficiency is {{difference}}% {{position}} the channel average, but the allocation was relatively reduced at the portfolio level.",
+        "cpaHold": "Considering the target CPA constraint and current marginal conversion efficiency together, the current budget level was calculated as appropriate.",
+        "riskIncreaseHigh": "Marginal revenue efficiency is {{revenueDifference}}% {{revenuePosition}} the channel average, while Risk Weight is {{riskDifference}}% above average. A limited increase was selected because risk-adjusted revenue contribution remains acceptable within the selected risk limit.",
+        "riskIncreaseLow": "Marginal revenue efficiency is {{revenueDifference}}% {{revenuePosition}} the channel average, while Risk Weight is {{riskDifference}}% below average, indicating strong risk-adjusted revenue contribution.",
+        "riskIncreaseMedium": "Marginal revenue efficiency is {{revenueDifference}}% versus the channel average and Risk Weight is near average. The budget was increased because risk-adjusted expected revenue contribution is favorable.",
+        "riskDecreaseHigh": "Risk Weight is {{riskDifference}}% above the channel average, while marginal revenue efficiency is {{revenueDifference}}% versus average. The budget was reduced based on risk-adjusted efficiency.",
+        "riskDecreaseOther": "Risk Weight is {{riskDifference}}% versus average, but other channels offer stronger risk-adjusted marginal revenue efficiency, resulting in a relative decrease.",
+        "riskHold": "Marginal revenue efficiency is {{revenueDifference}}% versus average and Risk Weight is {{riskDifference}}% versus average, placing the current budget near the balance point between risk and expected return.",
+        "fallback": "Based on the Gurobi optimum across the current objective and budget constraints, {{recommendation}} was selected.",
+        "conversionSimpleIncreaseHigh": "Marginal conversion efficiency is above average, so additional budget is expected to generate more conversions.",
+        "conversionSimpleIncreasePortfolio": "Under the total-budget constraint, additional allocation was favorable for increasing total conversions.",
+        "conversionSimpleDecreaseLow": "Marginal conversion efficiency is lower than other channels, so budget was shifted toward more efficient conversion channels.",
+        "conversionSimpleDecreasePortfolio": "A relatively lower-priority budget range was reduced to maximize total conversions.",
+        "conversionSimpleHold": "Marginal conversion efficiency at the current budget is close to the overall portfolio benchmark, so holding the current level was selected."
+      },
+      "riskExplanation": {
+        "title": "Budget optimized at a {{level}} risk level.",
+        "summary": "Total realized risk is {{realized}}%, within the selected risk limit of {{allowed}}%.",
+        "highestRisk": "{{channel}} contributes the most to total risk. Budget change is {{change}}% and performance volatility is {{volatility}}%.",
+        "mostChanged": "{{channel}} has the largest budget adjustment, changing {{change}}% from the current budget.",
+        "stableChannel": "{{channel}} has a relatively low risk contribution in the current allocation.",
+        "opportunity": "Current realized risk is {{gap}} percentage points below the revenue-optimal level, so allowing more risk may create additional revenue upside.",
+        "nearOptimal": "The current risk level is close to what is required to achieve maximum revenue.",
+        "levelLow": "low",
+        "levelMedium": "medium",
+        "levelHigh": "high"
+      },
+      "riskRecommendations": {
+        "volatilityTitle": "Monitor {{channel}} Performance Volatility",
+        "volatilityDescription": "{{channel}} has relatively high performance volatility at {{volatility}}%. Consider applying further budget increases gradually.",
+        "changeTitle": "Review {{channel}} Budget Change",
+        "changeDescription": "The optimized budget for {{channel}} changes by {{change}}% from the current level. Consider phased implementation rather than changing it all at once.",
+        "riskTitle": "Manage {{channel}} Risk Contribution",
+        "riskDescription": "{{channel}} has the largest risk contribution in the current optimization result. Prioritize monitoring its performance trend.",
+        "opportunityTitle": "Potential for Additional Revenue",
+        "opportunityDescription": "Current realized risk is {{gap}} percentage points below the revenue-optimal level. Compare the impact of moving the risk level one step higher.",
+        "stableTitle": "Conservative Allocation",
+        "stableDescription": "The current allocation is very close to the minimum risk required to satisfy the target budget. This is suitable when stability is the priority."
+      },
+      "riskScenarioExplanation": {
+        "bestRevenue": "This scenario has the highest projected revenue among the three.",
+        "bestRoas": "This scenario has the highest projected ROAS.",
+        "bestCpa": "This scenario has the lowest projected CPA.",
+        "lowestRisk": "This scenario has the lowest realized risk among the three.",
+        "additionalRisk": "Realized risk is {{risk}} percentage points higher than the most conservative scenario.",
+        "revenueGain": "Projected revenue is {{gain}}% higher than the most conservative scenario.",
+        "highConclusion": "The performance improvement outweighed the penalty for additional risk, so the high-risk scenario is recommended.",
+        "mediumConclusion": "The medium-risk scenario is recommended because it offers the best balance between performance improvement and risk management.",
+        "lowConclusion": "The low-risk scenario is recommended because the performance improvement from taking additional risk is limited."
+      },
+      "validation": {
+        "noVariables": "No optimization variables are available.",
+        "noConstraints": "No optimization constraints are available.",
+        "invalidVariables": "The LP contains invalid variables.",
+        "invalidBounds": "One or more variable lower bounds exceed their upper bounds.",
+        "capacityTooLow": "The total response-curve budget capacity is below the input budget.",
+        "noTotalBudget": "No total optimization budget has been entered.",
+        "channelMinCapacity": "The response-curve range for {{channel}} does not satisfy the minimum budget constraint.",
+        "channelMaxObserved": "{{channel}} cannot use the full maximum allowed budget because of the observed budget range."
+      },
+      "errors": {
+        "selectAdvertiser": "Select an advertiser first.",
+        "noMockData": "No Mock data matches the current filter conditions.",
+        "noMockScenario": "No current-budget Mock scenario result is available.",
+        "mockPreviewFailed": "Failed to run the Mock optimization preview.",
+        "mockPreviewRequestFailed": "The Mock optimization preview request failed.",
+        "previewRequestFailed": "The optimization preview request failed.",
+        "previewError": "An error occurred while requesting the optimization preview.",
+        "policyApiError": "Campaign Budget Policy API error: {{status}}",
+        "policyLoadFailed": "Failed to load campaign budget policies.",
+        "policyLoadError": "An error occurred while loading campaign budget policies.",
+        "bulkBothRequired": "Enter both the minimum and maximum budget percentages.",
+        "bulkMinRange": "The minimum budget percentage must be between 0% and 100%.",
+        "bulkMaxRange": "The maximum budget percentage must be at least 100%.",
+        "campaignBothRequired": "{{campaign}}: Enter both the minimum and maximum budgets.",
+        "campaignNumeric": "{{campaign}}: Enter numeric budget values.",
+        "campaignMinNonnegative": "{{campaign}}: The minimum budget must be at least 0 KRW.",
+        "campaignMaxAtLeastMin": "{{campaign}}: The maximum budget cannot be lower than the minimum budget.",
+        "campaignCurrentWithinRange": "{{campaign}}: The current budget must fall within the minimum/maximum range.",
+        "noPoliciesToSave": "Enter at least one Budget Policy to save.",
+        "policySaveApiError": "Campaign Budget Policy save error: {{status}}",
+        "policySaveFailed": "Failed to save the Budget Policy.",
+        "policySaveError": "An error occurred while saving Campaign Budget Policies.",
+        "configurePoliciesBeforeScaling": "Configure Budget Policies for all eligible campaigns before running budget scaling analysis.",
+        "scalingApiError": "Budget scaling analysis API error: {{status}}",
+        "scalingUnavailable": "Budget scaling analysis cannot run under the current conditions.",
+        "scalingError": "An error occurred during budget scaling analysis.",
+        "channelApiError": "Channel optimization API error: {{status}}",
+        "channelCalculationError": "An error occurred while calculating channel budget recommendations.",
+        "riskScenarioFailed": "Failed to calculate the {{level}} risk scenario.",
+        "riskCompareError": "An error occurred while comparing risk scenarios."
+      }
+    },
+    "scenario": {
+      "title": "Scenario Management",
+      "description": "Manage and compare saved optimization results.",
+      "savedCount": "{{count}} saved",
+      "comparison": {
+        "title": "Scenario Comparison",
+        "description": "Compare the key metrics of the two selected optimization results.",
+        "clearSelection": "Clear Comparison Selection",
+        "item": "Metric",
+        "optimizationObjective": "Optimization Objective",
+        "budgetChangeLimit": "Budget Change Limit",
+        "riskLevel": "Risk Level",
+        "channelBudgetComparison": "Optimized Budget by Channel",
+        "channel": "Channel",
+        "interpretation": "Comparison Insight",
+        "revenueDifference": "Projected Revenue Difference",
+        "roasDifference": "ROAS Difference",
+        "cpaDifference": "CPA Difference",
+        "channelBudgetDifference": "Budget Difference by Channel"
+      },
+      "risk": {
+        "low": "Low",
+        "medium": "Medium",
+        "high": "High"
+      },
+      "insight": {
+        "bothHigher": "The second scenario has both higher projected revenue and higher ROAS than the first scenario.",
+        "revenueHigherRoasLower": "The second scenario has higher projected revenue but lower ROAS, indicating a trade-off between growth and efficiency.",
+        "revenueLowerRoasHigher": "The second scenario has lower projected revenue but higher ROAS, making it more suitable for an efficiency-focused strategy.",
+        "firstBetter": "The first scenario performs relatively better on both projected revenue and ROAS."
+      },
+      "empty": {
+        "title": "No saved scenarios.",
+        "description": "Save an optimization result in Budget Optimization to manage it here."
+      },
+      "actions": {
+        "save": "Save",
+        "cancel": "Cancel",
+        "editName": "Edit Name",
+        "compareSelect": "Select to Compare",
+        "removeFinal": "Remove Final Selection",
+        "selectFinal": "Set as Final Scenario",
+        "reproposal": "Propose Again",
+        "createProposal": "Create Client Proposal",
+        "proposalCreated": "Client Proposal Created",
+        "cancelProposal": "Cancel Proposal",
+        "delete": "Delete"
+      },
+      "status": {
+        "draft": "Draft",
+        "recommended": "Recommended",
+        "confirmed": "Confirmed"
+      },
+      "confirm": {
+        "reproposal": "Propose the \"{{name}}\" scenario to the client again?",
+        "createProposal": "Create a client proposal from the \"{{name}}\" scenario?\n\nAfter creation, you can manage its status and follow-up tasks in Client Communication.",
+        "cancelProposal": "Cancel the client proposal for \"{{name}}\"?"
+      },
+      "metrics": {
+        "totalBudget": "Total Budget",
+        "projectedRevenue": "Projected Revenue",
+        "projectedRoas": "Projected ROAS",
+        "projectedCpa": "Projected CPA"
+      },
+      "note": {
+        "label": "Notes",
+        "placeholder": "Enter the purpose of this scenario or any reference notes."
+      }
+    },
+    "clientHub": {
+      "title": "Client Communication Hub",
+      "subtitle": "Manage proposals, approvals, tasks, and conversations in one place.",
+      "proposalsTitle": "Client Proposals",
+      "countUnit": "",
+      "emptyProposal": "No client proposals have been created yet.",
+      "fallbackProposal": "Optimization Proposal",
+      "status": {
+        "preparing": "Preparing Proposal",
+        "sent": "Proposal Ready",
+        "reviewing": "Client Reviewing",
+        "revisionRequested": "Revision Requested",
+        "approved": "Approved",
+        "reviewCompleted": "Review Complete"
+      },
+      "conversation": {
+        "emptyTitle": "No conversations or activity yet.",
+        "emptyDescription": "Messages and proposal status changes will appear here.",
+        "advertiser": "Client",
+        "operator": "Account Manager",
+        "read": "Read",
+        "unread": "Unread",
+        "viewProposal": "View Proposal",
+        "messagePlaceholder": "Enter a message for the client.",
+        "composerHint": "Enter to send · Shift + Enter for a new line",
+        "sendMessage": "Send Message",
+        "emptyMain": "Create a client proposal to start communicating here.",
+        "viewUpdatedProposal": "View Updated Proposal"
+      },
+      "workflow": {
+        "advertiserStatus": "Client Status",
+        "assignee": "Assignee",
+        "unassigned": "Unassigned",
+        "dueDate": "Due Date",
+        "taskStatus": "Task Status",
+        "waiting": "Waiting",
+        "inProgress": "In Progress",
+        "internalReview": "Internal Review",
+        "done": "Done",
+        "shareStatus": "Share Status",
+        "shared": "Shared",
+        "notShared": "Not Shared",
+        "advertiserView": "Client View",
+        "viewed": "Viewed",
+        "notViewed": "Not Viewed",
+        "firstViewed": "First viewed:",
+        "lastViewed": "Last viewed:",
+        "viewCount": "View count:",
+        "timesUnit": "times",
+        "nextAction": "Next Action",
+        "noSelection": "No proposal selected."
+      },
+      "progress": {
+        "title": "Client Progress",
+        "proposalReady": "Proposal Ready",
+        "shared": "Shared",
+        "viewed": "Viewed",
+        "reviewing": "Reviewing",
+        "approved": "Approved"
+      },
+      "actions": {
+        "markProposalReady": "Mark Proposal Ready",
+        "shareWithAdvertiser": "Share with Client",
+        "requestRevision": "Request Revision",
+        "approve": "Approve"
+      },
+      "confirm": {
+        "requestRevision": "Do you want to register a revision request for this proposal?",
+        "approve": "Do you want to approve this proposal?"
+      },
+      "nextActions": {
+        "startRevision": "Start Revision Work",
+        "revisionInProgress": "Revision in Progress",
+        "internalReview": "Internal Review Required",
+        "requestClientReview": "Request Client Review",
+        "waitingClientFeedback": "Waiting for Client Feedback",
+        "prepareExecution": "Approved · Prepare for Execution",
+        "readyForExecution": "Ready for Execution",
+        "complete": "Task Complete",
+        "prepareProposal": "Prepare Proposal Details",
+        "checkStatus": "Check Status"
+      },
+      "attention": {
+        "unviewed": {
+          "label": "Not Viewed",
+          "message": "The proposal has not been viewed for more than 3 days after sharing. A client reminder is recommended."
+        },
+        "reviewDelay": {
+          "label": "Review Delayed",
+          "message": "The client review has been in progress for more than 5 days. Follow-up is recommended."
+        },
+        "revision": {
+          "label": "Revision Requested",
+          "waiting": "A client revision request has been received. Revision work should be started.",
+          "inProgress": "The client revision request is in progress."
+        },
+        "approved": {
+          "label": "Approved",
+          "message": "Client approval is complete. Proceed with execution preparation."
+        },
+        "complete": {
+          "label": "Complete",
+          "message": "The client review and internal follow-up tasks are complete."
+        },
+        "stale": {
+          "label": "No Recent Update",
+          "message": "There has been no update for the past 7 days. Please check the task status."
+        }
+      },
+      "systemMessages": {
+        "viewedProposal": "The client viewed the proposal.",
+        "proposalReady": "The client proposal is ready.",
+        "proposalShared": "The proposal was shared with the client.",
+        "proposalApproved": "The client approved the proposal.",
+        "revisionRequested": "The client submitted a revision request.",
+        "revisionReshared": "The revised proposal was reshared with the client.",
+        "proposalCancelled": "The client proposal was cancelled.",
+        "newProposalShared": "A new advertising budget optimization proposal has been shared. Use the button below to review it.",
+        "updatedProposalShared": "The revised advertising budget optimization proposal has been shared again. The budget allocation and projected performance were updated based on the client request.",
+        "viewedProposalFirst": "The client viewed the proposal for the first time.",
+        "viewedProposalAgain": "The client viewed the proposal again."
+      },
+      "proposalCount": "{{count}} proposals",
+      "proposalCount_one": "{{count}} proposal",
+      "proposalCount_other": "{{count}} proposals"
+    },
+    "alerts": {
+      "header": {
+        "title": "Anomaly Alerts",
+        "description": "Detects sudden changes in key advertising performance metrics.",
+        "loading": "Loading...",
+        "refresh": "Refresh"
+      },
+      "summary": {
+        "open": "Open Alerts",
+        "critical": "Critical",
+        "warning": "Warning",
+        "acknowledged": "Acknowledged"
+      },
+      "empty": {
+        "loading": "Loading anomaly alerts...",
+        "none": "No anomalies are currently detected."
+      },
+      "severity": {
+        "critical": "CRITICAL",
+        "warning": "WARNING"
+      },
+      "actions": {
+        "acknowledge": "Acknowledge",
+        "resolve": "Resolve"
+      },
+      "card": {
+        "anomalyTitle": "{{metric}} Anomaly"
+      },
+      "scope": {
+        "campaign": "Campaign",
+        "channel": "Channel"
+      },
+      "time": {
+        "performanceDate": "Performance Date",
+        "firstDetected": "First Detected",
+        "lastChecked": "Last Rechecked"
+      },
+      "metrics": {
+        "metric": "Metric",
+        "baseline": "Baseline",
+        "current": "Current",
+        "changeRate": "Change",
+        "robustZ": "Robust Z"
+      },
+      "footer": {
+        "status": "Status"
+      },
+      "status": {
+        "open": "Open",
+        "acknowledged": "Acknowledged",
+        "resolved": "Resolved"
+      },
+      "errors": {
+        "loadFailed": "Failed to load anomaly alert data.",
+        "loadError": "An error occurred while loading anomaly alerts.",
+        "statusUpdateFailed": "Failed to update the alert status. ({{status}})",
+        "statusUpdateError": "An error occurred while updating the alert status."
+      },
+      "messages": {
+        "trackingConversionZero": "Ad activity was detected, but conversions are reported as zero. Check conversion tracking.",
+        "trackingRevenueZero": "Conversions were recorded, but revenue is reported as zero. Check revenue tracking.",
+        "increase": "{{metric}} increased by {{changePct}}% from the baseline.",
+        "decrease": "{{metric}} decreased by {{changePct}}% from the baseline.",
+        "changed": "{{metric}} changed by {{changePct}}% from the baseline."
+      },
+      "guidance": {
+        "possibleCausesTitle": "Possible Causes",
+        "recommendedActionsTitle": "Recommended Actions",
+        "trackingConversionZero": {
+          "possibleCauses": [
+            "The conversion tag or Conversion API may not be collecting events correctly.",
+            "A landing-page or completion-page change may be causing conversion events to be missed.",
+            "There may be a reporting discrepancy between the ad platform and actual order or inquiry data."
+          ],
+          "actions": [
+            "Check the ad platform conversion-tracking status and recent tag changes.",
+            "Compare actual order or inquiry data with ad-platform conversion data.",
+            "Test whether the completion-page or Conversion API event fires correctly.",
+            "Avoid sharp budget increases for the affected campaign until tracking is verified."
+          ]
+        },
+        "trackingRevenueZero": {
+          "possibleCauses": [
+            "Conversions may be occurring without a revenue value being passed.",
+            "The revenue or currency parameter may be missing from the purchase-complete event.",
+            "There may be an issue connecting ad-platform revenue with the order system."
+          ],
+          "actions": [
+            "First confirm whether conversions exist while only revenue is zero.",
+            "Check the value and currency parameters on the purchase-complete event.",
+            "Compare ad-platform revenue with actual order revenue.",
+            "Avoid ROAS-based budget decisions until revenue tracking is restored."
+          ]
+        },
+        "cpaIncrease": {
+          "possibleCauses": [
+            "Conversions may have fallen, or more spend may be required to generate the same number of conversions.",
+            "Higher CPC may have increased cost per conversion.",
+            "Lower CVR may have reduced click-to-conversion efficiency.",
+            "Missing conversion tracking may also be making CPA appear higher than it actually is."
+          ],
+          "actions": [
+            "Review CPC, CVR, and conversion volume together with CPA to isolate the cause.",
+            "Check for recent changes to creatives, search terms, targeting, or bidding.",
+            "Verify that conversion tracking is operating normally.",
+            "If performance deterioration persists, consider reducing or reallocating campaign budget."
+          ]
+        },
+        "roasDecrease": {
+          "possibleCauses": [
+            "Revenue growth may have been insufficient relative to the increase in ad spend.",
+            "Revenue itself may have declined.",
+            "CPA may have increased while CVR declined.",
+            "A revenue-tracking issue may be causing revenue to be underreported."
+          ],
+          "actions": [
+            "Determine whether higher ad spend or lower revenue is the larger driver.",
+            "Review CPA, CVR, CPC, and conversion volume together.",
+            "Check the revenue-tracking status.",
+            "If the anomaly persists, consider freezing or reducing the affected campaign budget."
+          ]
+        },
+        "cvrDecrease": {
+          "possibleCauses": [
+            "Landing-page conversion efficiency after the ad click may have declined.",
+            "The quality of incoming audiences or search terms may have changed.",
+            "There may be an issue with the page, checkout, or inquiry flow."
+          ],
+          "actions": [
+            "Verify that the landing page and conversion flow are working correctly.",
+            "Review recent changes in search-term and audience traffic quality.",
+            "Compare CVR changes by device and campaign.",
+            "Consider adjusting creatives or targeting where performance remains weak."
+          ]
+        },
+        "ctrDecrease": {
+          "possibleCauses": [
+            "Creative response may have weakened.",
+            "The audience or placement mix may have changed.",
+            "Ad fatigue may have increased."
+          ],
+          "actions": [
+            "Compare recent CTR by creative.",
+            "Check whether impression growth and CTR decline occurred at the same time.",
+            "Consider replacing low-performing creatives or testing new ones."
+          ]
+        },
+        "cpcIncrease": {
+          "possibleCauses": [
+            "Increased competition may have raised click costs.",
+            "Bid settings or the automated bidding strategy may have changed.",
+            "Lower CTR may have reduced advertising efficiency."
+          ],
+          "actions": [
+            "Check for recent bidding-setting changes.",
+            "Review CPC and CTR changes together.",
+            "Identify high-CPC segments by search term, audience, or placement.",
+            "Consider bid or budget adjustments in high-cost, low-efficiency segments."
+          ]
+        },
+        "revenueDecrease": {
+          "possibleCauses": [
+            "Conversion volume or average order value may have declined.",
+            "The quality of advertising traffic may have deteriorated.",
+            "Some revenue-tracking data may be missing."
+          ],
+          "actions": [
+            "Review conversion volume, CPA, and ROAS together.",
+            "Compare actual order revenue with ad-platform revenue.",
+            "Check whether the decline is concentrated in specific campaigns or products."
+          ]
+        },
+        "conversionsDecrease": {
+          "possibleCauses": [
+            "Click volume may have fallen or CVR may have declined.",
+            "A conversion-tracking issue may have occurred.",
+            "Ad traffic or landing-page performance may have weakened."
+          ],
+          "actions": [
+            "Review click volume and CVR together.",
+            "Check the conversion-tracking status.",
+            "Inspect the landing page and key conversion paths."
+          ]
+        },
+        "default": {
+          "possibleCauses": [
+            "Recent advertising performance moved outside its normal reference range.",
+            "Changes in ad settings, market conditions, or data aggregation may be contributing factors."
+          ],
+          "actions": [
+            "Compare related metrics over the same period.",
+            "Check for recent campaign-setting changes.",
+            "Review additional data to determine whether the anomaly persists."
+          ]
+        }
+      }
+    },
+    "tasks": {
+      "title": "Task Management",
+      "subtitle": "Manage assignees, due dates, and progress for client proposals and follow-up tasks.",
+      "count": "{{count}} tasks",
+      "fallbackProposal": "Optimization Proposal",
+      "summary": {
+        "waiting": "Waiting",
+        "inProgress": "In Progress",
+        "reviewing": "Internal Review",
+        "done": "Done",
+        "overdue": "Overdue"
+      },
+      "filters": {
+        "status": "Task Status",
+        "assignee": "Assignee",
+        "sort": "Sort",
+        "all": "All"
+      },
+      "status": {
+        "waiting": "Waiting",
+        "inProgress": "In Progress",
+        "reviewing": "Internal Review",
+        "done": "Done"
+      },
+      "priority": {
+        "low": "Low",
+        "normal": "Normal",
+        "high": "High",
+        "urgent": "Urgent"
+      },
+      "sort": {
+        "priority": "Urgent First",
+        "dueDate": "Nearest Due Date",
+        "updatedAt": "Recently Updated"
+      },
+      "empty": {
+        "title": "No tasks are registered.",
+        "description": "Follow-up tasks will appear here after you create client proposals."
+      },
+      "table": {
+        "scenario": "Scenario",
+        "clientStatus": "Client Status",
+        "priority": "Priority",
+        "assignee": "Assignee",
+        "dueDate": "Due Date",
+        "taskStatus": "Task Status",
+        "attention": "Attention",
+        "nextAction": "Next Action",
+        "actions": "Actions"
+      },
+      "due": {
+        "overdue": "Overdue",
+        "dueSoon": "Due Soon"
+      },
+      "actions": {
+        "viewDetails": "View Details"
+      },
+      "metrics": {
+        "totalBudget": "Total Budget",
+        "projectedRevenue": "Projected Revenue",
+        "projectedRoas": "Projected ROAS",
+        "projectedCpa": "Projected CPA"
+      },
+      "detail": {
+        "assignee": "Assignee",
+        "dueDate": "Due Date",
+        "taskStatus": "Task Status",
+        "priority": "Priority",
+        "clientComment": "Client Comment",
+        "noClientComment": "No client comment has been added.",
+        "internalNote": "Internal Note",
+        "noInternalNote": "No internal note has been added.",
+        "revisionReason": "Revision Request Reason"
+      },
+      "revision": {
+        "beforeAfter": "Before vs. After Revision",
+        "beforeAfterDescription": "Changes in budget and projected performance after applying the revision request.",
+        "channelBudgetChanges": "Budget Changes by Channel",
+        "channel": "Channel",
+        "before": "Before",
+        "after": "After",
+        "change": "Change",
+        "start": "Start Revision Work",
+        "editorTitle": "Prepare Revision",
+        "useSavedScenario": "Use Saved Scenario",
+        "editBudgetManually": "Edit Budgets Manually",
+        "savedScenarioHelp": "Select another saved optimization scenario to use as the revision.",
+        "selectScenario": "Select Scenario",
+        "currentVsRevision": "Current Proposal vs. Revision",
+        "manualBudgetTitle": "Edit Channel Budgets Manually",
+        "currentProposal": "Current Proposal",
+        "revisedBudget": "Revised Budget",
+        "changeRate": "Change Rate",
+        "projectedAfterRevision": "Projected Performance After Revision",
+        "applyManual": "Apply Manual Revision",
+        "channelBudgetComparison": "Channel Budget Comparison",
+        "revision": "Revision",
+        "applyScenario": "Apply This Scenario as Revision",
+        "reshareWithClient": "Reshare with Client"
+      },
+      "history": {
+        "title": "Status Change History"
+      },
+      "trash": {
+        "title": "Trash",
+        "description": "Review deleted tasks and restore or permanently delete them.",
+        "count": "{{count}} deleted tasks",
+        "empty": "The trash is empty.",
+        "clientStatus": "Client Status",
+        "deletedAt": "Deleted At",
+        "restore": "Restore",
+        "permanentDelete": "Delete Permanently",
+        "emptyTrash": "Empty Trash"
+      },
+      "confirm": {
+        "applyScenario": "Apply “{{name}}” as the revision?",
+        "applyManualRevision": "Apply the manually edited budgets and projected performance as the revision?",
+        "moveToTrash": "Move this completed task to the trash?",
+        "restoreTask": "Restore this task?",
+        "permanentDelete": "Permanently delete this task?\n\nThis action cannot be undone.",
+        "emptyTrash": "Permanently delete all {{count}} tasks in the trash?\n\nThis action cannot be undone."
+      },
+      "messages": {
+        "revisionStartError": "An error occurred while starting the revision work.",
+        "applyScenarioError": "An error occurred while applying the revision.",
+        "projectionUnavailable": "The projected performance for this revision cannot be calculated.",
+        "proposalNotFound": "The current proposal could not be found.",
+        "manualRevisionError": "An error occurred while applying the manual revision.",
+        "moveToTrashError": "An error occurred while moving the task to the trash.",
+        "restoreError": "An error occurred while restoring the task.",
+        "permanentDeleteFailed": "Permanent deletion failed.",
+        "permanentDeleteError": "An error occurred during permanent deletion.",
+        "emptyTrashError": "An error occurred while emptying the trash."
+      }
+    },
+    "mediaConnections": {
+      "title": "Media Data Connections",
+      "description": "Connect advertising accounts to import performance data automatically.",
+      "close": "Close",
+      "connected": "Connected",
+      "connectAccount": "Connect Account",
+      "disconnect": "Disconnect",
+      "empty": "No advertising accounts are connected yet.",
+      "metaDefaultAccount": "Meta Ad Account",
+      "cancel": "Cancel",
+      "testConnection": "Test Connection",
+      "fields": {
+        "apiUrl": "API URL",
+        "adAccountId": "Ad Account ID"
+      },
+      "messages": {
+        "loadFailed": "Failed to load media connection information."
+      },
+      "meta": {
+        "title": "Connect Meta Ads",
+        "description": "Enter the API information required to import Meta Ads data.",
+        "apiPlaceholder": "e.g. https://graph.facebook.com/...",
+        "tokenPlaceholder": "Enter the Meta Access Token.",
+        "accountPlaceholder": "e.g. act_123456789"
+      },
+      "naver": {
+        "title": "Connect Naver Ads",
+        "description": "Enter your Naver Search Ads API credentials.",
+        "confirmDisconnect": "Disconnect Naver Ads?\nThe saved API credentials will be removed.",
+        "disconnectFailed": "Failed to disconnect the account.",
+        "disconnected": "Naver Ads has been disconnected.",
+        "disconnectError": "An error occurred while disconnecting Naver Ads.",
+        "connectedSuccess": "Naver Ads API connected and saved successfully.\n{{count}} campaigns found.",
+        "connectFailed": "Failed to connect the Naver Ads API.",
+        "testError": "An error occurred while testing the Naver Ads API connection."
+      },
+      "google": {
+        "title": "Connect Google Ads",
+        "description": "Enter the API information required to import Google Ads data.",
+        "apiPlaceholder": "e.g. https://googleads.googleapis.com/...",
+        "tokenPlaceholder": "Enter your Google Ads credentials.",
+        "customerPlaceholder": "e.g. 123-456-7890"
+      },
+      "tiktok": {
+        "title": "Connect TikTok Ads",
+        "description": "Enter the API information required to import TikTok Ads data.",
+        "apiPlaceholder": "e.g. https://business-api.tiktok.com/..."
+      }
+    },
+    "auth": {
+      "email": "Email",
+      "password": "Password",
+      "passwordPlaceholder": "Enter your password",
+      "passwordConfirm": "Confirm Password",
+      "passwordConfirmPlaceholder": "Re-enter your password",
+      "name": "Name",
+      "namePlaceholder": "Enter your name",
+      "checking": "Checking login...",
+      "login": {
+        "title": "Operator Login",
+        "description": "Log in to view advertising performance and the optimization dashboard.",
+        "submit": "Log In",
+        "submitting": "Logging in...",
+        "noAccount": "Don’t have an account?"
+      },
+      "signup": {
+        "title": "Create Operator Account",
+        "description": "Create an AdScope operator account.",
+        "submit": "Sign Up",
+        "submitting": "Creating account...",
+        "haveAccount": "Already have an account?"
+      },
+      "errors": {
+        "emailPasswordRequired": "Enter your email and password.",
+        "passwordLength": "Your password must be at least 8 characters.",
+        "passwordMismatch": "The passwords do not match.",
+        "signupFailed": "Sign-up failed.",
+        "signupError": "An error occurred during sign-up.",
+        "loginFailed": "Login failed.",
+        "loginError": "An error occurred during login."
+      },
+      "koreanLanguage": "Korean",
+      "englishLanguage": "English"
+    },
+    "clientPage": {
+      "title": "Client Communication",
+      "subtitle": "Share final optimization proposals with clients and manage the review process.",
+      "proposalCount_one": "{{count}} proposal",
+      "proposalCount_other": "{{count}} proposals",
+      "emptyTitle": "No client proposals have been created yet.",
+      "emptyDescription": "Select a final scenario in Scenario Management, then create a client proposal.",
+      "fallbackProposal": "Optimization Proposal",
+      "progressStatus": "Progress Status",
+      "placeholders": {
+        "assignee": "Assignee name",
+        "clientComment": "Enter client questions, comments, or feedback.",
+        "internalNote": "Record internal notes or follow-up tasks.",
+        "revisionReason": "Enter the revision requested by the client."
+      },
+      "confirm": {
+        "share": "Share this proposal with the client?"
+      },
+      "messages": {
+        "cancelError": "An error occurred while cancelling the proposal.",
+        "reshareLinkError": "Failed to create a client reshare link.",
+        "reshareSaveError": "Failed to save the reshare status."
+      }
+    }
   }
 }
