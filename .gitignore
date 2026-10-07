@@ -24,3 +24,5 @@ dist-ssr
 *.sw?
 .env
 backend/.env
+# Local SQLite database
+backend/adscope.db
